@@ -1,0 +1,30 @@
+[package]
+name = "mombasa"
+version = "0.1.0"
+edition = "2018"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "test-server"
+path = "src/server.rs"
+
+[lib] # Bin to run the HelloWorld gRPC server
+name = "mombasa"
+crate-type = ["cdylib"]
+path = "src/mombasa.rs"
+
+[[bin]] # Bin to run the HelloWorld gRPC client
+name = "test-client"
+path = "src/client.rs"
+
+[dependencies]
+tonic = "0.5"
+prost = "0.8"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+winapi = { version = "0.3.9", features = ["memoryapi", "winnt"] }
+libc = "0.2.103"
+
+[build-dependencies]
+tonic-build = "0.5"

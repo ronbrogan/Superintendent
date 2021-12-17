@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Gee.External.Capstone" Version="2.0.2" />
+    <PackageReference Include="Iced" Version="1.14.0" />
+    <PackageReference Include="PeNet" Version="2.8.1" />
+  </ItemGroup>
+
+</Project>
