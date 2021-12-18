@@ -1,5 +1,3 @@
-#![feature(asm)]
-
 use tonic::{transport::Server};
 
 mod server_lib;

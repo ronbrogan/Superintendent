@@ -1,5 +1,3 @@
-#![feature(asm)]
-
 use tonic::{transport::Server};
 use std::ffi::c_void;
 

@@ -1,3 +1,4 @@
+use core::arch::asm;
 use tonic::{Request, Response, Status};
 use std::slice;
 use std::time::Instant;
