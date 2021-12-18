@@ -16,9 +16,20 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
+    # latest nightly may not have rustfmt/clippy
+    # we can't check for both:
+    # https://github.com/rust-lang/rustup-components-history/issues/9
+    # but we at least check for one.
+    # rustfmt _seems_ to break most often:
+    - bash: |
+        echo '##vso[task.setvariable variable=nightly]nightly-'$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/rustfmt)
+      displayName: "Determine latest style nightly"
     - template: install-rust.yml
       parameters:
-        rust: nightly
+        rust: $(nightly)
+        components:
+          - rustfmt
+          - clippy
          
     - script: cargo build --release --lib
       workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
