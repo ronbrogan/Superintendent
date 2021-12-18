@@ -16,6 +16,14 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
+    - template: install-rust.yml
+      parameters:
+        rust: nightly
+         
+    - script: cargo build --release --lib
+      workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
+      displayName: cargo build
+         
     - task: UseDotNet@2
       displayName: 'Use .NET 6 sdk'
       inputs:
