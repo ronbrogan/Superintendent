@@ -13,6 +13,33 @@ use crate::mombasa_bridge::{MemoryFreeRequest, MemoryFreeResponse};
 #[derive(Debug, Default)]
 pub struct Bridge {}
 
+impl Bridge {
+    fn call_function_impl(fnptr: u64, arg0: u64, arg1: u64, arg2: u64, arg3: u64, returns_float: bool) -> u64 {
+        let mut retval: u64;
+        let mut retfloat: u64;
+        
+        unsafe {
+            // Setup registers, make the call, indicate clobbered registers
+            asm!(
+                "call {0}",
+                in(reg) fnptr,
+                in("rcx") arg0,
+                in("rdx") arg1,
+                in("r8") arg2,
+                in("r9") arg3,
+                inout("xmm0") arg0 => retfloat,
+                in("xmm1") arg1,
+                in("xmm2") arg2,
+                in("xmm3") arg3,
+                out("rax") retval,
+                clobber_abi("win64"),
+            );
+        }
+
+        if returns_float { retfloat } else { retval }
+    }
+}
+
 #[tonic::async_trait]
 impl MombasaBridge for Bridge {
     async fn call_function(&self, request: Request<CallRequest>) -> Result<Response<CallResponse>, Status> {
@@ -20,13 +47,10 @@ impl MombasaBridge for Bridge {
 
         let req = request.into_inner();
 
-        let fnptr = req.function_pointer;
         let mut arg0 : u64 = 0;
         let mut arg1 : u64 = 0;
         let mut arg2 : u64= 0;
         let mut arg3 : u64= 0;
-        let mut retval: u64;
-        let mut retfloat: u64;
 
         let len = req.args.len();
 
@@ -46,39 +70,20 @@ impl MombasaBridge for Bridge {
             arg3 = req.args[3];
         }
 
-        unsafe {
-            if len > 4 {
-                // TODO: support more than 4 args?
-                // push remaining args in reverse to the stack
-                //for n in (4..len).rev() {
-                //    let v = req.args[n];
-                //}
-            }
-
-            // Setup registers, make the call, indicate clobbered registers
-            asm!(
-                "call {0}",
-                in(reg) fnptr,
-                in("rcx") arg0,
-                in("rdx") arg1,
-                in("r8") arg2,
-                in("r9") arg3,
-                inout("xmm0") arg0 => retfloat,
-                in("xmm1") arg1,
-                in("xmm2") arg2,
-                in("xmm3") arg3,
-                out("rax") retval,
-                out("r10") _,
-                out("r11") _,
-                out("xmm4") _,
-                out("xmm5") _
-            );
+        if len > 4 {
+            // TODO: support more than 4 args?
+            // push remaining args in reverse to the stack
+            //for n in (4..len).rev() {
+            //    let v = req.args[n];
+            //}
         }
+
+        let result = Bridge::call_function_impl(req.function_pointer, arg0, arg1, arg2, arg3, req.returns_float);
 
         // we might need to separate return values if int/float ORing doesn't work
         let reply = CallResponse {
             duration_microseconds: start.elapsed().as_micros() as u64,
-            value: if req.returns_float { retfloat } else { retval }
+            value: result
         };
 
         Ok(Response::new(reply))
