@@ -79,7 +79,7 @@ namespace Superintendent.CommandSink
 
         private void Write(nint address, byte* source, int length)
         {
-            Console.WriteLine($"Writing {length} bytes to {this.currentProcess} at {address.ToString("x")}");
+            Logger.LogTrace($"Writing {length} bytes to {this.currentProcess} at {address:x}");
 
             if (!Win32.WriteProcessMemory(this.currentProcess, address, source, length, out var written))
             {

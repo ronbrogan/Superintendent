@@ -15,6 +15,4 @@ namespace Superintendent.Core.Native
         IMPERSONATE = (0x0100),
         DIRECT_IMPERSONATION = (0x0200)
     }
-
-    
 }

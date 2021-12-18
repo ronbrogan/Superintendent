@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Superintendent.Core.Native
 {
     public unsafe class Win32
     {
-        public const int PROCESS_QUERY_INFORMATION = 0x400;
-        public const int PROCESS_VM_READ = 0x10;
-
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(AccessPermissions desiredAccess, bool inheritHandle, int processId);
 
@@ -30,10 +24,10 @@ namespace Superintendent.Core.Native
         public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
         [DllImport("ntdll.dll")]
-        public static extern int NtQueryInformationProcess(IntPtr ProcessHandle, int ProcessInformationClass, ref PROCESS_BASIC_INFORMATION ProcessInformation, int ProcessInformationLength, IntPtr ReturnLength);
+        public static extern int NtQueryInformationProcess(IntPtr ProcessHandle, int ProcessInformationClass, ref ProcessBasicInformation ProcessInformation, int ProcessInformationLength, IntPtr ReturnLength);
 
         [DllImport("ntdll.dll")]
-        public static extern int NtQueryInformationThread(IntPtr threadHandle, ThreadInformationClass ThreadInformationClass, ref THREAD_BASIC_INFORMATION ProcessInformation, int ThreadInformationLength, out IntPtr ReturnLength);
+        public static extern int NtQueryInformationThread(IntPtr threadHandle, ThreadInformationClass ThreadInformationClass, ref ThreadBasicInformation ProcessInformation, int ThreadInformationLength, out IntPtr ReturnLength);
 
         [DllImport("ntdll.dll")]
         public static extern int NtQueryInformationThread(IntPtr threadHandle, ThreadInformationClass ThreadInformationClass, ref IntPtr ProcessInformation, int ThreadInformationLength, out IntPtr ReturnLength);
@@ -63,7 +57,7 @@ namespace Superintendent.Core.Native
         /// </summary>
         public static bool InjectModule(int pid, string pathToModule)
         {
-            var injectPermissions = AccessPermissions.CreateThread | AccessPermissions.QueryInformation | AccessPermissions.VmOperation | AccessPermissions.VmWrite | AccessPermissions.VmRead;
+            var injectPermissions = AccessPermissions.ProcessCreateThread | AccessPermissions.ProcessQueryInformation | AccessPermissions.ProcessVmOperation | AccessPermissions.ProcessVmWrite | AccessPermissions.ProcessVmRead;
 
             var handle = OpenProcess(injectPermissions, false, pid);
 
@@ -100,7 +94,7 @@ namespace Superintendent.Core.Native
             {
                 Thread.Sleep(5);
                 GetExitCodeThread(threadHandle, out threadExit);
-                Console.WriteLine("Waiting for injection thread to exit");
+                Logger.LogInformation("Waiting for injection thread to exit");
             }
 
             CloseHandle(threadHandle);
@@ -132,10 +126,8 @@ namespace Superintendent.Core.Native
         ThreadHideFromDebugger
     }
 
-    
-
     [StructLayout(LayoutKind.Sequential)]
-    public struct PROCESS_BASIC_INFORMATION
+    public struct ProcessBasicInformation
     {
         public IntPtr Reserved1;
         public IntPtr PebBaseAddress;
@@ -146,7 +138,7 @@ namespace Superintendent.Core.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct THREAD_BASIC_INFORMATION
+    public struct ThreadBasicInformation
     {
         public IntPtr ExitStatus;
         public IntPtr TebBaseAddress;
@@ -157,33 +149,10 @@ namespace Superintendent.Core.Native
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct UNICODE_STRING
+    public struct UnicodeString
     {
         public short Length;
         public short MaximumLength;
         public IntPtr Buffer;
     }
-
-    // for 32-bit process in a 64-bit OS only
-    [StructLayout(LayoutKind.Sequential)]
-    public struct PROCESS_BASIC_INFORMATION_WOW64
-    {
-        public long Reserved1;
-        public long PebBaseAddress;
-        public long Reserved2_0;
-        public long Reserved2_1;
-        public long UniqueProcessId;
-        public long Reserved3;
-    }
-
-    // for 32-bit process in a 64-bit OS only
-    [StructLayout(LayoutKind.Sequential)]
-    public struct UNICODE_STRING_WOW64
-    {
-        public short Length;
-        public short MaximumLength;
-        public long Buffer;
-    }
-
-    
 }

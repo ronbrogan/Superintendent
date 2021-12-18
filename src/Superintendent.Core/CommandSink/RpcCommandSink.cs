@@ -15,7 +15,7 @@ namespace Superintendent.Core.CommandSink
         private readonly string module;
         private nint BaseOffset => this.process.GetModuleBase(this.module).GetValueOrDefault();
 
-        private MombasaBridge.MombasaBridgeClient RpcBridge => process.Bridge;
+        private MombasaBridge.MombasaBridgeClient? RpcBridge => process?.Bridge;
 
         public RpcCommandSink(RpcRemoteProcess process, string module)
         {
@@ -27,6 +27,9 @@ namespace Superintendent.Core.CommandSink
 
         public void Write(nint relativeAddress, Span<byte> data)
         {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
             var timer = Stopwatch.StartNew();
             var resp = this.RpcBridge.WriteMemory(new MemoryWriteRequest
             {
@@ -40,6 +43,9 @@ namespace Superintendent.Core.CommandSink
 
         public void WriteAt(nint absoluteAddress, Span<byte> data)
         {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
             var timer = Stopwatch.StartNew();
             var resp = this.RpcBridge.WriteMemory(new MemoryWriteRequest
             {
@@ -53,6 +59,9 @@ namespace Superintendent.Core.CommandSink
 
         public void Read(nint address, Span<byte> data)
         {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
             var timer = Stopwatch.StartNew();
             var resp = this.RpcBridge.ReadMemory(new MemoryReadRequest
             {
@@ -73,6 +82,9 @@ namespace Superintendent.Core.CommandSink
 
         public void ReadAt(nint address, Span<byte> data)
         {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
             var timer = Stopwatch.StartNew();
             var resp = this.RpcBridge.ReadMemory(new MemoryReadRequest
             {
@@ -96,6 +108,9 @@ namespace Superintendent.Core.CommandSink
 
         public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
         {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
             var timer = Stopwatch.StartNew();
 
             if (typeof(T) != typeof(nint) && typeof(T) != typeof(IntPtr) && typeof(T) != typeof(ulong) && typeof(T) != typeof(float))

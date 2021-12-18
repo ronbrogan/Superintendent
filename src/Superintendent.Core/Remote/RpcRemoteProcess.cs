@@ -7,24 +7,25 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Superintendent.Core.Remote
 {
     public class RpcRemoteProcess : IRemoteProcess
     {
-        internal MombasaBridge.MombasaBridgeClient Bridge { get; set; }
-        private Process process;
-        private ICommandSink processCommandSink;
-        private ProcessWatcher processWatcher;
+        internal MombasaBridge.MombasaBridgeClient? Bridge { get; set; }
+        private Process? process;
+        private ICommandSink? processCommandSink;
+        private ProcessWatcher? processWatcher;
         private Dictionary<string, IntPtr> processModuleOffsets = new();
 
-        public event EventHandler<ProcessAttachArgs> ProcessAttached;
-        public event EventHandler ProcessDetached;
+        public event EventHandler<ProcessAttachArgs>? ProcessAttached;
+        public event EventHandler? ProcessDetached;
 
-        public int ProcessId => this.process.Id;
+        public int ProcessId => this.process?.Id ?? 0;
 
-        public IEnumerable<ProcessThread> Threads { get { foreach (ProcessThread t in this.process.Threads) yield return t; } }
+        public IEnumerable<ProcessThread> Threads => this.process?.Threads.Cast<ProcessThread>() ?? Enumerable.Empty<ProcessThread>();
 
         public RpcRemoteProcess(int pid)
         {
@@ -39,29 +40,23 @@ namespace Superintendent.Core.Remote
         public async Task Attach(params string[] processNames)
         {
             processWatcher = new ProcessWatcher(processNames);
-            await processWatcher.Run(p => {
-                process = p;
-                processCommandSink = this.GetCommandSink();
-                AttachToProcess(p);
-                processModuleOffsets.Clear();
-            }, () => ProcessDetached?.Invoke(this, null));
+            await processWatcher.Run(
+                p => {
+                    process = p;
+                    processCommandSink = this.GetCommandSink();
+                    AttachToProcess(p);
+                    processModuleOffsets.Clear();
+                },
+                () => ProcessDetached?.Invoke(this, null!));
         }
 
         public void AttachToProcess(Process proc)
         {
-            Console.WriteLine($"Attaching to process: {proc.Id}");
+            Logger.LogInformation($"Attaching to process: {proc.Id}");
 
-            var needsMombasa = true;
-            foreach(ProcessModule module in proc.Modules)
-            {
-                if(Path.GetFileName(module.FileName) == "mombasa.dll")
-                {
-                    needsMombasa = false;
-                    break;
-                }
-            }
+            var hasMombasa = proc.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == "mombasa.dll");
 
-            if(needsMombasa)
+            if(!hasMombasa)
             {
                 var path = Environment.GetEnvironmentVariable("MombasaPath")
                 ?? Path.Combine(Environment.CurrentDirectory, "mombasa.dll");
@@ -99,17 +94,8 @@ namespace Superintendent.Core.Remote
                 return offset;
             }
 
-            ProcessModule loadedModule = null;
-
-            foreach (ProcessModule mod in this.process.Modules)
-            {
-                if (mod.ModuleName != null 
-                    && mod.ModuleName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    loadedModule = mod;
-                    break;
-                }
-            }
+            var loadedModule = this.process?.Modules.Cast<ProcessModule>()
+                .FirstOrDefault(m => moduleName.Equals(m.ModuleName, StringComparison.OrdinalIgnoreCase));
 
             if (loadedModule == null)
             {
@@ -123,6 +109,9 @@ namespace Superintendent.Core.Remote
 
         public nint Allocate(int length, MemoryProtection protection = MemoryProtection.ReadWrite)
         {
+            if (this.Bridge == null)
+                throw new Exception("Process is not attached");
+
             var resp = this.Bridge.AllocateMemory(new MemoryAllocateRequest()
             {
                 Length = (uint)length,
@@ -134,6 +123,9 @@ namespace Superintendent.Core.Remote
 
         public void Free(nint address, int length = 0, AllocationType freeType = AllocationType.Release)
         {
+            if (this.Bridge == null)
+                throw new Exception("Process is not attached");
+
             this.Bridge.FreeMemory(new MemoryFreeRequest()
             {
                 Address = (ulong)address,
@@ -142,17 +134,17 @@ namespace Superintendent.Core.Remote
             });
         }
 
-        public void Write(nint relativeAddress, Span<byte> data) => processCommandSink.Write(relativeAddress, data);
+        public void Write(nint relativeAddress, Span<byte> data) => processCommandSink?.Write(relativeAddress, data);
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data) => processCommandSink.WriteAt(absoluteAddress, data);
+        public void WriteAt(nint absoluteAddress, Span<byte> data) => processCommandSink?.WriteAt(absoluteAddress, data);
 
-        public void Read(nint address, Span<byte> data) => processCommandSink.Read(address, data);
+        public void Read(nint address, Span<byte> data) => processCommandSink?.Read(address, data);
 
-        public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => processCommandSink.Read(ptrToaddress, data);
+        public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => processCommandSink?.Read(ptrToaddress, data);
 
-        public void ReadAt(nint address, Span<byte> data) => processCommandSink.ReadAt(address, data);
+        public void ReadAt(nint address, Span<byte> data) => processCommandSink?.ReadAt(address, data);
 
-        public nint GetBaseOffset() => processCommandSink.GetBaseOffset();
+        public nint GetBaseOffset() => processCommandSink?.GetBaseOffset() ?? -1;
 
         public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null) => processCommandSink.CallFunctionAt<T>(functionPointer, arg1, arg2, arg3, arg4);
 

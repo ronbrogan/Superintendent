@@ -3,6 +3,7 @@ using Superintendent.Core.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Superintendent.Core.Remote
 {
@@ -13,16 +14,16 @@ namespace Superintendent.Core.Remote
         private bool disposedValue;
         private ICommandSink processCommandSink;
 
-        public event EventHandler<ProcessAttachArgs> ProcessAttached;
+        public event EventHandler<ProcessAttachArgs>? ProcessAttached;
 
         public int ProcessId => this.process.Id;
 
-        public IEnumerable<ProcessThread> Threads { get { foreach (ProcessThread t in this.process.Threads) yield return t; } }
+        public IEnumerable<ProcessThread> Threads => this.process.Threads.Cast<ProcessThread>();
 
         public PinvokeRemoteProcess(int processId)
         {
             this.process = Process.GetProcessById(processId);
-            this.processHandle = Win32.OpenProcess(AccessPermissions.AllAccess, false, processId);
+            this.processHandle = Win32.OpenProcess(AccessPermissions.ProcessAllAccess, false, processId);
             this.processCommandSink = this.GetCommandSink();
             this.ProcessAttached?.Invoke(this, new ProcessAttachArgs() { Process = this, ProcessId = processId });
         }
@@ -116,12 +117,12 @@ namespace Superintendent.Core.Remote
 
         public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public T CallFunction<T>(nint functionPointerOffset, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

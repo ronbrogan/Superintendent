@@ -18,21 +18,20 @@ namespace Superintendent.Core.Native
         StandardRights_ALL = 0x001F0000,
         SpecificRights_ALL = 0x0000FFFF,
 
-        // process
-        Terminate = 0x0001,
-        CreateThread = 0x0002,
-        SetSessionID = 0x0004,
-        VmOperation = 0x0008,
-        VmRead = 0x0010,
-        VmWrite = 0x0020,
-        DupHandle = 0x0040,
-        CreateProcess = 0x0080,
-        SetQuota = 0x0100,
-        SetInformation = 0x0200,
-        QueryInformation = 0x0400,
-        SuspendResume = 0x0800,
-        QueryLimitedInformation = 0x1000,
-        SetLimitedInformation = 0x2000,
-        AllAccess = StandardRights_Required | Synchronize | 0xFFFF
+        ProcessTerminate = 0x0001,
+        ProcessCreateThread = 0x0002,
+        ProcessSetSessionID = 0x0004,
+        ProcessVmOperation = 0x0008,
+        ProcessVmRead = 0x0010,
+        ProcessVmWrite = 0x0020,
+        ProcessDupHandle = 0x0040,
+        ProcessCreateProcess = 0x0080,
+        ProcessSetQuota = 0x0100,
+        ProcessSetInformation = 0x0200,
+        ProcessQueryInformation = 0x0400,
+        ProcessSuspendResume = 0x0800,
+        ProcessQueryLimitedInformation = 0x1000,
+        ProcessSetLimitedInformation = 0x2000,
+        ProcessAllAccess = StandardRights_Required | Synchronize | 0xFFFF
     }
 }

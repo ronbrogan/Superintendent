@@ -89,7 +89,7 @@ namespace Superintendent.Core.Native
         public IntPtr glCurrentRC;                              /* bec/1240 */
         public IntPtr glContext;                                /* bf0/1248 */
         public uint LastStatusValue;                            /* bf4/1250 */
-        public UNICODE_STRING StaticUnicodeString;              /* bf8/1258 used by advapi32 */
+        public UnicodeString StaticUnicodeString;              /* bf8/1258 used by advapi32 */
         public fixed char StaticUnicodeBuffer[261];             /* c00/1268 used by advapi32 */
         public IntPtr DeallocationStack;                        /* e0c/1478 */
         public fixed ulong TlsSlots[64];                        /* e10/1480 */

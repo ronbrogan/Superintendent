@@ -12,7 +12,7 @@ namespace Superintendent.Core
 
         public void TraceMicroseconds(string metric, ulong microseconds)
         {
-            Console.WriteLine($"[METRIC] {metric}: {microseconds}");
+            Logger.LogTrace($"[METRIC] {metric}: {microseconds}");
         }
     }
 }
