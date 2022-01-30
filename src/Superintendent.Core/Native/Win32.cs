@@ -102,6 +102,52 @@ namespace Superintendent.Core.Native
 
             return true;
         }
+
+        /// <summary>
+        /// Eject the module from the process. 
+        /// This will open and close a handle to the process for use during ejection.
+        /// This should only be used on modules that were injected and gracefully handle removal
+        /// </summary>
+        public static void EjectModule(int pid, string pathToModule)
+        {
+            var injectPermissions = AccessPermissions.ProcessCreateThread | AccessPermissions.ProcessQueryInformation | AccessPermissions.ProcessVmOperation | AccessPermissions.ProcessVmWrite | AccessPermissions.ProcessVmRead;
+
+            var handle = OpenProcess(injectPermissions, false, pid);
+
+            EjectModule(pid, handle, pathToModule);
+
+            CloseHandle(handle);
+        }
+
+        public static bool EjectModule(int pid, IntPtr processHandle, string pathToModule)
+        {
+            IntPtr module = IntPtr.Zero;
+
+            foreach (ProcessModule mod in Process.GetProcessById(pid).Modules)
+            {
+                if (mod.FileName == pathToModule)
+                    return false;
+
+                module = mod.BaseAddress;
+            }
+
+            var freeLibrary = GetProcAddress(GetModuleHandle("Kernel32"), "FreeLibrary");
+
+            var threadHandle = CreateRemoteThread(processHandle, IntPtr.Zero, 0, freeLibrary, module, 0, out var id);
+
+            var threadExit = (uint)ExitCode.StillActive;
+
+            while (threadExit == (uint)ExitCode.StillActive)
+            {
+                Thread.Sleep(5);
+                GetExitCodeThread(threadHandle, out threadExit);
+                Logger.LogInformation("Waiting for ejection thread to exit");
+            }
+
+            CloseHandle(threadHandle);
+
+            return true;
+        }
     }
 
     public enum ThreadInformationClass

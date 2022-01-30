@@ -9,6 +9,8 @@ service MombasaBridge {
 
     rpc WriteMemory(MemoryWriteRequest) returns (MemoryWriteResponse);
     rpc ReadMemory(MemoryReadRequest) returns (MemoryReadResponse);
+
+    rpc SetTlsValue(SetTlsValueRequest) returns (SetTlsValueResponse);
 }
 
 message CallRequest {
@@ -19,7 +21,8 @@ message CallRequest {
 
 message CallResponse {
     uint64 durationMicroseconds = 1;
-    fixed64 value = 2;
+    bool success = 2;
+    fixed64 value = 3;
 }
 
 message MemoryWriteRequest {
@@ -59,5 +62,14 @@ message MemoryFreeRequest {
 }
 
 message MemoryFreeResponse {
+    uint64 durationMicroseconds = 1;
+}
+
+message SetTlsValueRequest {
+    uint32 index = 1;
+    fixed64 value = 2;
+}
+
+message SetTlsValueResponse {
     uint64 durationMicroseconds = 1;
 }

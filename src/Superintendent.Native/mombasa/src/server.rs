@@ -6,7 +6,7 @@ use server_lib::Bridge;
 mod mombasa_bridge { tonic::include_proto!("mombasa"); }
 use mombasa_bridge::mombasa_bridge_server::MombasaBridgeServer;
 
-#[tokio::main]
+#[tokio::main(worker_threads = 1)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "127.0.0.1:50051".parse()?;
     let greeter = Bridge::default();

@@ -6,6 +6,7 @@ using Superintendent.Core.Remote;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Superintendent.Core.CommandSink
 {
@@ -57,6 +58,18 @@ namespace Superintendent.Core.CommandSink
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(WriteAt)}_Server", resp.DurationMicroseconds);
         }
 
+        public unsafe void Write<T>(nint relativeAddress, T data) where T : unmanaged
+        {
+            var bytes = new Span<byte>(&data, sizeof(T));
+            this.Write(relativeAddress, bytes);
+        }
+
+        public unsafe void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged
+        {
+            var bytes = new Span<byte>(&data, sizeof(T));
+            this.WriteAt(absoluteAddress, bytes);
+        }
+
         public void Read(nint address, Span<byte> data)
         {
             if (this.RpcBridge == null)
@@ -98,15 +111,29 @@ namespace Superintendent.Core.CommandSink
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Server", resp.DurationMicroseconds);
         }
 
+        public unsafe void Read<T>(nint relativeAddress, out T data) where T : unmanaged
+        {
+            Unsafe.SkipInit(out data);
+            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
+            this.Read(relativeAddress, bytes);
+        }
+
+        public unsafe void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged
+        {
+            Unsafe.SkipInit(out data);
+            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
+            this.ReadAt(absoluteAddress, bytes);
+        }
+
         public void SetProtection(nint address, MemoryProtection desiredProtection)
         {
             throw new NotImplementedException();
         }
 
-        public T CallFunction<T>(nint functionPointerOffset, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
-            => CallFunctionAt<T>(this.BaseOffset + functionPointerOffset, arg1, arg2, arg3, arg4);
+        public (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
+            => CallFunctionAt<T>(this.BaseOffset + functionPointerOffset, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
 
-        public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
+        public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
             if (this.RpcBridge == null)
                 throw new Exception("Process is not attached");
@@ -124,28 +151,55 @@ namespace Superintendent.Core.CommandSink
                 ReturnsFloat = typeof(T) == typeof(float)
             };
 
-            if (arg1.HasValue) callReq.Args.Add(arg1.Value);
-            if (arg2.HasValue) callReq.Args.Add(arg2.Value);
-            if (arg3.HasValue) callReq.Args.Add(arg3.Value);
-            if (arg4.HasValue) callReq.Args.Add(arg4.Value);
+            if (arg1.HasValue) callReq.Args.Add((ulong)arg1.Value);
+            if (arg2.HasValue) callReq.Args.Add((ulong)arg2.Value);
+            if (arg3.HasValue) callReq.Args.Add((ulong)arg3.Value);
+            if (arg4.HasValue) callReq.Args.Add((ulong)arg4.Value);
+            if (arg5.HasValue) callReq.Args.Add((ulong)arg5.Value);
+            if (arg6.HasValue) callReq.Args.Add((ulong)arg6.Value);
+            if (arg7.HasValue) callReq.Args.Add((ulong)arg7.Value);
+            if (arg8.HasValue) callReq.Args.Add((ulong)arg8.Value);
+            if (arg9.HasValue) callReq.Args.Add((ulong)arg9.Value);
+            if (arg10.HasValue) callReq.Args.Add((ulong)arg10.Value);
+            if (arg11.HasValue) callReq.Args.Add((ulong)arg11.Value);
+            if (arg12.HasValue) callReq.Args.Add((ulong)arg12.Value);
 
             var resp = this.RpcBridge.CallFunction(callReq);
 
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(CallFunctionAt)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(CallFunctionAt)}_Server", resp.DurationMicroseconds);
 
+            var success = resp.Success;
+
+            if(!success)
+            {
+                Logger.LogError($"Rpc_{nameof(CallFunctionAt)} call failure");
+            }
+
             if (typeof(T) == typeof(float))
             {
-                return (T)(object)BitConverter.UInt32BitsToSingle((uint)resp.Value);
+                return (success, (T)(object)BitConverter.UInt32BitsToSingle((uint)resp.Value));
             }
             else if(typeof(T) == typeof(nint) || typeof(T) == typeof(IntPtr))
             {
-                return (T)(object)(IntPtr)resp.Value;
+                return (success, (T)(object)(IntPtr)resp.Value);
             }
             else
             {
-                return (T)(object)resp.Value;
+                return (success, (T)(object)resp.Value);
             }
+        }
+
+        public void SetTlsValue(int index, nint value)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            this.RpcBridge.SetTlsValue(new SetTlsValueRequest()
+            {
+                Index = (uint)index,
+                Value = (ulong)value
+            });
         }
     }
 }

@@ -2,6 +2,7 @@
 using Superintendent.Core.Native;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Superintendent.CommandSink
@@ -64,6 +65,18 @@ namespace Superintendent.CommandSink
             }
         }
 
+        public unsafe void Write<T>(nint relativeAddress, T data) where T : unmanaged
+        {
+            var bytes = new Span<byte>(&data, sizeof(T));
+            this.Write(relativeAddress, bytes);
+        }
+
+        public unsafe void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged
+        {
+            var bytes = new Span<byte>(&data, sizeof(T));
+            this.WriteAt(absoluteAddress, bytes);
+        }
+
         private void Read(nint address, byte* destination, int length)
         {
             if (!Win32.ReadProcessMemory(this.currentProcess, address, destination, length, out var read))
@@ -75,6 +88,20 @@ namespace Superintendent.CommandSink
             {
                 throw new Exception("Couldn't read all requested data", new Win32Exception());
             }
+        }
+
+        public unsafe void Read<T>(nint relativeAddress, out T data) where T : unmanaged
+        {
+            Unsafe.SkipInit(out data);
+            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
+            this.Read(relativeAddress, bytes);
+        }
+
+        public unsafe void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged
+        {
+            Unsafe.SkipInit(out data);
+            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
+            this.ReadAt(absoluteAddress, bytes);
         }
 
         private void Write(nint address, byte* source, int length)
@@ -92,14 +119,19 @@ namespace Superintendent.CommandSink
             }
         }
 
-        public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
+        public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
-        public T CallFunction<T>(nint functionPointerOffset, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
+        public (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
+        }
+
+        public void SetTlsValue(int index, nint value)
+        {
+            throw new NotSupportedException();
         }
     }
 }

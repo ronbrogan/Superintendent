@@ -16,9 +16,14 @@ namespace Superintendent.Core.Remote
 
         public event EventHandler<ProcessAttachArgs>? ProcessAttached;
 
-        public int ProcessId => this.process.Id;
+        public Process Process => this.process;
 
-        public IEnumerable<ProcessThread> Threads => this.process.Threads.Cast<ProcessThread>();
+        public int ProcessId => this.Process?.Id ?? -1;
+
+        public IEnumerable<ProcessThread> Threads => this.Process?.Threads.Cast<ProcessThread>() ?? Enumerable.Empty<ProcessThread>();
+
+        public IEnumerable<ProcessModule> Modules => this.Process?.Modules.Cast<ProcessModule>() ?? Enumerable.Empty<ProcessModule>();
+
 
         public PinvokeRemoteProcess(int processId)
         {
@@ -40,11 +45,11 @@ namespace Superintendent.Core.Remote
 
         public ICommandSink GetCommandSink(string module)
         {
-            ProcessModule loadedModule = null;
+            ProcessModule? loadedModule = null;
 
             foreach(ProcessModule mod in this.process.Modules)
             {
-                if(mod.ModuleName.Equals(module, StringComparison.OrdinalIgnoreCase))
+                if(module.Equals(mod.ModuleName, StringComparison.OrdinalIgnoreCase))
                 {
                     loadedModule = mod;
                     break;
@@ -79,11 +84,19 @@ namespace Superintendent.Core.Remote
 
         public void WriteAt(nint absoluteAddress, Span<byte> data) => this.processCommandSink.Write(absoluteAddress, data);
 
+        public void Write<T>(nint relativeAddress, T data) where T : unmanaged => this.processCommandSink.Write(relativeAddress, data);
+
+        public void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged => this.processCommandSink.Write(absoluteAddress, data);
+
         public void Read(nint address, Span<byte> data) => this.processCommandSink.Read(address, data);
 
         public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => this.processCommandSink.Read(ptrToaddress, data);
 
         public void ReadAt(nint address, Span<byte> data) => this.processCommandSink.ReadAt(address, data);
+
+        public void Read<T>(nint relativeAddress, out T data) where T : unmanaged => this.processCommandSink.ReadAt(relativeAddress, out data);
+
+        public void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged => this.processCommandSink.ReadAt(absoluteAddress, out data);
 
         public nint GetBaseOffset() => 0;
 
@@ -94,7 +107,7 @@ namespace Superintendent.Core.Remote
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
+                    this.process.Dispose();
                 }
 
                 Win32.CloseHandle(this.processHandle);
@@ -115,12 +128,17 @@ namespace Superintendent.Core.Remote
             GC.SuppressFinalize(this);
         }
 
-        public T CallFunctionAt<T>(nint functionPointer, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
+        public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
             throw new NotSupportedException();
         }
 
-        public T CallFunction<T>(nint functionPointerOffset, ulong? arg1 = null, ulong? arg2 = null, ulong? arg3 = null, ulong? arg4 = null)
+        public (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
+        {
+            throw new NotSupportedException();
+        }
+
+        public void SetTlsValue(int index, nint value)
         {
             throw new NotSupportedException();
         }

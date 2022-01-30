@@ -1,8 +1,13 @@
 [package]
 name = "mombasa"
-version = "0.1.0"
+version = "0.2.5"
 edition = "2018"
 
+[profile.release]
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -20,11 +25,16 @@ name = "test-client"
 path = "src/client.rs"
 
 [dependencies]
-tonic = "0.5"
-prost = "0.8"
-tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
-winapi = { version = "0.3.9", features = ["memoryapi", "winnt"] }
+tonic = "0.6.2"
+prost = "0.9.0"
+tokio = { version = "1.15.0", features = ["macros", "rt-multi-thread"] }
+winapi = { version = "0.3.9", features = ["memoryapi", "winnt", "processthreadsapi"] }
 libc = "0.2.103"
+flexi_logger = "0.22"
+log = "0.4"
+directories = "0.8.5"
+triggered = "0.1.2"
+once_cell = "1.9.0"
 
 [build-dependencies]
-tonic-build = "0.5"
+tonic-build = "0.6.2"

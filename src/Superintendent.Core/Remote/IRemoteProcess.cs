@@ -12,9 +12,22 @@ namespace Superintendent.Core.Remote
         public IRemoteProcess Process { get; set; }
     }
 
+    public class AttachExceptionArgs
+    {
+        public int ProcessId { get; set; }
+        public Exception? Exception { get; set; }
+    }
+
     public interface IRemoteProcess : IDisposable, ICommandSink
     {
+        public Process? Process { get; }
+
         public int ProcessId { get; }
+
+        public IEnumerable<ProcessThread> Threads { get; }
+
+        public IEnumerable<ProcessModule> Modules { get; }
+
 
         public event EventHandler<ProcessAttachArgs> ProcessAttached;
 
@@ -26,6 +39,6 @@ namespace Superintendent.Core.Remote
 
         public void Free(nint address, int length = 0, AllocationType freeType = AllocationType.Release);
 
-        public IEnumerable<ProcessThread> Threads { get; }
+        public void SetTlsValue(int index, nint value);
     }
 }

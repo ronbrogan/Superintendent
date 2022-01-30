@@ -9,58 +9,44 @@ namespace Superintendent.Core
     public class ProcessWatcher : IDisposable
     {
         private Task? runTask;
-        private CancellationTokenSource? runCts;
+        private CancellationTokenSource runCts = new CancellationTokenSource();
         private string[] processNames;
         private bool disposedValue;
 
         public Process? CurrentProcess { get; private set; } = null;
 
-        private List<Action<Process>> callbacks = new();
-        private List<Action> detachCallbacks = new();
+        private Action<Process>? callback;
+        private Action? detachCallback;
+        private Action<int, Exception?>? failCallback;
 
         public ProcessWatcher(params string[] processNames)
         {
             this.processNames = processNames;
         }
 
-        public async Task Run(Action<Process> foundProcess, Action? processExit = null)
+        public void Run(Action<Process> foundProcess, Action? processExit = null, Action<int, Exception?>? failureCallback = null)
         {
-            if(runCts != null)
-            {
-                if (runCts.IsCancellationRequested)
-                {
-                    runCts.Cancel();
-                    runCts.Dispose();
-                    runCts = null;
-                    callbacks.Clear();
-                }
-                else
-                {
-                    callbacks.Add(foundProcess);
-                    return;
-                }
-            }
-
             if (runTask != null)
             {
-                await this.runTask;
+                throw new Exception("Watcher is already running");
             }
 
-            callbacks.Add(foundProcess);
+            callback = foundProcess;
+            detachCallback = processExit;
+            failCallback = failureCallback;
 
-            if(processExit != null)
-                detachCallbacks.Add(processExit);
-
-            this.TryAttach();
-            this.runCts = new CancellationTokenSource();
             this.runTask = this.PollProcesses();
         }
 
         public async Task Stop()
         {
             this.runCts.Cancel();
-            await this.runTask;
-            this.runTask = null;
+            
+            if(this.runTask != null)
+            {
+                await this.runTask;
+                this.runTask = null;
+            }
         }
 
         private void TryAttach()
@@ -73,14 +59,13 @@ namespace Superintendent.Core
                 {
                     var running = DateTime.Now - proc[0].StartTime;
 
-                    // Don't attach during first 15 seconds of process to allow for process bootstrapping
-                    if (running.TotalSeconds < 15)
+                    // Don't attach during first 30 seconds of process to allow for process bootstrapping
+                    if (running.TotalSeconds < 30)
                         continue;
 
                     this.CurrentProcess = proc[0];
 
-                    foreach (var foundProcess in this.callbacks)
-                        foundProcess(proc[0]);
+                    this.callback?.Invoke(proc[0]);
                 }
             }
         }
@@ -91,15 +76,21 @@ namespace Superintendent.Core
             {
                 if(this.CurrentProcess != null && this.CurrentProcess.HasExited)
                 {
-                    foreach (var cb in this.detachCallbacks)
-                        cb();
+                    this.detachCallback?.Invoke();
 
                     this.CurrentProcess = null;
                 }
 
                 if(this.CurrentProcess == null)
                 {
-                    this.TryAttach();
+                    try
+                    {
+                        this.TryAttach();
+                    }
+                    catch (Exception ex)
+                    {
+                        this.failCallback?.Invoke(this.CurrentProcess?.Id ?? 0, ex);
+                    }
                 }
 
                 await Task.Delay(1000, this.runCts.Token);
@@ -113,7 +104,14 @@ namespace Superintendent.Core
                 if (disposing)
                 {
                     this.runCts?.Cancel();
-                    this.runCts.Dispose();
+                    this.runCts?.Dispose();
+
+                    if (this.CurrentProcess != null)
+                    {
+                        this.detachCallback?.Invoke();
+
+                        this.CurrentProcess = null;
+                    }
                 }
 
                 disposedValue = true;
