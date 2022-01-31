@@ -13,6 +13,7 @@ namespace Superintendent.Core.Remote
         private IntPtr processHandle;
         private bool disposedValue;
         private ICommandSink processCommandSink;
+        private RpcRemoteProcess? rpcConnection = null;
 
         public event EventHandler<ProcessAttachArgs>? ProcessAttached;
 
@@ -33,6 +34,14 @@ namespace Superintendent.Core.Remote
             this.ProcessAttached?.Invoke(this, new ProcessAttachArgs() { Process = this, ProcessId = processId });
         }
 
+        public RpcRemoteProcess GetRpcConnection()
+        {
+            if (this.rpcConnection == null)
+                this.rpcConnection = new RpcRemoteProcess(this.process.Id);
+            
+            return this.rpcConnection;
+        }
+
         public bool InjectModule(string pathToModule)
         {
             return Win32.InjectModule(this.process.Id, this.processHandle, pathToModule);
@@ -40,7 +49,7 @@ namespace Superintendent.Core.Remote
 
         public ICommandSink GetCommandSink()
         {
-            return new PinvokeCommandSink(this.processHandle, 0);
+            return new PinvokeCommandSink(this.processHandle, (this.process?.MainModule?.BaseAddress ?? IntPtr.Zero));
         }
 
         public ICommandSink GetCommandSink(string module)
@@ -92,13 +101,13 @@ namespace Superintendent.Core.Remote
 
         public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => this.processCommandSink.Read(ptrToaddress, data);
 
+        public void Read<T>(nint relativeAddress, out T data) where T : unmanaged => this.processCommandSink.Read(relativeAddress, out data);
+        
         public void ReadAt(nint address, Span<byte> data) => this.processCommandSink.ReadAt(address, data);
-
-        public void Read<T>(nint relativeAddress, out T data) where T : unmanaged => this.processCommandSink.ReadAt(relativeAddress, out data);
 
         public void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged => this.processCommandSink.ReadAt(absoluteAddress, out data);
 
-        public nint GetBaseOffset() => 0;
+        public nint GetBaseOffset() => this.processCommandSink.GetBaseOffset();
 
 
         private void Dispose(bool disposing)
