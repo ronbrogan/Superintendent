@@ -3,7 +3,7 @@
 #include <thread>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include "MombasaServer.cpp"
+#include "mombasa_bridge.cpp"
 
 static std::thread* grpcThread;
 static std::unique_ptr<Server> grpcServer;

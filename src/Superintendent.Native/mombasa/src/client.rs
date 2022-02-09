@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = MombasaBridgeClient::connect("http://127.0.0.1:50051").await?;
 
     let request = tonic::Request::new(CallRequest {
-        function_pointer: 0x7FF69D2AB502,
+        function_pointer: 0x7FF6D87C4640,
         args: Vec::new(),
         returns_float: false
     });
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("RESPONSE={:?}", response);
 
     let request3 = tonic::Request::new(CallRequest {
-        function_pointer: 0x7FF69D2A90CC,
+        function_pointer: 0x7FF6D87C4680,
         args: vec![1,2,3,4,5],
         returns_float: false
     });
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("RESPONSE={:?}", response3);
 
     let request2 = tonic::Request::new(MemoryReadRequest {
-        address: 0x7FF69D39F650,
+        address: 0x7FF6D87E7130,
         count: 14
     });
 

@@ -1,0 +1,12 @@
+{
+  "name": "mombasa",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "spdlog",
+    "grpc",
+    {
+      "name": "protobuf",
+      "features": [ "zlib" ]
+    }
+  ]
+}
