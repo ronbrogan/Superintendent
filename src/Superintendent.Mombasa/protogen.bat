@@ -1,0 +1,2 @@
+protoc -I=..\Superintendent.Native\mombasa\proto\ --cpp_out=. mombasa.proto 
+protoc -I=..\Superintendent.Native\mombasa\proto\ --grpc_out=. --plugin=protoc-gen-grpc="C:\src\vcpkg\packages\grpc_x64-windows\tools\grpc\grpc_cpp_plugin.exe" mombasa.proto 
