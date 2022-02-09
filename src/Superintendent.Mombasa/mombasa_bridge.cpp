@@ -29,12 +29,9 @@ extern "C" {
 
 // Logic and data behind the server's behavior.
 class MombasaBridgeImpl final : public MombasaBridge::Service {
-
-    std::shared_ptr<spdlog::logger> log = spdlog::get("console");
-
     Status CallFunction(ServerContext* context, const CallRequest* request, CallResponse* reply) override {
         return Work([&](auto start) {
-            log->info("Call function invoked for {0:x}, {1} args, isfloat: {2}", request->functionpointer(), request->args_size(), request->returnsfloat());
+            spdlog::info("Call function invoked for {0:x}, {1} args, isfloat: {2}", request->functionpointer(), request->args_size(), request->returnsfloat());
             auto func = (void*)request->functionpointer();
             auto argc = request->args_size();
             uint64 argv[12];
@@ -53,7 +50,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
 
     Status ReadMemory(ServerContext* context, const MemoryReadRequest* request, MemoryReadResponse* reply) override {
         return Work([&](auto start) {
-            log->info("Read memory requested for {0:x}", request->address());
+            spdlog::info("Read memory requested for {0:x}", request->address());
 
             auto address = (char*)request->address();
             std::string data(address, request->count());
@@ -65,7 +62,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
 
     Status WriteMemory(ServerContext* context, const MemoryWriteRequest* request, MemoryWriteResponse* reply) override {
         return Work([&](auto start) {
-            log->info("Write memory requested for {0:x}", request->address());
+            spdlog::info("Write memory requested for {0:x}", request->address());
             auto address = (char*)request->address();
             auto data = request->data();
             memcpy(address, data.data(), data.length());
@@ -75,7 +72,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
 
     Status AllocateMemory(ServerContext* context, const MemoryAllocateRequest* request, MemoryAllocateResponse* reply) override {
         return Work([&](auto start) {
-            log->info("Allocate memory requested");
+            spdlog::info("Allocate memory requested");
             auto commit = 0x1000;
             auto allocated = VirtualAlloc(NULL, request->length(), commit, request->protection());
             reply->set_address((uint64)allocated);
@@ -85,7 +82,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
 
     Status FreeMemory(ServerContext* context, const MemoryFreeRequest* request, MemoryFreeResponse* reply) override {
         return Work([&](auto start) {
-            log->info("Free memory requested for {0:x}", request->address());
+            spdlog::info("Free memory requested for {0:x}", request->address());
             auto freed = VirtualFree((void*)request->address(), 0, request->freetype());
             TIMER_STOP;
         });
@@ -95,7 +92,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
         return Work([&](auto start) {
             auto index = request->index();
             auto address = request->value();
-            log->info("Set TLS value requested for {0}/{1:x}", index, address);
+            spdlog::info("Set TLS value requested for {0}/{1:x}", index, address);
             auto set = TlsSetValue(index, (void*)address);
             TIMER_STOP;
         });
@@ -113,7 +110,7 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
             __except (EXCEPTION_EXECUTE_HANDLER) {
                 statusCode = grpc::StatusCode::DATA_LOSS;
                 exception = GetExceptionCode();
-                log->error("Failure during RPC 0x{0:x}", exception);
+                spdlog::error("Failure during RPC 0x{0:x}", exception);
             }
         }();
 

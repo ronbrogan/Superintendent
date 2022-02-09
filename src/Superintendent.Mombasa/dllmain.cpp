@@ -1,8 +1,10 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include <chrono>
 #include <thread>
+#include <filesystem>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #include "mombasa_bridge.cpp"
 
 static std::thread* grpcThread;
@@ -34,17 +36,42 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 __declspec(dllexport) void Initialize()
 {
-    auto console = spdlog::stdout_color_mt("console");
-    auto log = spdlog::get("console");
-    log->info("mombasa intialize!");
+    //auto console_sink = spdlog::stdout_color_mt("console");
+    //spdlog::set_default_logger(console_sink);
+
+    HMODULE currentModule;
+    if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)DllMain, &currentModule))
+    {
+        char filePath[512];
+        GetModuleFileNameA(currentModule, filePath, 512);
+
+        std::cout << "Loaded mombasa: " << filePath << std::endl;
+
+        auto logpath = std::filesystem::path(filePath).parent_path().append("log.mombasa.txt");
+
+        std::cout << "Mombasa log: " << logpath << std::endl;
+
+        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath.string());
+        file_sink->set_level(spdlog::level::trace);
+
+        spdlog::logger logger("multi_sink", { 
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>(), 
+            file_sink
+        });
+
+        logger.flush_on(spdlog::level::trace);
+
+        spdlog::set_default_logger(std::make_shared<spdlog::logger>(logger));
+    }
+
+    spdlog::info("mombasa intialize!");
     auto thread = new std::thread(GrpcStartup);
     grpcThread = thread;
 }
 
 __declspec(dllexport) void Teardown()
 {
-    auto log = spdlog::get("console");
-    log->info("mombasa teardown!");
+    spdlog::info("mombasa teardown!");
 
     grpcServer->Shutdown();
 
@@ -54,8 +81,7 @@ __declspec(dllexport) void Teardown()
 
 void GrpcStartup() 
 {
-    auto log = spdlog::get("console");
-    log->info("grpc_startup running");
+    spdlog::info("grpc_startup running");
 
     std::string server_address("127.0.0.1:50051");
     MombasaBridgeImpl service;
@@ -71,11 +97,11 @@ void GrpcStartup()
     // Finally assemble the server.
     grpcServer = builder.BuildAndStart();
 
-    log->info("gRPC Server listening on " + server_address);
+    spdlog::info("gRPC Server listening on " + server_address);
 
     // Wait for the server to shutdown. Note that some other thread must be
     // responsible for shutting down the server for this call to ever return.
     grpcServer->Wait();
 
-    log->info("gRPC thread should be ending");
+    spdlog::info("gRPC thread should be ending");
 }
