@@ -18,7 +18,6 @@ stages:
     steps:
     - task: run-vcpkg@0
       inputs:
-        vcpkgDirectory: '$(workingDirectory)'
         vcpkgTriplet: 'x64-windows-static'
         vcpkgArguments: 'spdlog grpc protobuf[zlib]'
     - task: VSBuild@1
