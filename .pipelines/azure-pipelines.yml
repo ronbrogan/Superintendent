@@ -12,10 +12,15 @@ stages:
   jobs:
   - job: Build
     displayName: Build
+    timeoutInMinutes: 120
     pool:
       vmImage: 'windows-2022'
 
     steps:
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg-x64-windows-static-spdlog-grpc-protobuf'
+        path: '$(Build.BinariesDirectory)/vcpkg'
     - task: run-vcpkg@0
       inputs:
         vcpkgGitCommitId: '2022.02.02'
