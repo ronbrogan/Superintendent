@@ -16,6 +16,20 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgDirectory: '$(workingDirectory)'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'spdlog grpc protobuf[zlib]'
+    - task: VSBuild@1
+      inputs:
+        solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
+        vsVersion: '17.0'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArchitecture: 'x64'
+        createLogFile: true
+
     # latest nightly may not have rustfmt/clippy
     # we can't check for both:
     # https://github.com/rust-lang/rustup-components-history/issues/9
