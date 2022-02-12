@@ -26,9 +26,6 @@ stages:
       inputs:
         vcpkgSetupOnly: true
         vcpkgGitCommitId: '2022.02.02'
-        vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'spdlog grpc protobuf[zlib]'
-        cleanAfterBuild: false
     
     - task: CmdLine@2
       inputs:
