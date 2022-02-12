@@ -36,7 +36,7 @@ stages:
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-grpc'
+        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
@@ -56,11 +56,6 @@ stages:
     - task: Cache@2
       inputs:
         key: 'vcpkg-x64-windows-static-spdlog-protobuf'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-    
-    - task: Cache@2
-      inputs:
-        key: 'vcpkg-x64-windows-static-grpc'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
