@@ -10,16 +10,57 @@ stages:
   displayName: Build stage
 
   jobs:
-  - job: Build
-    displayName: Build
-    timeoutInMinutes: 360
+  - job: BuildND1
+    displayName: Build Native Deps1
     pool:
       vmImage: 'windows-2022'
 
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-spdlog-grpc-protobuf'
+        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'spdlog protobuf'
+    
+  - job: BuildND1
+    displayName: Build Native Deps2
+    pool:
+      vmImage: 'windows-2022'
+
+    steps:
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg-x64-windows-static-grpc'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'grpc'
+
+
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'windows-2022'
+
+    steps:
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+    
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg-x64-windows-static-grpc'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
