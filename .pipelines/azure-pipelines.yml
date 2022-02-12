@@ -12,7 +12,7 @@ stages:
   jobs:
   - job: Build
     displayName: Build
-    timeoutInMinutes: 120
+    timeoutInMinutes: 360
     pool:
       vmImage: 'windows-2022'
 
