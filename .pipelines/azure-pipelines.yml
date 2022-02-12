@@ -21,11 +21,20 @@ stages:
       inputs:
         key: 'vcpkg-x64-windows-static-spdlog-grpc-protobuf'
         path: '$(Build.BinariesDirectory)/vcpkg'
+
     - task: run-vcpkg@0
       inputs:
+        vcpkgSetupOnly: true
         vcpkgGitCommitId: '2022.02.02'
         vcpkgTriplet: 'x64-windows-static'
         vcpkgArguments: 'spdlog grpc protobuf[zlib]'
+        cleanAfterBuild: false
+    
+    - task: CmdLine@2
+      inputs:
+        script: '$(Build.BinariesDirectory)\vcpkg\vcpkg.exe install --triplet x64-windows-static'
+        workingDirectory: '$(workingDirectory)\Superintendent.Mombasa'
+
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
