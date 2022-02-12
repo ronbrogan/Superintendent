@@ -28,7 +28,7 @@ stages:
         vcpkgTriplet: 'x64-windows-static'
         vcpkgArguments: 'spdlog protobuf'
     
-  - job: BuildND1
+  - job: BuildND2
     displayName: Build Native Deps2
     pool:
       vmImage: 'windows-2022'
