@@ -16,24 +16,52 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
+    - task: PowerShell@2
+      displayName: 'Download Native Dependencies'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Import-Module BitsTransfer
+          write-host "Starting download"
+          Start-BitsTransfer -Source https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip -Destination $(Build.BinariesDirectory)/deps.zip
+          write-host "Unzipping"
+          expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
+          ls
+
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'spdlog'
+    - task: VSBuild@1
+      inputs:
+        solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
+        vsVersion: '17.0'
+        msbuildArgs: '/p:VcpkgEnableManifest=false /p:VCPKG_INSTALLATION_ROOT="$(Build.BinariesDirectory)\vcpkg-export-20220212-202727" /p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\vcpkg-export-20220212-202727\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\vcpkg-export-20220212-202727\scripts\buildsystems\msbuild\vcpkg.targets"'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArchitecture: 'x64'
+        createLogFile: true
+
     # latest nightly may not have rustfmt/clippy
     # we can't check for both:
     # https://github.com/rust-lang/rustup-components-history/issues/9
     # but we at least check for one.
     # rustfmt _seems_ to break most often:
-    - bash: |
-        echo '##vso[task.setvariable variable=nightly]nightly-'$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/rustfmt)
-      displayName: "Determine latest style nightly"
-    - template: install-rust.yml
-      parameters:
-        rust: $(nightly)
-        components:
-          - rustfmt
-          - clippy
-         
-    - script: cargo build --release --lib
-      workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
-      displayName: cargo build
+    #- bash: |
+    #    echo '##vso[task.setvariable variable=nightly]nightly-'$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/rustfmt)
+    #  displayName: "Determine latest style nightly"
+    #- template: install-rust.yml
+    #  parameters:
+    #    rust: $(nightly)
+    #    components:
+    #      - rustfmt
+    #      - clippy
+    #     
+    #- script: cargo build --release --lib
+    #  workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
+    #  displayName: cargo build
          
     - task: UseDotNet@2
       displayName: 'Use .NET 6 sdk'
