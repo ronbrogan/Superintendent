@@ -35,13 +35,12 @@ stages:
           write-host "normalizing dir"
           cd $(Build.BinariesDirectory)
           mv vcpkg-export-20220212-202727 vcpkg
-          rm $(workingDirectory)\vcpkg.json
 
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
         vsVersion: '17.0'
-        msbuildArgs: '/p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets"'
+        msbuildArgs: '/p:VcpkgEnableManifest=false /p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets"'
         platform: 'x64'
         configuration: 'Release'
         msbuildArchitecture: 'x64'
