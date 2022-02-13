@@ -21,10 +21,12 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          invoke-webrequest -Uri https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip -OutFile $(Build.BinariesDirectory)/deps.zip
-          
+          Import-Module BitsTransfer
+          write-host "Starting download"
+          Start-BitsTransfer -Source https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip -Destination $(Build.BinariesDirectory)/deps.zip
+          write-host "Unzipping"
           expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
-          
+          write-host "normalizing dir"
           rename-item $(Build.BinariesDirectory)/vcpkg-export-20220212-202727 $(Build.BinariesDirectory)/vcpkg\
 
     - task: VSBuild@1
