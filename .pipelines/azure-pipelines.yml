@@ -16,7 +16,12 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
-
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'spdlog'
     - task: PowerShell@2
       displayName: 'Download Native Dependencies'
       inputs:
