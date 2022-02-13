@@ -27,7 +27,7 @@ stages:
           write-host "Unzipping"
           expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
           write-host "normalizing dir"
-          rename-item $(Build.BinariesDirectory)/vcpkg-export-20220212-202727 $(Build.BinariesDirectory)/vcpkg\
+          rename-item $(Build.BinariesDirectory)/vcpkg-export-20220212-202727 vcpkg\
 
     - task: VSBuild@1
       inputs:
