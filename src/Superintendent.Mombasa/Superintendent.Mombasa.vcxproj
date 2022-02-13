@@ -114,10 +114,7 @@
     <ClCompile Include="mombasa_bridge.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Superintendent.Native\mombasa\proto\mombasa.proto">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </None>
+    <None Include="mombasa.proto" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="function_disaptcher.asm" />

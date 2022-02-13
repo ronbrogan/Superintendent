@@ -4,11 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <VersionPrefix>0.0.3.0</VersionPrefix>
-    <VersionSuffix>localpreview01</VersionSuffix>
+    <VersionSuffix>localpreview02</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Superintendent.Native\mombasa\proto\mombasa.proto" GrpcServices="Client" Link="protos/mombasa.proto" />
+    <Protobuf Include="..\Superintendent.Mombasa\mombasa.proto" GrpcServices="Client" Link="protos/mombasa.proto" />
   </ItemGroup>
 
   <ItemGroup>

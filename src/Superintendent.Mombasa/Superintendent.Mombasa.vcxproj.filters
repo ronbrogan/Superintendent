@@ -37,7 +37,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Superintendent.Native\mombasa\proto\mombasa.proto" />
+    <None Include="mombasa.proto">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="function_disaptcher.asm">

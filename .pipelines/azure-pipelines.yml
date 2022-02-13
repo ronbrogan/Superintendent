@@ -34,6 +34,7 @@ stages:
         vcpkgGitCommitId: '2022.02.02'
         vcpkgTriplet: 'x64-windows-static'
         vcpkgArguments: 'spdlog'
+
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
@@ -43,25 +44,6 @@ stages:
         configuration: 'Release'
         msbuildArchitecture: 'x64'
         createLogFile: true
-
-    # latest nightly may not have rustfmt/clippy
-    # we can't check for both:
-    # https://github.com/rust-lang/rustup-components-history/issues/9
-    # but we at least check for one.
-    # rustfmt _seems_ to break most often:
-    #- bash: |
-    #    echo '##vso[task.setvariable variable=nightly]nightly-'$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/rustfmt)
-    #  displayName: "Determine latest style nightly"
-    #- template: install-rust.yml
-    #  parameters:
-    #    rust: $(nightly)
-    #    components:
-    #      - rustfmt
-    #      - clippy
-    #     
-    #- script: cargo build --release --lib
-    #  workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
-    #  displayName: cargo build
          
     - task: UseDotNet@2
       displayName: 'Use .NET 6 sdk'
