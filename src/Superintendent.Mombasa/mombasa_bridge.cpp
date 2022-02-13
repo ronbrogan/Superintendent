@@ -13,6 +13,7 @@
 using grpc::Server;
 using grpc::ServerAsyncResponseWriter;
 using grpc::ServerBuilder;
+using grpc::CompletionQueue;
 using grpc::ServerCompletionQueue;
 using grpc::ServerContext;
 using grpc::Status;
@@ -28,7 +29,10 @@ extern "C" {
 }
 
 // Logic and data behind the server's behavior.
-class MombasaBridgeImpl final : public MombasaBridge::Service {
+class MombasaBridgeImpl final : public MombasaBridge::AsyncService {
+
+public:
+
     Status CallFunction(ServerContext* context, const CallRequest* request, CallResponse* reply) override {
         return Work([&](auto start) {
             spdlog::info("Call function invoked for {0:x}, {1} args, isfloat: {2}", request->functionpointer(), request->args_size(), request->returnsfloat());
@@ -99,6 +103,9 @@ class MombasaBridgeImpl final : public MombasaBridge::Service {
     }
 
     Status Work(std::function<void(std::chrono::steady_clock::time_point)> action) {
+        std::stringstream ss;
+        ss << std::this_thread::get_id();
+        spdlog::info("Thread: " + ss.str());
         unsigned long exception;
         grpc::StatusCode statusCode = grpc::StatusCode::OK;
         auto start = high_resolution_clock::now();

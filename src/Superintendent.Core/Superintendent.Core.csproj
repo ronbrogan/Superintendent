@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <VersionPrefix>0.0.2.1</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionPrefix>0.0.3.0</VersionPrefix>
+    <VersionSuffix>localpreview01</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\Superintendent.Native\mombasa\target\release\mombasa.dll">
+    <Content Include="..\Superintendent.Mombasa\x64\bin\$(Configuration)\mombasa.dll">
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
   </ItemGroup>
