@@ -26,10 +26,28 @@ stages:
         vcpkgSetupOnly: true
         vcpkgGitCommitId: '2022.02.02'
         vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'spdlog protobuf'
+        vcpkgArguments: 'spdlog protobuf openssl'
     
   - job: BuildND2
     displayName: Build Native Deps2
+    pool:
+      vmImage: 'windows-2022'
+
+    steps:
+    - task: Cache@2
+      inputs:
+        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows'
+        vcpkgArguments: 'spdlog protobuf openssl'
+
+  - job: BuildND3
+    displayName: Build Native Deps3
     pool:
       vmImage: 'windows-2022'
 
