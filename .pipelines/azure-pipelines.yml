@@ -65,7 +65,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com -v "$(workingDirectory)\Superintendent.Mombasa\x64\bin\Release\mombasa.dll"
+          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com -v "$(workingDirectory)\Superintendent.Mombasa\x64\bin\Release\mombasa.dll"
 
     - task: DotNetCoreCLI@2
       displayName: Build Superintendent.Core
@@ -80,7 +80,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com --continue-on-error -v "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\mombasa.dll" "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\ref\mombasa.dll"
+          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com --continue-on-error -v "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\mombasa.dll" "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\ref\mombasa.dll"
         
     - task: DotNetCoreCLI@2
       displayName: Pack Superintendent.Core NuGet
