@@ -21,7 +21,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          invoke-webrequest https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip --out $(Build.BinariesDirectory)/deps.zip
+          invoke-webrequest -Uri https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip -OutFile $(Build.BinariesDirectory)/deps.zip
           
           expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
           
