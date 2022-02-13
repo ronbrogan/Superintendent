@@ -26,7 +26,7 @@ stages:
         vcpkgSetupOnly: true
         vcpkgGitCommitId: '2022.02.02'
         vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'spdlog protobuf openssl'
+        vcpkgArguments: 'spdlog protobuf openssl zlib'
     
   - job: BuildND2
     dependsOn: BuildND1
@@ -50,7 +50,7 @@ stages:
         vcpkgSetupOnly: true
         vcpkgGitCommitId: '2022.02.02'
         vcpkgTriplet: 'x64-windows'
-        vcpkgArguments: 'spdlog protobuf openssl'
+        vcpkgArguments: 'spdlog protobuf openssl zlib'
 
   - job: BuildND3
     dependsOn: BuildND2
@@ -109,7 +109,7 @@ stages:
     
     - task: CmdLine@2
       inputs:
-        script: '$(Build.BinariesDirectory)\vcpkg\vcpkg.exe install --triplet x64-windows-static'
+        script: '$(Build.BinariesDirectory)\vcpkg\vcpkg.exe integrate install'
         workingDirectory: '$(workingDirectory)\Superintendent.Mombasa'
 
     - task: VSBuild@1
