@@ -10,112 +10,28 @@ stages:
   displayName: Build stage
 
   jobs:
-  - job: BuildND1
-    displayName: Build Native Deps1
-    pool:
-      vmImage: 'windows-2022'
-
-    steps:
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-1'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-
-    - task: run-vcpkg@0
-      inputs:
-        vcpkgSetupOnly: true
-        vcpkgGitCommitId: '2022.02.02'
-        vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'spdlog protobuf openssl zlib'
-    
-  - job: BuildND2
-    dependsOn: BuildND1
-    displayName: Build Native Deps2
-    pool:
-      vmImage: 'windows-2022'
-
-    steps:
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-1'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-2'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-
-    - task: run-vcpkg@0
-      inputs:
-        vcpkgSetupOnly: true
-        vcpkgGitCommitId: '2022.02.02'
-        vcpkgTriplet: 'x64-windows'
-        vcpkgArguments: 'spdlog protobuf openssl zlib'
-
-  - job: BuildND3
-    dependsOn: BuildND2
-    displayName: Build Native Deps3
-    pool:
-      vmImage: 'windows-2022'
-
-    steps:
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-1'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-2'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-3'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-
-    - task: run-vcpkg@0
-      inputs:
-        vcpkgSetupOnly: true
-        vcpkgGitCommitId: '2022.02.02'
-        vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'grpc'
-
-
   - job: Build
-    dependsOn: BuildND3
     displayName: Build
     pool:
       vmImage: 'windows-2022'
 
     steps:
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-1'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-2'
-        path: '$(Build.BinariesDirectory)/vcpkg'
-    - task: Cache@2
-      inputs:
-        key: '$(Build.BuildId)-3'
-        path: '$(Build.BinariesDirectory)/vcpkg'
 
-    - task: run-vcpkg@0
+    - task: PowerShell@2
       inputs:
-        vcpkgSetupOnly: true
-        vcpkgGitCommitId: '2022.02.02'
-        vcpkgTriplet: 'x64-windows-static'
-        vcpkgArguments: 'spdlog'
-    
-    - task: CmdLine@2
-      inputs:
-        script: '$(Build.BinariesDirectory)\vcpkg\vcpkg.exe integrate install'
-        workingDirectory: '$(workingDirectory)\Superintendent.Mombasa'
+        targetType: 'inline'
+        script: |
+          invoke-webrequest https://openblam.blob.core.windows.net/nuget/vcpkg-export-20220212-202727.zip --out $(Build.BinariesDirectory)/deps.zip
+          
+          expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
+          
+          rename-item $(Build.BinariesDirectory)/vcpkg-export-20220212-202727 $(Build.BinariesDirectory)/vcpkg\
 
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
         vsVersion: '17.0'
+        msbuildArgs: '/p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets"'
         platform: 'x64'
         configuration: 'Release'
         msbuildArchitecture: 'x64'
