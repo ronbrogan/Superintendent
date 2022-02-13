@@ -35,6 +35,7 @@ stages:
           write-host "normalizing dir"
           cd $(Build.BinariesDirectory)
           mv vcpkg-export-20220212-202727 vcpkg
+          rm $(workingDirectory)\vcpkg.json
 
     - task: VSBuild@1
       inputs:
