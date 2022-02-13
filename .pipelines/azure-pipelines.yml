@@ -86,8 +86,10 @@ stages:
       displayName: Pack Superintendent.Core NuGet
       inputs:
         command: 'pack'
-        projects: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
-        arguments: --configuration Release --no-build --output $(Build.ArtifactStagingDirectory)
+        packagesToPack: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
+        configuration: 'Release'
+        nobuild: true
+        versioningScheme: 'off'
 
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
