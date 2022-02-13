@@ -106,6 +106,7 @@
   <ItemGroup>
     <ClInclude Include="mombasa.grpc.pb.h" />
     <ClInclude Include="mombasa.pb.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -118,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <MASM Include="function_disaptcher.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Superintendent.Mombasa.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

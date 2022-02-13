@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/rotating_file_sink.h>
 #include <grpcpp/grpcpp.h>
 #include "mombasa_bridge.cpp"
 using namespace mombasa;
@@ -59,7 +59,7 @@ __declspec(dllexport) void Initialize()
 
         std::cout << "Mombasa log: " << logpath << std::endl;
 
-        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath.string());
+        auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logpath.string(), 1024*1024, 2, true);
         file_sink->set_level(spdlog::level::trace);
 
         spdlog::logger logger("multi_sink", { 
@@ -76,6 +76,9 @@ __declspec(dllexport) void Initialize()
         auto console_sink = spdlog::stdout_color_mt("console");
         spdlog::set_default_logger(console_sink);
     }
+
+    // ISO8601 [pid]<tid> [level] msg
+    spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %z [%P]<%t> [%l] %v");
 
     spdlog::info("mombasa intialize!");
     auto thread = new std::thread(GrpcStartup);
@@ -113,6 +116,9 @@ void GrpcStartup()
     // Register "service" as the instance through which we'll communicate with
     // clients. In this case it corresponds to an *synchronous* service.
     builder.RegisterService(&service);
+
+    builder.SetMaxReceiveMessageSize(128 * 1024 * 1024);
+    builder.SetMaxSendMessageSize(128 * 1024 * 1024);
 
     grpcCompletionQueue = builder.AddCompletionQueue();
 

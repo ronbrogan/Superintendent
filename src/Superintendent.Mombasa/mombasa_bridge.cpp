@@ -105,7 +105,6 @@ public:
     Status Work(std::function<void(std::chrono::steady_clock::time_point)> action) {
         std::stringstream ss;
         ss << std::this_thread::get_id();
-        spdlog::info("Thread: " + ss.str());
         unsigned long exception;
         grpc::StatusCode statusCode = grpc::StatusCode::OK;
         auto start = high_resolution_clock::now();
