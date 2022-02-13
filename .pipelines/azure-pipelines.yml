@@ -18,7 +18,7 @@ stages:
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        key: '$(Build.BuildId)-1'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
@@ -37,7 +37,12 @@ stages:
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        key: '$(Build.BuildId)-1'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+
+    - task: Cache@2
+      inputs:
+        key: '$(Build.BuildId)-2'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
@@ -56,7 +61,15 @@ stages:
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        key: '$(Build.BuildId)-1'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+    - task: Cache@2
+      inputs:
+        key: '$(Build.BuildId)-2'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+    - task: Cache@2
+      inputs:
+        key: '$(Build.BuildId)-3'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
@@ -76,7 +89,15 @@ stages:
     steps:
     - task: Cache@2
       inputs:
-        key: 'vcpkg-x64-windows-static-spdlog-protobuf'
+        key: '$(Build.BuildId)-1'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+    - task: Cache@2
+      inputs:
+        key: '$(Build.BuildId)-2'
+        path: '$(Build.BinariesDirectory)/vcpkg'
+    - task: Cache@2
+      inputs:
+        key: '$(Build.BuildId)-3'
         path: '$(Build.BinariesDirectory)/vcpkg'
 
     - task: run-vcpkg@0
