@@ -27,6 +27,7 @@ static const char* MombasaBridge_method_names[] = {
   "/mombasa.MombasaBridge/FreeMemory",
   "/mombasa.MombasaBridge/WriteMemory",
   "/mombasa.MombasaBridge/ReadMemory",
+  "/mombasa.MombasaBridge/PollMemory",
   "/mombasa.MombasaBridge/SetTlsValue",
 };
 
@@ -42,7 +43,8 @@ MombasaBridge::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   , rpcmethod_FreeMemory_(MombasaBridge_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_WriteMemory_(MombasaBridge_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_ReadMemory_(MombasaBridge_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetTlsValue_(MombasaBridge_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PollMemory_(MombasaBridge_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_SetTlsValue_(MombasaBridge_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status MombasaBridge::Stub::CallFunction(::grpc::ClientContext* context, const ::mombasa::CallRequest& request, ::mombasa::CallResponse* response) {
@@ -160,6 +162,22 @@ void MombasaBridge::Stub::async::ReadMemory(::grpc::ClientContext* context, cons
   return result;
 }
 
+::grpc::ClientReader< ::mombasa::MemoryReadResponse>* MombasaBridge::Stub::PollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) {
+  return ::grpc::internal::ClientReaderFactory< ::mombasa::MemoryReadResponse>::Create(channel_.get(), rpcmethod_PollMemory_, context, request);
+}
+
+void MombasaBridge::Stub::async::PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadResponse>* reactor) {
+  ::grpc::internal::ClientCallbackReaderFactory< ::mombasa::MemoryReadResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_PollMemory_, context, request, reactor);
+}
+
+::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* MombasaBridge::Stub::AsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::mombasa::MemoryReadResponse>::Create(channel_.get(), cq, rpcmethod_PollMemory_, context, request, true, tag);
+}
+
+::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* MombasaBridge::Stub::PrepareAsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncReaderFactory< ::mombasa::MemoryReadResponse>::Create(channel_.get(), cq, rpcmethod_PollMemory_, context, request, false, nullptr);
+}
+
 ::grpc::Status MombasaBridge::Stub::SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::mombasa::SetTlsValueResponse* response) {
   return ::grpc::internal::BlockingUnaryCall< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SetTlsValue_, context, request, response);
 }
@@ -236,6 +254,16 @@ MombasaBridge::Service::Service() {
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MombasaBridge_method_names[5],
+      ::grpc::internal::RpcMethod::SERVER_STREAMING,
+      new ::grpc::internal::ServerStreamingHandler< MombasaBridge::Service, ::mombasa::MemoryPollRequest, ::mombasa::MemoryReadResponse>(
+          [](MombasaBridge::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::mombasa::MemoryPollRequest* req,
+             ::grpc::ServerWriter<::mombasa::MemoryReadResponse>* writer) {
+               return service->PollMemory(ctx, req, writer);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MombasaBridge_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MombasaBridge::Service* service,
@@ -281,6 +309,13 @@ MombasaBridge::Service::~Service() {
   (void) context;
   (void) request;
   (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status MombasaBridge::Service::PollMemory(::grpc::ServerContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* writer) {
+  (void) context;
+  (void) request;
+  (void) writer;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 

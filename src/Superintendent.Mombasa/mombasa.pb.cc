@@ -70,6 +70,20 @@ struct MemoryWriteResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemoryWriteResponseDefaultTypeInternal _MemoryWriteResponse_default_instance_;
+constexpr MemoryPollRequest::MemoryPollRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : address_(uint64_t{0u})
+  , count_(0u)
+  , interval_(0u){}
+struct MemoryPollRequestDefaultTypeInternal {
+  constexpr MemoryPollRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~MemoryPollRequestDefaultTypeInternal() {}
+  union {
+    MemoryPollRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemoryPollRequestDefaultTypeInternal _MemoryPollRequest_default_instance_;
 constexpr MemoryReadRequest::MemoryReadRequest(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : address_(uint64_t{0u})
@@ -175,7 +189,7 @@ struct SetTlsValueResponseDefaultTypeInternal {
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT SetTlsValueResponseDefaultTypeInternal _SetTlsValueResponse_default_instance_;
 }  // namespace mombasa
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mombasa_2eproto[12];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mombasa_2eproto[13];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_mombasa_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_mombasa_2eproto = nullptr;
 
@@ -213,6 +227,15 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mombasa_2eproto::offsets[] PRO
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::mombasa::MemoryWriteResponse, durationmicroseconds_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryPollRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryPollRequest, address_),
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryPollRequest, count_),
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryPollRequest, interval_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadRequest, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -283,14 +306,15 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 9, -1, -1, sizeof(::mombasa::CallResponse)},
   { 18, -1, -1, sizeof(::mombasa::MemoryWriteRequest)},
   { 26, -1, -1, sizeof(::mombasa::MemoryWriteResponse)},
-  { 33, -1, -1, sizeof(::mombasa::MemoryReadRequest)},
-  { 41, -1, -1, sizeof(::mombasa::MemoryReadResponse)},
-  { 50, -1, -1, sizeof(::mombasa::MemoryAllocateRequest)},
-  { 58, -1, -1, sizeof(::mombasa::MemoryAllocateResponse)},
-  { 66, -1, -1, sizeof(::mombasa::MemoryFreeRequest)},
-  { 75, -1, -1, sizeof(::mombasa::MemoryFreeResponse)},
-  { 82, -1, -1, sizeof(::mombasa::SetTlsValueRequest)},
-  { 90, -1, -1, sizeof(::mombasa::SetTlsValueResponse)},
+  { 33, -1, -1, sizeof(::mombasa::MemoryPollRequest)},
+  { 42, -1, -1, sizeof(::mombasa::MemoryReadRequest)},
+  { 50, -1, -1, sizeof(::mombasa::MemoryReadResponse)},
+  { 59, -1, -1, sizeof(::mombasa::MemoryAllocateRequest)},
+  { 67, -1, -1, sizeof(::mombasa::MemoryAllocateResponse)},
+  { 75, -1, -1, sizeof(::mombasa::MemoryFreeRequest)},
+  { 84, -1, -1, sizeof(::mombasa::MemoryFreeResponse)},
+  { 91, -1, -1, sizeof(::mombasa::SetTlsValueRequest)},
+  { 99, -1, -1, sizeof(::mombasa::SetTlsValueResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -298,6 +322,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_CallResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryWriteRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryWriteResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryPollRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryAllocateRequest_default_instance_),
@@ -316,36 +341,39 @@ const char descriptor_table_protodef_mombasa_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\001(\010\022\r\n\005value\030\003 \001(\006\"3\n\022MemoryWriteRequest"
   "\022\017\n\007address\030\001 \001(\006\022\014\n\004data\030\002 \001(\014\"3\n\023Memor"
   "yWriteResponse\022\034\n\024durationMicroseconds\030\001"
-  " \001(\004\"3\n\021MemoryReadRequest\022\017\n\007address\030\001 \001"
-  "(\006\022\r\n\005count\030\002 \001(\r\"Q\n\022MemoryReadResponse\022"
-  "\034\n\024durationMicroseconds\030\001 \001(\004\022\017\n\007address"
-  "\030\002 \001(\006\022\014\n\004data\030\003 \001(\014\";\n\025MemoryAllocateRe"
-  "quest\022\016\n\006length\030\001 \001(\r\022\022\n\nprotection\030\002 \001("
-  "\r\"G\n\026MemoryAllocateResponse\022\034\n\024durationM"
-  "icroseconds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\"F\n\021Me"
-  "moryFreeRequest\022\017\n\007address\030\001 \001(\006\022\016\n\006leng"
-  "th\030\002 \001(\r\022\020\n\010freeType\030\003 \001(\r\"2\n\022MemoryFree"
-  "Response\022\034\n\024durationMicroseconds\030\001 \001(\004\"2"
-  "\n\022SetTlsValueRequest\022\r\n\005index\030\001 \001(\r\022\r\n\005v"
-  "alue\030\002 \001(\006\"3\n\023SetTlsValueResponse\022\034\n\024dur"
-  "ationMicroseconds\030\001 \001(\0042\301\003\n\rMombasaBridg"
-  "e\022;\n\014CallFunction\022\024.mombasa.CallRequest\032"
-  "\025.mombasa.CallResponse\022Q\n\016AllocateMemory"
-  "\022\036.mombasa.MemoryAllocateRequest\032\037.momba"
-  "sa.MemoryAllocateResponse\022E\n\nFreeMemory\022"
-  "\032.mombasa.MemoryFreeRequest\032\033.mombasa.Me"
-  "moryFreeResponse\022H\n\013WriteMemory\022\033.mombas"
-  "a.MemoryWriteRequest\032\034.mombasa.MemoryWri"
-  "teResponse\022E\n\nReadMemory\022\032.mombasa.Memor"
-  "yReadRequest\032\033.mombasa.MemoryReadRespons"
-  "e\022H\n\013SetTlsValue\022\033.mombasa.SetTlsValueRe"
-  "quest\032\034.mombasa.SetTlsValueResponseb\006pro"
-  "to3"
+  " \001(\004\"E\n\021MemoryPollRequest\022\017\n\007address\030\001 \001"
+  "(\006\022\r\n\005count\030\002 \001(\r\022\020\n\010interval\030\003 \001(\r\"3\n\021M"
+  "emoryReadRequest\022\017\n\007address\030\001 \001(\006\022\r\n\005cou"
+  "nt\030\002 \001(\r\"Q\n\022MemoryReadResponse\022\034\n\024durati"
+  "onMicroseconds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\022\014\n"
+  "\004data\030\003 \001(\014\";\n\025MemoryAllocateRequest\022\016\n\006"
+  "length\030\001 \001(\r\022\022\n\nprotection\030\002 \001(\r\"G\n\026Memo"
+  "ryAllocateResponse\022\034\n\024durationMicrosecon"
+  "ds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\"F\n\021MemoryFreeR"
+  "equest\022\017\n\007address\030\001 \001(\006\022\016\n\006length\030\002 \001(\r\022"
+  "\020\n\010freeType\030\003 \001(\r\"2\n\022MemoryFreeResponse\022"
+  "\034\n\024durationMicroseconds\030\001 \001(\004\"2\n\022SetTlsV"
+  "alueRequest\022\r\n\005index\030\001 \001(\r\022\r\n\005value\030\002 \001("
+  "\006\"3\n\023SetTlsValueResponse\022\034\n\024durationMicr"
+  "oseconds\030\001 \001(\0042\212\004\n\rMombasaBridge\022;\n\014Call"
+  "Function\022\024.mombasa.CallRequest\032\025.mombasa"
+  ".CallResponse\022Q\n\016AllocateMemory\022\036.mombas"
+  "a.MemoryAllocateRequest\032\037.mombasa.Memory"
+  "AllocateResponse\022E\n\nFreeMemory\022\032.mombasa"
+  ".MemoryFreeRequest\032\033.mombasa.MemoryFreeR"
+  "esponse\022H\n\013WriteMemory\022\033.mombasa.MemoryW"
+  "riteRequest\032\034.mombasa.MemoryWriteRespons"
+  "e\022E\n\nReadMemory\022\032.mombasa.MemoryReadRequ"
+  "est\032\033.mombasa.MemoryReadResponse\022G\n\nPoll"
+  "Memory\022\032.mombasa.MemoryPollRequest\032\033.mom"
+  "basa.MemoryReadResponse0\001\022H\n\013SetTlsValue"
+  "\022\033.mombasa.SetTlsValueRequest\032\034.mombasa."
+  "SetTlsValueResponseb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_mombasa_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mombasa_2eproto = {
-  false, false, 1243, descriptor_table_protodef_mombasa_2eproto, "mombasa.proto", 
-  &descriptor_table_mombasa_2eproto_once, nullptr, 0, 12,
+  false, false, 1387, descriptor_table_protodef_mombasa_2eproto, "mombasa.proto", 
+  &descriptor_table_mombasa_2eproto_once, nullptr, 0, 13,
   schemas, file_default_instances, TableStruct_mombasa_2eproto::offsets,
   file_level_metadata_mombasa_2eproto, file_level_enum_descriptors_mombasa_2eproto, file_level_service_descriptors_mombasa_2eproto,
 };
@@ -1234,6 +1262,240 @@ void MemoryWriteResponse::InternalSwap(MemoryWriteResponse* other) {
 
 // ===================================================================
 
+class MemoryPollRequest::_Internal {
+ public:
+};
+
+MemoryPollRequest::MemoryPollRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:mombasa.MemoryPollRequest)
+}
+MemoryPollRequest::MemoryPollRequest(const MemoryPollRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&address_, &from.address_,
+    static_cast<size_t>(reinterpret_cast<char*>(&interval_) -
+    reinterpret_cast<char*>(&address_)) + sizeof(interval_));
+  // @@protoc_insertion_point(copy_constructor:mombasa.MemoryPollRequest)
+}
+
+void MemoryPollRequest::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&address_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&interval_) -
+    reinterpret_cast<char*>(&address_)) + sizeof(interval_));
+}
+
+MemoryPollRequest::~MemoryPollRequest() {
+  // @@protoc_insertion_point(destructor:mombasa.MemoryPollRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void MemoryPollRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void MemoryPollRequest::ArenaDtor(void* object) {
+  MemoryPollRequest* _this = reinterpret_cast< MemoryPollRequest* >(object);
+  (void)_this;
+}
+void MemoryPollRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void MemoryPollRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void MemoryPollRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:mombasa.MemoryPollRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&address_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&interval_) -
+      reinterpret_cast<char*>(&address_)) + sizeof(interval_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* MemoryPollRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // fixed64 address = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 9)) {
+          address_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint64>(ptr);
+          ptr += sizeof(::PROTOBUF_NAMESPACE_ID::uint64);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 count = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 interval = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          interval_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* MemoryPollRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:mombasa.MemoryPollRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // fixed64 address = 1;
+  if (this->_internal_address() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed64ToArray(1, this->_internal_address(), target);
+  }
+
+  // uint32 count = 2;
+  if (this->_internal_count() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_count(), target);
+  }
+
+  // uint32 interval = 3;
+  if (this->_internal_interval() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_interval(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:mombasa.MemoryPollRequest)
+  return target;
+}
+
+size_t MemoryPollRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:mombasa.MemoryPollRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // fixed64 address = 1;
+  if (this->_internal_address() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // uint32 count = 2;
+  if (this->_internal_count() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32SizePlusOne(this->_internal_count());
+  }
+
+  // uint32 interval = 3;
+  if (this->_internal_interval() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32SizePlusOne(this->_internal_interval());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MemoryPollRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    MemoryPollRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MemoryPollRequest::GetClassData() const { return &_class_data_; }
+
+void MemoryPollRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<MemoryPollRequest *>(to)->MergeFrom(
+      static_cast<const MemoryPollRequest &>(from));
+}
+
+
+void MemoryPollRequest::MergeFrom(const MemoryPollRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:mombasa.MemoryPollRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_address() != 0) {
+    _internal_set_address(from._internal_address());
+  }
+  if (from._internal_count() != 0) {
+    _internal_set_count(from._internal_count());
+  }
+  if (from._internal_interval() != 0) {
+    _internal_set_interval(from._internal_interval());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void MemoryPollRequest::CopyFrom(const MemoryPollRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:mombasa.MemoryPollRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MemoryPollRequest::IsInitialized() const {
+  return true;
+}
+
+void MemoryPollRequest::InternalSwap(MemoryPollRequest* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MemoryPollRequest, interval_)
+      + sizeof(MemoryPollRequest::interval_)
+      - PROTOBUF_FIELD_OFFSET(MemoryPollRequest, address_)>(
+          reinterpret_cast<char*>(&address_),
+          reinterpret_cast<char*>(&other->address_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata MemoryPollRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[4]);
+}
+
+// ===================================================================
+
 class MemoryReadRequest::_Internal {
  public:
 };
@@ -1441,7 +1703,7 @@ void MemoryReadRequest::InternalSwap(MemoryReadRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryReadRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[4]);
+      file_level_metadata_mombasa_2eproto[5]);
 }
 
 // ===================================================================
@@ -1693,7 +1955,7 @@ void MemoryReadResponse::InternalSwap(MemoryReadResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryReadResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[5]);
+      file_level_metadata_mombasa_2eproto[6]);
 }
 
 // ===================================================================
@@ -1905,7 +2167,7 @@ void MemoryAllocateRequest::InternalSwap(MemoryAllocateRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryAllocateRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[6]);
+      file_level_metadata_mombasa_2eproto[7]);
 }
 
 // ===================================================================
@@ -2117,7 +2379,7 @@ void MemoryAllocateResponse::InternalSwap(MemoryAllocateResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryAllocateResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[7]);
+      file_level_metadata_mombasa_2eproto[8]);
 }
 
 // ===================================================================
@@ -2351,7 +2613,7 @@ void MemoryFreeRequest::InternalSwap(MemoryFreeRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryFreeRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[8]);
+      file_level_metadata_mombasa_2eproto[9]);
 }
 
 // ===================================================================
@@ -2529,7 +2791,7 @@ void MemoryFreeResponse::InternalSwap(MemoryFreeResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryFreeResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[9]);
+      file_level_metadata_mombasa_2eproto[10]);
 }
 
 // ===================================================================
@@ -2741,7 +3003,7 @@ void SetTlsValueRequest::InternalSwap(SetTlsValueRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SetTlsValueRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[10]);
+      file_level_metadata_mombasa_2eproto[11]);
 }
 
 // ===================================================================
@@ -2919,7 +3181,7 @@ void SetTlsValueResponse::InternalSwap(SetTlsValueResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SetTlsValueResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[11]);
+      file_level_metadata_mombasa_2eproto[12]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -2936,6 +3198,9 @@ template<> PROTOBUF_NOINLINE ::mombasa::MemoryWriteRequest* Arena::CreateMaybeMe
 }
 template<> PROTOBUF_NOINLINE ::mombasa::MemoryWriteResponse* Arena::CreateMaybeMessage< ::mombasa::MemoryWriteResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::mombasa::MemoryWriteResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::MemoryPollRequest* Arena::CreateMaybeMessage< ::mombasa::MemoryPollRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::MemoryPollRequest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::mombasa::MemoryReadRequest* Arena::CreateMaybeMessage< ::mombasa::MemoryReadRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::mombasa::MemoryReadRequest >(arena);

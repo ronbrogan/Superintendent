@@ -24,6 +24,15 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mombasa_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mombasa_bridge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mombasa_calldata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -33,9 +42,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mombasa.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mombasa_bridge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

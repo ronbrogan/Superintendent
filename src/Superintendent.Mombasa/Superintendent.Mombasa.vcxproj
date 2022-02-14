@@ -106,13 +106,15 @@
   <ItemGroup>
     <ClInclude Include="mombasa.grpc.pb.h" />
     <ClInclude Include="mombasa.pb.h" />
+    <ClInclude Include="mombasa_base.h" />
+    <ClInclude Include="mombasa_bridge.h" />
+    <ClInclude Include="mombasa_calldata.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mombasa.grpc.pb.cc" />
     <ClCompile Include="mombasa.pb.cc" />
-    <ClCompile Include="mombasa_bridge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mombasa.proto" />

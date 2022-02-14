@@ -70,6 +70,15 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::MemoryReadResponse>> PrepareAsyncReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::MemoryReadResponse>>(PrepareAsyncReadMemoryRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::mombasa::MemoryReadResponse>> PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::mombasa::MemoryReadResponse>>(PollMemoryRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>> AsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>>(AsyncPollMemoryRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>> PrepareAsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>>(PrepareAsyncPollMemoryRaw(context, request, cq));
+    }
     virtual ::grpc::Status SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::mombasa::SetTlsValueResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::SetTlsValueResponse>> AsyncSetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::SetTlsValueResponse>>(AsyncSetTlsValueRaw(context, request, cq));
@@ -90,6 +99,7 @@ class MombasaBridge final {
       virtual void WriteMemory(::grpc::ClientContext* context, const ::mombasa::MemoryWriteRequest* request, ::mombasa::MemoryWriteResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void ReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest* request, ::mombasa::MemoryReadResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest* request, ::mombasa::MemoryReadResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadResponse>* reactor) = 0;
       virtual void SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
@@ -107,6 +117,9 @@ class MombasaBridge final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::MemoryWriteResponse>* PrepareAsyncWriteMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryWriteRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::MemoryReadResponse>* AsyncReadMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::MemoryReadResponse>* PrepareAsyncReadMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::mombasa::MemoryReadResponse>* PollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>* AsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>* PrepareAsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::SetTlsValueResponse>* AsyncSetTlsValueRaw(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::SetTlsValueResponse>* PrepareAsyncSetTlsValueRaw(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -148,6 +161,15 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryReadResponse>> PrepareAsyncReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryReadResponse>>(PrepareAsyncReadMemoryRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReader< ::mombasa::MemoryReadResponse>> PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::mombasa::MemoryReadResponse>>(PollMemoryRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>> AsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>>(AsyncPollMemoryRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>> PrepareAsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>>(PrepareAsyncPollMemoryRaw(context, request, cq));
+    }
     ::grpc::Status SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::mombasa::SetTlsValueResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::SetTlsValueResponse>> AsyncSetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::SetTlsValueResponse>>(AsyncSetTlsValueRaw(context, request, cq));
@@ -168,6 +190,7 @@ class MombasaBridge final {
       void WriteMemory(::grpc::ClientContext* context, const ::mombasa::MemoryWriteRequest* request, ::mombasa::MemoryWriteResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest* request, ::mombasa::MemoryReadResponse* response, std::function<void(::grpc::Status)>) override;
       void ReadMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest* request, ::mombasa::MemoryReadResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadResponse>* reactor) override;
       void SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response, std::function<void(::grpc::Status)>) override;
       void SetTlsValue(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -191,6 +214,9 @@ class MombasaBridge final {
     ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryWriteResponse>* PrepareAsyncWriteMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryWriteRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryReadResponse>* AsyncReadMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryReadResponse>* PrepareAsyncReadMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::mombasa::MemoryReadResponse>* PollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) override;
+    ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* AsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* PrepareAsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::SetTlsValueResponse>* AsyncSetTlsValueRaw(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::SetTlsValueResponse>* PrepareAsyncSetTlsValueRaw(::grpc::ClientContext* context, const ::mombasa::SetTlsValueRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_CallFunction_;
@@ -198,6 +224,7 @@ class MombasaBridge final {
     const ::grpc::internal::RpcMethod rpcmethod_FreeMemory_;
     const ::grpc::internal::RpcMethod rpcmethod_WriteMemory_;
     const ::grpc::internal::RpcMethod rpcmethod_ReadMemory_;
+    const ::grpc::internal::RpcMethod rpcmethod_PollMemory_;
     const ::grpc::internal::RpcMethod rpcmethod_SetTlsValue_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -211,6 +238,7 @@ class MombasaBridge final {
     virtual ::grpc::Status FreeMemory(::grpc::ServerContext* context, const ::mombasa::MemoryFreeRequest* request, ::mombasa::MemoryFreeResponse* response);
     virtual ::grpc::Status WriteMemory(::grpc::ServerContext* context, const ::mombasa::MemoryWriteRequest* request, ::mombasa::MemoryWriteResponse* response);
     virtual ::grpc::Status ReadMemory(::grpc::ServerContext* context, const ::mombasa::MemoryReadRequest* request, ::mombasa::MemoryReadResponse* response);
+    virtual ::grpc::Status PollMemory(::grpc::ServerContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* writer);
     virtual ::grpc::Status SetTlsValue(::grpc::ServerContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response);
   };
   template <class BaseClass>
@@ -314,12 +342,32 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_PollMemory() {
+      ::grpc::Service::MarkMethodAsync(5);
+    }
+    ~WithAsyncMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPollMemory(::grpc::ServerContext* context, ::mombasa::MemoryPollRequest* request, ::grpc::ServerAsyncWriter< ::mombasa::MemoryReadResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(5, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_SetTlsValue : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -330,10 +378,10 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTlsValue(::grpc::ServerContext* context, ::mombasa::SetTlsValueRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::SetTlsValueResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_CallFunction<WithAsyncMethod_AllocateMemory<WithAsyncMethod_FreeMemory<WithAsyncMethod_WriteMemory<WithAsyncMethod_ReadMemory<WithAsyncMethod_SetTlsValue<Service > > > > > > AsyncService;
+  typedef WithAsyncMethod_CallFunction<WithAsyncMethod_AllocateMemory<WithAsyncMethod_FreeMemory<WithAsyncMethod_WriteMemory<WithAsyncMethod_ReadMemory<WithAsyncMethod_PollMemory<WithAsyncMethod_SetTlsValue<Service > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_CallFunction : public BaseClass {
    private:
@@ -470,18 +518,40 @@ class MombasaBridge final {
       ::grpc::CallbackServerContext* /*context*/, const ::mombasa::MemoryReadRequest* /*request*/, ::mombasa::MemoryReadResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_PollMemory() {
+      ::grpc::Service::MarkMethodCallback(5,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::mombasa::MemoryPollRequest, ::mombasa::MemoryReadResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::mombasa::MemoryPollRequest* request) { return this->PollMemory(context, request); }));
+    }
+    ~WithCallbackMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::mombasa::MemoryReadResponse>* PollMemory(
+      ::grpc::CallbackServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_SetTlsValue : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodCallback(5,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response) { return this->SetTlsValue(context, request, response); }));}
     void SetMessageAllocatorFor_SetTlsValue(
         ::grpc::MessageAllocator< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -496,7 +566,7 @@ class MombasaBridge final {
     virtual ::grpc::ServerUnaryReactor* SetTlsValue(
       ::grpc::CallbackServerContext* /*context*/, const ::mombasa::SetTlsValueRequest* /*request*/, ::mombasa::SetTlsValueResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_CallFunction<WithCallbackMethod_AllocateMemory<WithCallbackMethod_FreeMemory<WithCallbackMethod_WriteMemory<WithCallbackMethod_ReadMemory<WithCallbackMethod_SetTlsValue<Service > > > > > > CallbackService;
+  typedef WithCallbackMethod_CallFunction<WithCallbackMethod_AllocateMemory<WithCallbackMethod_FreeMemory<WithCallbackMethod_WriteMemory<WithCallbackMethod_ReadMemory<WithCallbackMethod_PollMemory<WithCallbackMethod_SetTlsValue<Service > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_CallFunction : public BaseClass {
@@ -584,12 +654,29 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_PollMemory() {
+      ::grpc::Service::MarkMethodGeneric(5);
+    }
+    ~WithGenericMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_SetTlsValue : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -701,12 +788,32 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_PollMemory() {
+      ::grpc::Service::MarkMethodRaw(5);
+    }
+    ~WithRawMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPollMemory(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(5, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_SetTlsValue : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -717,7 +824,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTlsValue(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -831,12 +938,34 @@ class MombasaBridge final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_PollMemory() {
+      ::grpc::Service::MarkMethodRawCallback(5,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->PollMemory(context, request); }));
+    }
+    ~WithRawCallbackMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* PollMemory(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_SetTlsValue : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodRawCallback(5,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetTlsValue(context, request, response); }));
@@ -993,7 +1122,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>(
             [this](::grpc::ServerContext* context,
@@ -1015,8 +1144,35 @@ class MombasaBridge final {
     virtual ::grpc::Status StreamedSetTlsValue(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::mombasa::SetTlsValueRequest,::mombasa::SetTlsValueResponse>* server_unary_streamer) = 0;
   };
   typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_SetTlsValue<Service > > > > > > StreamedUnaryService;
-  typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_SetTlsValue<Service > > > > > > StreamedService;
+  template <class BaseClass>
+  class WithSplitStreamingMethod_PollMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithSplitStreamingMethod_PollMemory() {
+      ::grpc::Service::MarkMethodStreamed(5,
+        new ::grpc::internal::SplitServerStreamingHandler<
+          ::mombasa::MemoryPollRequest, ::mombasa::MemoryReadResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerSplitStreamer<
+                     ::mombasa::MemoryPollRequest, ::mombasa::MemoryReadResponse>* streamer) {
+                       return this->StreamedPollMemory(context,
+                         streamer);
+                  }));
+    }
+    ~WithSplitStreamingMethod_PollMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status PollMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with split streamed
+    virtual ::grpc::Status StreamedPollMemory(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::mombasa::MemoryPollRequest,::mombasa::MemoryReadResponse>* server_split_streamer) = 0;
+  };
+  typedef WithSplitStreamingMethod_PollMemory<Service > SplitStreamedService;
+  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithSplitStreamingMethod_PollMemory<WithStreamedUnaryMethod_SetTlsValue<Service > > > > > > > StreamedService;
 };
 
 }  // namespace mombasa

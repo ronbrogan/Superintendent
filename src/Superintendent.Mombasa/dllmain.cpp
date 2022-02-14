@@ -6,15 +6,21 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <grpcpp/grpcpp.h>
-#include "mombasa_bridge.cpp"
+#include <grpcpp/alarm.h>
+
+#include "mombasa_base.h"
+#include "mombasa_calldata.h"
+#include "mombasa_bridge.h"
 using namespace mombasa;
 
 using grpc::Server;
 using grpc::ServerAsyncResponseWriter;
+using grpc::ServerAsyncWriter;
 using grpc::ServerBuilder;
 using grpc::ServerCompletionQueue;
 using grpc::ServerContext;
 using grpc::Status;
+using grpc::StatusCode;
 
 static std::thread* grpcThread;
 static std::shared_ptr<Server> grpcServer;
@@ -130,68 +136,6 @@ void GrpcStartup()
     HandleRpcs(&service);
 }
 
-// Class encompasing the state and logic needed to serve a request.
-
-class CallDataBase {
-public:
-    virtual void Handle() = 0;
-};
-
-template <typename TReq, typename TResp>
-class CallData : public CallDataBase {
-public:
-    // Take in the "service" instance (in this case representing an asynchronous
-    // server) and the completion queue "cq" used for asynchronous communication
-    // with the gRPC runtime.
-    CallData(MombasaBridge::AsyncService* service,
-        ServerCompletionQueue* cq,
-        std::function<void(ServerContext* context, TReq* request, ServerAsyncResponseWriter<TResp>* response, CompletionQueue* new_call_cq, ServerCompletionQueue* notification_cq, void* tag)> readfunc,
-        std::function<Status(ServerContext* context, TReq* request, TResp* response)> implfunc)
-        : ready(true), service_(service), cq_(cq), ctx_(new ServerContext()), responder_(ctx_), readfunc_(readfunc), implfunc_(implfunc) {
-        // Invoke the serving logic right away.
-        readfunc(ctx_, &request_, &responder_, cq_, cq_, this);
-    }
-
-    void Handle() override {
-        if (ready) {
-            // Process current request
-            auto status = implfunc_(ctx_, &request_, &reply_);
-            responder_.Finish(reply_, status, this);
-            ready = false;
-        } else {
-            // allow this instance to handle another request
-            Reset();
-            readfunc_(ctx_, &request_, &responder_, cq_, cq_, this);
-        }
-    }
-
-    void Reset() {
-        delete ctx_;
-        ctx_ = new ServerContext();
-        responder_ = ServerAsyncResponseWriter<TResp>(ctx_);
-        ready = true;
-    }
-
-private:
-    bool ready;
-    // The means of communication with the gRPC runtime for an asynchronous
-    // server.
-    MombasaBridge::AsyncService* service_;
-    // The producer-consumer queue where for asynchronous server notifications.
-    ServerCompletionQueue* cq_;
-    // Context for the rpc, allowing to tweak aspects of it such as the use
-    // of compression, authentication, as well as to send metadata back to the
-    // client.
-    ServerContext* ctx_;
-
-    TReq request_;
-    TResp reply_;
-    ServerAsyncResponseWriter<TResp> responder_;
-
-    std::function<void(ServerContext* context, TReq* request, ServerAsyncResponseWriter<TResp>* response, CompletionQueue* new_call_cq, ServerCompletionQueue* notification_cq, void* tag)> readfunc_;
-    std::function<Status(ServerContext* context, TReq* request, TResp* response)> implfunc_;
-};
-
 void HandleRpcs(MombasaBridge::AsyncService* s) {
 
     MombasaBridgeImpl impl;
@@ -222,16 +166,24 @@ void HandleRpcs(MombasaBridge::AsyncService* s) {
         [s](auto && ...args) { s->RequestSetTlsValue(args...); },
         [i](auto && ...args) { return i->SetTlsValue(args...); });
 
+    new PollingStreamCallData<MemoryPollRequest, MemoryReadResponse>(s, cq,
+        [s](auto && ...args) { s->RequestPollMemory(args...); },
+        [i](auto && ...args) { return i->ReadMemory(args...); },
+        [s](const MemoryPollRequest* request) { return PollingState(request->interval()); });
+
     void* tag;
     bool ok;
-    while (true) {
+    bool run = true;
+    while (run) {
         // Block waiting to read the next event from the completion queue. The
         // event is uniquely identified by its tag, which in this case is the
         // memory address of a CallData instance.
         // The return value of Next should always be checked. This return value
         // tells us whether there is any kind of event or cq_ is shutting down.
-        GPR_ASSERT(grpcCompletionQueue->Next(&tag, &ok));
-        GPR_ASSERT(ok);
-        static_cast<CallDataBase*>(tag)->Handle();
+        run = grpcCompletionQueue->Next(&tag, &ok);
+
+        if (run && ok) {
+            static_cast<CallDataBase*>(tag)->Handle();
+        }
     }
 }
