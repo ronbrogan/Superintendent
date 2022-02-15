@@ -86,13 +86,19 @@ namespace Superintendent.Core.Remote
             this.ProcessAttached?.Invoke(this, new ProcessAttachArgs() { Process = this, ProcessId = proc.Id });
         }
 
+        public void EjectMombasa()
+        {
+            if(this.process != null)
+                Win32.EjectModule(this.process.Id, MombasaPath);
+        }
+
         public void DetachFromProcess()
         {
             if (this.process == null || this.process.HasExited) return;
 
             if (this.injectedMombasa)
             {
-                Win32.EjectModule(this.process.Id, MombasaPath);
+                this.EjectMombasa();
                 this.injectedMombasa = false;
             }
 

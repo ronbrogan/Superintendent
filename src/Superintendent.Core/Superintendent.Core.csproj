@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <VersionPrefix>0.0.3.0</VersionPrefix>
-    <VersionSuffix>cppbeta1</VersionSuffix>
+    <VersionSuffix>cppbeta2</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
