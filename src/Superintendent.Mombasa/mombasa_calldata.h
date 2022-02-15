@@ -186,7 +186,7 @@ public:
     }
 
     void Teardown() {
-        spdlog::info("Poller {0:x} stopping", (uint64)this);
+        spdlog::info("Poller {0:x} stopping, polled {1} times", (uint64)this, pollingState.GetPollCount());
         delete this;
     }
 };

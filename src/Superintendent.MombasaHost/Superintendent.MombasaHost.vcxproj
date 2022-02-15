@@ -78,6 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(Platform)\bin\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -143,6 +145,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Superintendent.MombasaHost.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj">
+      <Project>{ec8aaccc-5783-486a-819f-c6d4857e312c}</Project>
+	  <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+	<Content Include="..\Superintendent.Mombasa\$(Platform)\bin\$(Configuration)\mombasa.dll">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -135,7 +135,7 @@ public:
                 action(start);
             }
             __except (FilterException(GetExceptionCode(), GetExceptionInformation(), &exceptionLocation)) {
-                statusCode = grpc::StatusCode::DATA_LOSS;
+                statusCode = grpc::StatusCode::ABORTED;
                 exception = GetExceptionCode();
             }
         }();
