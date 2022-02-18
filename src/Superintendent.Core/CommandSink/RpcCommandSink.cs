@@ -128,7 +128,53 @@ namespace Superintendent.Core.CommandSink
             this.ReadAt(absoluteAddress, bytes);
         }
 
-        public unsafe Task PollMemoryAt<T>(nint absoluteAddress, Action<T> callback, CancellationToken token = default)
+        public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)(this.BaseOffset + relativeAddress),
+                Count = byteCount,
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)absoluteAddress,
+                Count = byteCount,
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public unsafe Task PollMemory<T>(nint relativeAddress, uint intervalMs, Action<T> callback, CancellationToken token = default)
+             where T : unmanaged
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)(this.BaseOffset + relativeAddress),
+                Count = (uint)sizeof(T),
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public unsafe Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default)
              where T : unmanaged
         {
             if (this.RpcBridge == null)
@@ -138,10 +184,21 @@ namespace Superintendent.Core.CommandSink
             { 
                 Address = (ulong)absoluteAddress, 
                 Count = (uint)sizeof(T), 
-                Interval = 100 
+                Interval = intervalMs
             });
 
             return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        private Task PollReadResponses(IAsyncStreamReader<MemoryReadResponse> resp, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            return Task.Run(async () =>
+            {
+                while (await resp.MoveNext(token))
+                {
+                    callback(resp.Current.Data.Memory.Span);
+                }
+            });
         }
 
         private Task PollReadResponses<T>(IAsyncStreamReader<MemoryReadResponse> resp, Action<T> callback, CancellationToken token = default)

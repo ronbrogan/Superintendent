@@ -4,10 +4,12 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Superintendent.CommandSink
 {
-    public unsafe class PinvokeCommandSink : ICommandSink
+    public class PinvokeCommandSink : ICommandSink
     {
         private IntPtr currentProcess;
         private readonly nint baseOffset;
@@ -21,7 +23,7 @@ namespace Superintendent.CommandSink
 
         public nint GetBaseOffset() => this.baseOffset;
 
-        public void Read(nint address, Span<byte> data)
+        public unsafe void Read(nint address, Span<byte> data)
         {
             fixed (byte* b = &MemoryMarshal.GetReference(data))
             {
@@ -29,7 +31,7 @@ namespace Superintendent.CommandSink
             }
         }
 
-        public void Read(Ptr<nint> pointerToAddress, Span<byte> data)
+        public unsafe void Read(Ptr<nint> pointerToAddress, Span<byte> data)
         {
             byte* ptrVal = stackalloc byte[8];
 
@@ -41,7 +43,7 @@ namespace Superintendent.CommandSink
             }
         }
 
-        public void ReadAt(nint address, Span<byte> data)
+        public unsafe void ReadAt(nint address, Span<byte> data)
         {
             fixed (byte* b = &MemoryMarshal.GetReference(data))
             {
@@ -49,7 +51,7 @@ namespace Superintendent.CommandSink
             }
         }
 
-        public void Write(nint relativeAddress, Span<byte> data)
+        public unsafe void Write(nint relativeAddress, Span<byte> data)
         {
             fixed (byte* b = &MemoryMarshal.GetReference(data))
             {
@@ -57,7 +59,7 @@ namespace Superintendent.CommandSink
             }
         }
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data)
+        public unsafe void WriteAt(nint absoluteAddress, Span<byte> data)
         {
             fixed (byte* b = &MemoryMarshal.GetReference(data))
             {
@@ -77,7 +79,7 @@ namespace Superintendent.CommandSink
             this.WriteAt(absoluteAddress, bytes);
         }
 
-        private void Read(nint address, byte* destination, int length)
+        private unsafe void Read(nint address, byte* destination, int length)
         {
             if (!Win32.ReadProcessMemory(this.currentProcess, address, destination, length, out var read))
             {
@@ -104,7 +106,7 @@ namespace Superintendent.CommandSink
             this.ReadAt(absoluteAddress, bytes);
         }
 
-        private void Write(nint address, byte* source, int length)
+        private unsafe void Write(nint address, byte* source, int length)
         {
             Logger.LogTrace($"Writing {length} bytes to {this.currentProcess} at {address:x}");
 
@@ -132,6 +134,60 @@ namespace Superintendent.CommandSink
         public void SetTlsValue(int index, nint value)
         {
             throw new NotSupportedException();
+        }
+
+        public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            var data = new byte[byteCount];
+            return Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    this.Read(relativeAddress, data);
+                    callback(data);
+                    await Task.Delay((int)intervalMs);
+                }
+            });
+        }
+
+        public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            var data = new byte[byteCount];
+            return Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    this.ReadAt(absoluteAddress, data);
+                    callback(data);
+                    await Task.Delay((int)intervalMs);
+                }
+            });
+        }
+
+        public Task PollMemory<T>(nint relativeAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+        {
+            return Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    this.Read<T>(relativeAddress, out var item);
+                    callback(item);
+                    await Task.Delay((int)intervalMs);
+                }
+            });
+        }
+
+        public Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+        {
+            return Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    this.ReadAt<T>(absoluteAddress, out var item);
+                    callback(item);
+                    await Task.Delay((int)intervalMs);
+                }
+            });
         }
     }
 }
