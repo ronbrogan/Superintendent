@@ -4,6 +4,7 @@ trigger:
 variables:
   # Working Directory
   workingDirectory: '$(System.DefaultWorkingDirectory)/src'
+  vcpkgExportVersion: 'vcpkg-export-20220212-202727'
 
 stages:
 - stage: Build
@@ -16,37 +17,79 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
-    # latest nightly may not have rustfmt/clippy
-    # we can't check for both:
-    # https://github.com/rust-lang/rustup-components-history/issues/9
-    # but we at least check for one.
-    # rustfmt _seems_ to break most often:
-    - bash: |
-        echo '##vso[task.setvariable variable=nightly]nightly-'$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/rustfmt)
-      displayName: "Determine latest style nightly"
-    - template: install-rust.yml
-      parameters:
-        rust: $(nightly)
-        components:
-          - rustfmt
-          - clippy
-         
-    - script: cargo build --release --lib
-      workingDirectory: $(workingDirectory)/Superintendent.Native/mombasa
-      displayName: cargo build
+    - task: PowerShell@2
+      displayName: 'Download Native Dependencies'
+      inputs:
+        targetType: 'inline'
+        script: |
+          Import-Module BitsTransfer
+          write-host "Starting download"
+          Start-BitsTransfer -Source https://openblam.blob.core.windows.net/nuget/$(vcpkgExportVersion).zip -Destination $(Build.BinariesDirectory)/deps.zip
+          write-host "Unzipping"
+          expand-archive -Path $(Build.BinariesDirectory)/deps.zip  -DestinationPath $(Build.BinariesDirectory)
+          ls
+
+    - task: run-vcpkg@0
+      inputs:
+        vcpkgSetupOnly: true
+        vcpkgGitCommitId: '2022.02.02'
+        vcpkgTriplet: 'x64-windows-static'
+        vcpkgArguments: 'spdlog'
+
+    - task: VSBuild@1
+      inputs:
+        solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
+        vsVersion: '17.0'
+        msbuildArgs: '/p:VcpkgEnableManifest=false /p:VCPKG_INSTALLATION_ROOT="$(Build.BinariesDirectory)\$(vcpkgExportVersion)" /p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\$(vcpkgExportVersion)\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\$(vcpkgExportVersion)\scripts\buildsystems\msbuild\vcpkg.targets"'
+        platform: 'x64'
+        configuration: 'Release'
+        msbuildArchitecture: 'x64'
+        createLogFile: true
          
     - task: UseDotNet@2
       displayName: 'Use .NET 6 sdk'
       inputs:
         packageType: sdk
         version: 6.0.x
+        
+    - task: DotNetCoreCLI@2
+      displayName: 'Install Azure SignTool'
+      inputs:
+        command: custom
+        custom: tool
+        arguments: 'install --global AzureSignTool'
+        
+    - task: PowerShell@2
+      displayName: 'Sign mombasa'
+      condition: ne(variables.AzureKeyVaultClientSecret, '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com -v "$(workingDirectory)\Superintendent.Mombasa\x64\bin\Release\mombasa.dll"
 
+    - task: DotNetCoreCLI@2
+      displayName: Build Superintendent.Core
+      inputs:
+        command: 'build'
+        projects: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
+        arguments: --configuration Release
+        
+    - task: PowerShell@2
+      displayName: 'Sign Superintendent.Core'
+      condition: ne(variables.AzureKeyVaultClientSecret, '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com --continue-on-error -v "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\Superintendent.Core.dll"
+        
     - task: DotNetCoreCLI@2
       displayName: Pack Superintendent.Core NuGet
       inputs:
         command: 'pack'
-        projects: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
-        arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+        packagesToPack: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
+        configuration: 'Release'
+        nobuild: true
+        versioningScheme: 'off'
 
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop

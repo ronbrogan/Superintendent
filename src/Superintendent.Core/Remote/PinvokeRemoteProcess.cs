@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Superintendent.Core.Remote
 {
@@ -151,5 +153,17 @@ namespace Superintendent.Core.Remote
         {
             throw new NotSupportedException();
         }
+
+        public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+            => this.processCommandSink.PollMemory(relativeAddress, intervalMs, byteCount, callback, token);
+
+        public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+            => this.processCommandSink.PollMemoryAt(absoluteAddress, intervalMs, byteCount, callback, token);
+
+        public Task PollMemory<T>(nint relativeAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+            => this.processCommandSink.PollMemory<T>(relativeAddress, intervalMs, callback, token);
+
+        public Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+            => this.processCommandSink.PollMemoryAt<T>(absoluteAddress, intervalMs, callback, token);
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Superintendent.Core.Remote
@@ -48,15 +49,21 @@ namespace Superintendent.Core.Remote
 
         public RpcRemoteProcess() { }
 
-        public void Attach(params string[] processNames)
+        public void Attach(Func<Process, bool>? attachGuard = null, params string[] processNames)
         {
             processWatcher = new ProcessWatcher(processNames);
             processWatcher.Run(
                 p => {
-                    process = p;
-                    processCommandSink = this.GetCommandSink();
-                    AttachToProcess(p);
-                    processModuleOffsets.Clear();
+                    if(attachGuard?.Invoke(p) ?? true)
+                    {
+                        process = p;
+                        processCommandSink = this.GetCommandSink();
+                        AttachToProcess(p);
+                        processModuleOffsets.Clear();
+                        return true;
+                    }
+
+                    return false;
                 },
                 () => DetachFromProcess(),
                 (i,e) => HandleAttachFailure(i,e));
@@ -86,13 +93,17 @@ namespace Superintendent.Core.Remote
             this.ProcessAttached?.Invoke(this, new ProcessAttachArgs() { Process = this, ProcessId = proc.Id });
         }
 
+        public void EjectMombasa()
+        {
+            if(this.process != null)
+                Win32.EjectModule(this.process.Id, MombasaPath);
+        }
+
         public void DetachFromProcess()
         {
-            if (this.process == null || this.process.HasExited) return;
-
             if (this.injectedMombasa)
             {
-                Win32.EjectModule(this.process.Id, MombasaPath);
+                this.EjectMombasa();
                 this.injectedMombasa = false;
             }
 
@@ -208,8 +219,21 @@ namespace Superintendent.Core.Remote
             throw new NotImplementedException();
         }
 
+        public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+            => this.processCommandSink?.PollMemory(relativeAddress, intervalMs, byteCount, callback, token) ?? Task.CompletedTask;
+
+        public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+            => this.processCommandSink?.PollMemoryAt(absoluteAddress, intervalMs, byteCount, callback, token) ?? Task.CompletedTask;
+
+        public Task PollMemory<T>(nint relativeAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+            => this.processCommandSink?.PollMemory<T>(relativeAddress, intervalMs, callback, token) ?? Task.CompletedTask;
+
+        public Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
+            => this.processCommandSink?.PollMemoryAt<T>(absoluteAddress, intervalMs, callback, token) ?? Task.CompletedTask;
+
         public void Dispose()
         {
+            this.EjectMombasa();
             this.processWatcher?.Dispose();
             this.process?.Dispose();
         }

@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Grpc.Core;
 using Mombasa;
 using Superintendent.CommandSink;
 using Superintendent.Core.Native;
@@ -7,6 +8,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Superintendent.Core.CommandSink
 {
@@ -123,6 +126,99 @@ namespace Superintendent.Core.CommandSink
             Unsafe.SkipInit(out data);
             var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
             this.ReadAt(absoluteAddress, bytes);
+        }
+
+        public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)(this.BaseOffset + relativeAddress),
+                Count = byteCount,
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)absoluteAddress,
+                Count = byteCount,
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public unsafe Task PollMemory<T>(nint relativeAddress, uint intervalMs, Action<T> callback, CancellationToken token = default)
+             where T : unmanaged
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest()
+            {
+                Address = (ulong)(this.BaseOffset + relativeAddress),
+                Count = (uint)sizeof(T),
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        public unsafe Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default)
+             where T : unmanaged
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.RpcBridge.PollMemory(new MemoryPollRequest() 
+            { 
+                Address = (ulong)absoluteAddress, 
+                Count = (uint)sizeof(T), 
+                Interval = intervalMs
+            });
+
+            return this.PollReadResponses(resp.ResponseStream, callback, token);
+        }
+
+        private Task PollReadResponses(IAsyncStreamReader<MemoryReadResponse> resp, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
+        {
+            return Task.Run(async () =>
+            {
+                while (await resp.MoveNext(token))
+                {
+                    callback(resp.Current.Data.Memory.Span);
+                }
+            });
+        }
+
+        private Task PollReadResponses<T>(IAsyncStreamReader<MemoryReadResponse> resp, Action<T> callback, CancellationToken token = default)
+            where T : unmanaged
+        {
+            return Task.Run(async () =>
+            {
+                while (await resp.MoveNext(token))
+                {
+                    callback(this.Cast<T>(resp.Current.Data));
+                }
+            });
+        }
+
+        private unsafe T Cast<T>(ByteString data) where T : unmanaged
+        {
+            fixed(byte* bytes = data.Memory.Span)
+            {
+                return *(T*)bytes;
+            }
         }
 
         public void SetProtection(nint address, MemoryProtection desiredProtection)
