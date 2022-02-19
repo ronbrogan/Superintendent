@@ -15,7 +15,7 @@ namespace Superintendent.Core
 
         public Process? CurrentProcess { get; private set; } = null;
 
-        private Action<Process>? callback;
+        private Func<Process, bool>? callback;
         private Action? detachCallback;
         private Action<int, Exception?>? failCallback;
 
@@ -24,7 +24,7 @@ namespace Superintendent.Core
             this.processNames = processNames;
         }
 
-        public void Run(Action<Process> foundProcess, Action? processExit = null, Action<int, Exception?>? failureCallback = null)
+        public void Run(Func<Process, bool> foundProcess, Action? processExit = null, Action<int, Exception?>? failureCallback = null)
         {
             if (runTask != null)
             {
@@ -57,17 +57,27 @@ namespace Superintendent.Core
 
                 if (proc != null && proc.Length > 0 && !proc[0].HasExited)
                 {
-                    var running = DateTime.Now - proc[0].StartTime;
+                    if(this.callback?.Invoke(proc[0]) ?? false)
+                    {
+                        if(this.CurrentProcess != null)
+                        {
+                            this.CurrentProcess.Exited -= HandleProcessExit;
+                            this.CurrentProcess.EnableRaisingEvents = false;
+                        }
 
-                    // Don't attach during first 30 seconds of process to allow for process bootstrapping
-                    if (running.TotalSeconds < 30)
-                        continue;
-
-                    this.CurrentProcess = proc[0];
-
-                    this.callback?.Invoke(proc[0]);
+                        this.CurrentProcess = proc[0];
+                        this.CurrentProcess.EnableRaisingEvents = true;
+                        this.CurrentProcess.Exited += HandleProcessExit;
+                        return;
+                    }
                 }
             }
+        }
+
+        private void HandleProcessExit(object? sender, EventArgs e)
+        {
+            this.detachCallback?.Invoke();
+            this.CurrentProcess = null;
         }
 
         private async Task PollProcesses()
@@ -77,7 +87,6 @@ namespace Superintendent.Core
                 if(this.CurrentProcess != null && this.CurrentProcess.HasExited)
                 {
                     this.detachCallback?.Invoke();
-
                     this.CurrentProcess = null;
                 }
 
@@ -109,7 +118,6 @@ namespace Superintendent.Core
                     if (this.CurrentProcess != null)
                     {
                         this.detachCallback?.Invoke();
-
                         this.CurrentProcess = null;
                     }
                 }

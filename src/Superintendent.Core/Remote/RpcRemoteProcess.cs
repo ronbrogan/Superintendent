@@ -49,15 +49,21 @@ namespace Superintendent.Core.Remote
 
         public RpcRemoteProcess() { }
 
-        public void Attach(params string[] processNames)
+        public void Attach(Func<Process, bool>? attachGuard = null, params string[] processNames)
         {
             processWatcher = new ProcessWatcher(processNames);
             processWatcher.Run(
                 p => {
-                    process = p;
-                    processCommandSink = this.GetCommandSink();
-                    AttachToProcess(p);
-                    processModuleOffsets.Clear();
+                    if(attachGuard?.Invoke(p) ?? true)
+                    {
+                        process = p;
+                        processCommandSink = this.GetCommandSink();
+                        AttachToProcess(p);
+                        processModuleOffsets.Clear();
+                        return true;
+                    }
+
+                    return false;
                 },
                 () => DetachFromProcess(),
                 (i,e) => HandleAttachFailure(i,e));
@@ -95,8 +101,6 @@ namespace Superintendent.Core.Remote
 
         public void DetachFromProcess()
         {
-            if (this.process == null || this.process.HasExited) return;
-
             if (this.injectedMombasa)
             {
                 this.EjectMombasa();
@@ -229,6 +233,7 @@ namespace Superintendent.Core.Remote
 
         public void Dispose()
         {
+            this.EjectMombasa();
             this.processWatcher?.Dispose();
             this.process?.Dispose();
         }
