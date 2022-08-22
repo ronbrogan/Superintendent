@@ -85,9 +85,9 @@ namespace Superintendent.Core.Remote
             Win32.VirtualFreeEx(this.processHandle, address, (uint)length, freeType);
         }
 
-        public void SetProtection(nint address, MemoryProtection desiredProtection)
+        public void SetProtection(nint address, int length, MemoryProtection desiredProtection)
         {
-            throw new NotImplementedException();
+            Win32.VirtualProtectEx(this.processHandle, address, (uint)length, desiredProtection, out _);
         }
 
         // Implement ICommandSink through 0-offset command sink instance

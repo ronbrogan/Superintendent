@@ -178,6 +178,19 @@ namespace Superintendent.Core.Remote
             });
         }
 
+        public void SetProtection(nint address, int length, MemoryProtection desiredProtection)
+        {
+            if (this.Bridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.Bridge.ProtectMemory(new MemoryProtectRequest()
+            {
+                Address = (ulong)address,
+                Length = (uint)length,
+                Protection = (uint)desiredProtection
+            });
+        }
+
         public void Write(nint relativeAddress, Span<byte> data) => processCommandSink?.Write(relativeAddress, data);
 
         public void WriteAt(nint absoluteAddress, Span<byte> data) => processCommandSink?.WriteAt(absoluteAddress, data);
@@ -213,11 +226,6 @@ namespace Superintendent.Core.Remote
         }
 
         public void SetTlsValue(int index, nint value) => processCommandSink?.SetTlsValue(index, value);
-
-        public void SetProtection(nint address, MemoryProtection desiredProtection)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
             => this.processCommandSink?.PollMemory(relativeAddress, intervalMs, byteCount, callback, token) ?? Task.CompletedTask;

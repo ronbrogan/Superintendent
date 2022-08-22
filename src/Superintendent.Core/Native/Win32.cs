@@ -51,6 +51,9 @@ namespace Superintendent.Core.Native
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, AllocationType flAllocationType);
 
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, MemoryProtection flProtect, out MemoryProtection oldflProtect);
+
         /// <summary>
         /// Inject the module into the process. 
         /// This will open and close a handle to the process for use during injection

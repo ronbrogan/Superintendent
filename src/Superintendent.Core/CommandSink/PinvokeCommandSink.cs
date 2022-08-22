@@ -23,6 +23,8 @@ namespace Superintendent.CommandSink
 
         public nint GetBaseOffset() => this.baseOffset;
 
+        public nint GetAbsoluteAddress(nint offset) => this.baseOffset + offset;
+
         public unsafe void Read(nint address, Span<byte> data)
         {
             fixed (byte* b = &MemoryMarshal.GetReference(data))

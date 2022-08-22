@@ -154,6 +154,10 @@ void HandleRpcs(MombasaBridge::AsyncService* s) {
         [s](auto && ...args) { s->RequestFreeMemory(args...); },
         [i](auto && ...args) { return i->FreeMemory(args...); });
 
+    new CallData<MemoryProtectRequest, MemoryProtectResponse>(s, cq,
+        [s](auto && ...args) { s->RequestProtectMemory(args...); },
+        [i](auto && ...args) { return i->ProtectMemory(args...); });
+
     new CallData<MemoryWriteRequest, MemoryWriteResponse>(s, cq,
         [s](auto && ...args) { s->RequestWriteMemory(args...); },
         [i](auto && ...args) { return i->WriteMemory(args...); });
