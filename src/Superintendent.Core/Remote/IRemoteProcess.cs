@@ -33,7 +33,7 @@ namespace Superintendent.Core.Remote
 
         ICommandSink GetCommandSink(string module);
 
-        public void SetProtection(nint address, MemoryProtection desiredProtection);
+        public void SetProtection(nint address, int length, MemoryProtection desiredProtection);
 
         public nint Allocate(int length, MemoryProtection protection = MemoryProtection.ReadWrite);
 

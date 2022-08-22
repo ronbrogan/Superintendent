@@ -112,6 +112,15 @@ public:
         });
     }
 
+    Status ProtectMemory(ServerContext* context, const MemoryProtectRequest* request, MemoryProtectResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("Protect memory requested");
+            DWORD old;
+            VirtualProtect((void*)request->address(), request->length(), request->protection(), &old);
+            TIMER_STOP;
+        });
+    }
+
     Status SetTlsValue(ServerContext* context, const SetTlsValueRequest* request, SetTlsValueResponse* reply) override {
         return Work([&](auto start) {
             auto index = request->index();

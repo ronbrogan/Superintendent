@@ -29,6 +29,8 @@ namespace Superintendent.Core.CommandSink
 
         public nint GetBaseOffset() => this.BaseOffset;
 
+        public nint GetAbsoluteAddress(nint offset) => this.BaseOffset + offset;
+
         public void Write(nint relativeAddress, Span<byte> data)
         {
             if (this.RpcBridge == null)

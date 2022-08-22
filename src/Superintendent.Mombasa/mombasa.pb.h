@@ -46,7 +46,7 @@ struct TableStruct_mombasa_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -75,6 +75,12 @@ extern MemoryFreeResponseDefaultTypeInternal _MemoryFreeResponse_default_instanc
 class MemoryPollRequest;
 struct MemoryPollRequestDefaultTypeInternal;
 extern MemoryPollRequestDefaultTypeInternal _MemoryPollRequest_default_instance_;
+class MemoryProtectRequest;
+struct MemoryProtectRequestDefaultTypeInternal;
+extern MemoryProtectRequestDefaultTypeInternal _MemoryProtectRequest_default_instance_;
+class MemoryProtectResponse;
+struct MemoryProtectResponseDefaultTypeInternal;
+extern MemoryProtectResponseDefaultTypeInternal _MemoryProtectResponse_default_instance_;
 class MemoryReadRequest;
 struct MemoryReadRequestDefaultTypeInternal;
 extern MemoryReadRequestDefaultTypeInternal _MemoryReadRequest_default_instance_;
@@ -102,6 +108,8 @@ template<> ::mombasa::MemoryAllocateResponse* Arena::CreateMaybeMessage<::mombas
 template<> ::mombasa::MemoryFreeRequest* Arena::CreateMaybeMessage<::mombasa::MemoryFreeRequest>(Arena*);
 template<> ::mombasa::MemoryFreeResponse* Arena::CreateMaybeMessage<::mombasa::MemoryFreeResponse>(Arena*);
 template<> ::mombasa::MemoryPollRequest* Arena::CreateMaybeMessage<::mombasa::MemoryPollRequest>(Arena*);
+template<> ::mombasa::MemoryProtectRequest* Arena::CreateMaybeMessage<::mombasa::MemoryProtectRequest>(Arena*);
+template<> ::mombasa::MemoryProtectResponse* Arena::CreateMaybeMessage<::mombasa::MemoryProtectResponse>(Arena*);
 template<> ::mombasa::MemoryReadRequest* Arena::CreateMaybeMessage<::mombasa::MemoryReadRequest>(Arena*);
 template<> ::mombasa::MemoryReadResponse* Arena::CreateMaybeMessage<::mombasa::MemoryReadResponse>(Arena*);
 template<> ::mombasa::MemoryWriteRequest* Arena::CreateMaybeMessage<::mombasa::MemoryWriteRequest>(Arena*);
@@ -1863,6 +1871,314 @@ class MemoryFreeResponse final :
 };
 // -------------------------------------------------------------------
 
+class MemoryProtectRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.MemoryProtectRequest) */ {
+ public:
+  inline MemoryProtectRequest() : MemoryProtectRequest(nullptr) {}
+  ~MemoryProtectRequest() override;
+  explicit constexpr MemoryProtectRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  MemoryProtectRequest(const MemoryProtectRequest& from);
+  MemoryProtectRequest(MemoryProtectRequest&& from) noexcept
+    : MemoryProtectRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline MemoryProtectRequest& operator=(const MemoryProtectRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline MemoryProtectRequest& operator=(MemoryProtectRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const MemoryProtectRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const MemoryProtectRequest* internal_default_instance() {
+    return reinterpret_cast<const MemoryProtectRequest*>(
+               &_MemoryProtectRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(MemoryProtectRequest& a, MemoryProtectRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(MemoryProtectRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(MemoryProtectRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline MemoryProtectRequest* New() const final {
+    return new MemoryProtectRequest();
+  }
+
+  MemoryProtectRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<MemoryProtectRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MemoryProtectRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const MemoryProtectRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MemoryProtectRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.MemoryProtectRequest";
+  }
+  protected:
+  explicit MemoryProtectRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAddressFieldNumber = 1,
+    kLengthFieldNumber = 2,
+    kProtectionFieldNumber = 3,
+  };
+  // fixed64 address = 1;
+  void clear_address();
+  ::PROTOBUF_NAMESPACE_ID::uint64 address() const;
+  void set_address(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_address() const;
+  void _internal_set_address(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // uint32 length = 2;
+  void clear_length();
+  ::PROTOBUF_NAMESPACE_ID::uint32 length() const;
+  void set_length(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_length() const;
+  void _internal_set_length(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 protection = 3;
+  void clear_protection();
+  ::PROTOBUF_NAMESPACE_ID::uint32 protection() const;
+  void set_protection(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_protection() const;
+  void _internal_set_protection(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.MemoryProtectRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 address_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 length_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 protection_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
+// -------------------------------------------------------------------
+
+class MemoryProtectResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.MemoryProtectResponse) */ {
+ public:
+  inline MemoryProtectResponse() : MemoryProtectResponse(nullptr) {}
+  ~MemoryProtectResponse() override;
+  explicit constexpr MemoryProtectResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  MemoryProtectResponse(const MemoryProtectResponse& from);
+  MemoryProtectResponse(MemoryProtectResponse&& from) noexcept
+    : MemoryProtectResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline MemoryProtectResponse& operator=(const MemoryProtectResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline MemoryProtectResponse& operator=(MemoryProtectResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const MemoryProtectResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const MemoryProtectResponse* internal_default_instance() {
+    return reinterpret_cast<const MemoryProtectResponse*>(
+               &_MemoryProtectResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    12;
+
+  friend void swap(MemoryProtectResponse& a, MemoryProtectResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(MemoryProtectResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(MemoryProtectResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline MemoryProtectResponse* New() const final {
+    return new MemoryProtectResponse();
+  }
+
+  MemoryProtectResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<MemoryProtectResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const MemoryProtectResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const MemoryProtectResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(MemoryProtectResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.MemoryProtectResponse";
+  }
+  protected:
+  explicit MemoryProtectResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDurationMicrosecondsFieldNumber = 1,
+  };
+  // uint64 durationMicroseconds = 1;
+  void clear_durationmicroseconds();
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds() const;
+  void set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_durationmicroseconds() const;
+  void _internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.MemoryProtectResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
+// -------------------------------------------------------------------
+
 class SetTlsValueRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.SetTlsValueRequest) */ {
  public:
@@ -1911,7 +2227,7 @@ class SetTlsValueRequest final :
                &_SetTlsValueRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(SetTlsValueRequest& a, SetTlsValueRequest& b) {
     a.Swap(&b);
@@ -2065,7 +2381,7 @@ class SetTlsValueResponse final :
                &_SetTlsValueResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   friend void swap(SetTlsValueResponse& a, SetTlsValueResponse& b) {
     a.Swap(&b);
@@ -2790,6 +3106,94 @@ inline void MemoryFreeResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID
 
 // -------------------------------------------------------------------
 
+// MemoryProtectRequest
+
+// fixed64 address = 1;
+inline void MemoryProtectRequest::clear_address() {
+  address_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 MemoryProtectRequest::_internal_address() const {
+  return address_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 MemoryProtectRequest::address() const {
+  // @@protoc_insertion_point(field_get:mombasa.MemoryProtectRequest.address)
+  return _internal_address();
+}
+inline void MemoryProtectRequest::_internal_set_address(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  address_ = value;
+}
+inline void MemoryProtectRequest::set_address(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_address(value);
+  // @@protoc_insertion_point(field_set:mombasa.MemoryProtectRequest.address)
+}
+
+// uint32 length = 2;
+inline void MemoryProtectRequest::clear_length() {
+  length_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 MemoryProtectRequest::_internal_length() const {
+  return length_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 MemoryProtectRequest::length() const {
+  // @@protoc_insertion_point(field_get:mombasa.MemoryProtectRequest.length)
+  return _internal_length();
+}
+inline void MemoryProtectRequest::_internal_set_length(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  length_ = value;
+}
+inline void MemoryProtectRequest::set_length(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_length(value);
+  // @@protoc_insertion_point(field_set:mombasa.MemoryProtectRequest.length)
+}
+
+// uint32 protection = 3;
+inline void MemoryProtectRequest::clear_protection() {
+  protection_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 MemoryProtectRequest::_internal_protection() const {
+  return protection_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 MemoryProtectRequest::protection() const {
+  // @@protoc_insertion_point(field_get:mombasa.MemoryProtectRequest.protection)
+  return _internal_protection();
+}
+inline void MemoryProtectRequest::_internal_set_protection(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  protection_ = value;
+}
+inline void MemoryProtectRequest::set_protection(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_protection(value);
+  // @@protoc_insertion_point(field_set:mombasa.MemoryProtectRequest.protection)
+}
+
+// -------------------------------------------------------------------
+
+// MemoryProtectResponse
+
+// uint64 durationMicroseconds = 1;
+inline void MemoryProtectResponse::clear_durationmicroseconds() {
+  durationmicroseconds_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 MemoryProtectResponse::_internal_durationmicroseconds() const {
+  return durationmicroseconds_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 MemoryProtectResponse::durationmicroseconds() const {
+  // @@protoc_insertion_point(field_get:mombasa.MemoryProtectResponse.durationMicroseconds)
+  return _internal_durationmicroseconds();
+}
+inline void MemoryProtectResponse::_internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  durationmicroseconds_ = value;
+}
+inline void MemoryProtectResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_durationmicroseconds(value);
+  // @@protoc_insertion_point(field_set:mombasa.MemoryProtectResponse.durationMicroseconds)
+}
+
+// -------------------------------------------------------------------
+
 // SetTlsValueRequest
 
 // uint32 index = 1;
@@ -2859,6 +3263,10 @@ inline void SetTlsValueResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_I
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

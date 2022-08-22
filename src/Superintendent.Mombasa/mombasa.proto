@@ -6,6 +6,7 @@ service MombasaBridge {
 
     rpc AllocateMemory(MemoryAllocateRequest) returns (MemoryAllocateResponse);
     rpc FreeMemory(MemoryFreeRequest) returns (MemoryFreeResponse);
+    rpc ProtectMemory(MemoryProtectRequest) returns (MemoryProtectResponse);
 
     rpc WriteMemory(MemoryWriteRequest) returns (MemoryWriteResponse);
     rpc ReadMemory(MemoryReadRequest) returns (MemoryReadResponse);
@@ -70,6 +71,16 @@ message MemoryFreeRequest {
 }
 
 message MemoryFreeResponse {
+    uint64 durationMicroseconds = 1;
+}
+
+message MemoryProtectRequest {
+    fixed64 address = 1;
+    uint32 length = 2;
+    uint32 protection = 3;
+}
+
+message MemoryProtectResponse {
     uint64 durationMicroseconds = 1;
 }
 

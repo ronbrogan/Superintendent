@@ -38,5 +38,6 @@ namespace Superintendent.CommandSink
         (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged;
 
         public void SetTlsValue(int index, nint value);
+        nint GetAbsoluteAddress(nint offset);
     }
 }

@@ -25,6 +25,7 @@ static const char* MombasaBridge_method_names[] = {
   "/mombasa.MombasaBridge/CallFunction",
   "/mombasa.MombasaBridge/AllocateMemory",
   "/mombasa.MombasaBridge/FreeMemory",
+  "/mombasa.MombasaBridge/ProtectMemory",
   "/mombasa.MombasaBridge/WriteMemory",
   "/mombasa.MombasaBridge/ReadMemory",
   "/mombasa.MombasaBridge/PollMemory",
@@ -41,10 +42,11 @@ MombasaBridge::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   : channel_(channel), rpcmethod_CallFunction_(MombasaBridge_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_AllocateMemory_(MombasaBridge_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_FreeMemory_(MombasaBridge_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_WriteMemory_(MombasaBridge_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ReadMemory_(MombasaBridge_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_PollMemory_(MombasaBridge_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_SetTlsValue_(MombasaBridge_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ProtectMemory_(MombasaBridge_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_WriteMemory_(MombasaBridge_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ReadMemory_(MombasaBridge_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PollMemory_(MombasaBridge_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_SetTlsValue_(MombasaBridge_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status MombasaBridge::Stub::CallFunction(::grpc::ClientContext* context, const ::mombasa::CallRequest& request, ::mombasa::CallResponse* response) {
@@ -112,6 +114,29 @@ void MombasaBridge::Stub::async::FreeMemory(::grpc::ClientContext* context, cons
 ::grpc::ClientAsyncResponseReader< ::mombasa::MemoryFreeResponse>* MombasaBridge::Stub::AsyncFreeMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryFreeRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncFreeMemoryRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status MombasaBridge::Stub::ProtectMemory(::grpc::ClientContext* context, const ::mombasa::MemoryProtectRequest& request, ::mombasa::MemoryProtectResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::mombasa::MemoryProtectRequest, ::mombasa::MemoryProtectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ProtectMemory_, context, request, response);
+}
+
+void MombasaBridge::Stub::async::ProtectMemory(::grpc::ClientContext* context, const ::mombasa::MemoryProtectRequest* request, ::mombasa::MemoryProtectResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::mombasa::MemoryProtectRequest, ::mombasa::MemoryProtectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ProtectMemory_, context, request, response, std::move(f));
+}
+
+void MombasaBridge::Stub::async::ProtectMemory(::grpc::ClientContext* context, const ::mombasa::MemoryProtectRequest* request, ::mombasa::MemoryProtectResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ProtectMemory_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::MemoryProtectResponse>* MombasaBridge::Stub::PrepareAsyncProtectMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryProtectRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::mombasa::MemoryProtectResponse, ::mombasa::MemoryProtectRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ProtectMemory_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::MemoryProtectResponse>* MombasaBridge::Stub::AsyncProtectMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryProtectRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncProtectMemoryRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -235,6 +260,16 @@ MombasaBridge::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MombasaBridge_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::MemoryProtectRequest, ::mombasa::MemoryProtectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](MombasaBridge::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::mombasa::MemoryProtectRequest* req,
+             ::mombasa::MemoryProtectResponse* resp) {
+               return service->ProtectMemory(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MombasaBridge_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::MemoryWriteRequest, ::mombasa::MemoryWriteResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MombasaBridge::Service* service,
              ::grpc::ServerContext* ctx,
@@ -243,7 +278,7 @@ MombasaBridge::Service::Service() {
                return service->WriteMemory(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MombasaBridge_method_names[4],
+      MombasaBridge_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::MemoryReadRequest, ::mombasa::MemoryReadResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MombasaBridge::Service* service,
@@ -253,7 +288,7 @@ MombasaBridge::Service::Service() {
                return service->ReadMemory(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MombasaBridge_method_names[5],
+      MombasaBridge_method_names[6],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< MombasaBridge::Service, ::mombasa::MemoryPollRequest, ::mombasa::MemoryReadResponse>(
           [](MombasaBridge::Service* service,
@@ -263,7 +298,7 @@ MombasaBridge::Service::Service() {
                return service->PollMemory(ctx, req, writer);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MombasaBridge_method_names[6],
+      MombasaBridge_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MombasaBridge::Service* service,
@@ -292,6 +327,13 @@ MombasaBridge::Service::~Service() {
 }
 
 ::grpc::Status MombasaBridge::Service::FreeMemory(::grpc::ServerContext* context, const ::mombasa::MemoryFreeRequest* request, ::mombasa::MemoryFreeResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status MombasaBridge::Service::ProtectMemory(::grpc::ServerContext* context, const ::mombasa::MemoryProtectRequest* request, ::mombasa::MemoryProtectResponse* response) {
   (void) context;
   (void) request;
   (void) response;
