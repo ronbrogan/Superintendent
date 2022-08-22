@@ -75,6 +75,8 @@ namespace Superintendent.Core.Remote
             return new PinvokeCommandSink(this.processHandle, loadedModule.BaseAddress);
         }
 
+        public nint GetAbsoluteAddress(nint offset) => (this.process?.MainModule?.BaseAddress ?? IntPtr.Zero) + offset;
+
         public nint Allocate(int length, MemoryProtection protection = MemoryProtection.ReadWrite)
         {
             return Win32.VirtualAllocEx(this.processHandle, IntPtr.Zero, (uint)length, AllocationType.Commit, protection);

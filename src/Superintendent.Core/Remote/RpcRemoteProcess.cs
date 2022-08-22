@@ -129,6 +129,8 @@ namespace Superintendent.Core.Remote
             return new RpcCommandSink(this, module);
         }
 
+        public nint GetAbsoluteAddress(nint offset) => (this.process?.MainModule?.BaseAddress ?? IntPtr.Zero) + offset;
+
         public IntPtr? GetModuleBase(string moduleName)
         {
             if (string.IsNullOrEmpty(moduleName)) return IntPtr.Zero;
