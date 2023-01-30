@@ -12,11 +12,11 @@ mov rbp, rsp ; set new frame pointer
 ; prepare stack
 push rsi
 push rbx
+push r8 ; if rax should be replaced with xmm0
 sub rsp, 80h
 
 mov r10, rcx ; function pointer
 mov rsi, rdx ; arg array, 12 elements
-mov r11, r8  ; if rax should be replaced with xmm0
 
 ; standard args
 mov rcx, qword ptr [rsi + 00h]
@@ -56,14 +56,16 @@ mov qword ptr [rsp + 58h], rbx
 ; make the call
 call r10
 
+add rsp, 80h
+pop r8
+
 ; check if we should move float result into return value
-test r11b, r11b
+test r8b, r8b
 je done
 movq rax, xmm0
 
 ;restore stack
 done:
-add rsp, 80h
 pop rbx
 pop rsi
 pop rbp

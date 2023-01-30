@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,3
- PRODUCTVERSION 1,0,0,3
+ FILEVERSION 1,0,0,5
+ PRODUCTVERSION 1,0,0,5
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Helical Software, LLC"
             VALUE "FileDescription", "A GRPC server dll that bootstraps upon loading into a process"
-            VALUE "FileVersion", "1.0.0.3"
+            VALUE "FileVersion", "1.0.0.5"
             VALUE "InternalName", "Superintendent.Mombasa"
             VALUE "LegalCopyright", "Copyright (C) 2022"
             VALUE "OriginalFilename", "Superintendent.Mombasa"
             VALUE "ProductName", "Superintendent.Mombasa"
-            VALUE "ProductVersion", "1.0.0.3"
+            VALUE "ProductVersion", "1.0.0.5"
         END
     END
     BLOCK "VarFileInfo"

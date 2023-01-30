@@ -40,6 +40,12 @@ extern "C" {
     uint64 function_dispatcher(void* func, uint64* argv, bool isFloat);
 }
 
+// Exporting it as a friendly name to easily track down in disassembly, etc
+extern "C" __declspec(dllexport) uint64 FunctionDispatcher(void* func, uint64 * argv, bool isFloat)
+{
+    return function_dispatcher(func, argv, isFloat);
+}
+
 // Logic and data behind the server's behavior.
 class MombasaBridgeImpl final : public MombasaBridge::AsyncService {
 
