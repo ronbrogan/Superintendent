@@ -87,7 +87,7 @@ namespace Superintendent.Core.CommandSink
                 Count = (uint)data.Length
             });
 
-            resp.Data.ToArray().CopyTo(data);
+            resp.Data.Memory.Span.CopyTo(data);
 
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Read)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Read)}_Server", resp.DurationMicroseconds);
@@ -110,7 +110,7 @@ namespace Superintendent.Core.CommandSink
                 Count = (uint)data.Length
             });
 
-            resp.Data.ToArray().CopyTo(data);
+            resp.Data.Memory.Span.CopyTo(data);
 
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Server", resp.DurationMicroseconds);
