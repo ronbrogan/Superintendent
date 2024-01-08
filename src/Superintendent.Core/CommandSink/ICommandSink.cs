@@ -1,10 +1,8 @@
-﻿using Superintendent.Core;
-using Superintendent.Core.CommandSink;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Superintendent.CommandSink
+namespace Superintendent.Core.CommandSink
 {
     [Flags]
     public enum RegionProtection
@@ -16,6 +14,7 @@ namespace Superintendent.CommandSink
 
     public interface ICommandSink
     {
+        nint GetAbsoluteAddress(nint offset);
         void Write(nint relativeAddress, Span<byte> data);
         void WriteAt(nint absoluteAddress, Span<byte> data);
         void Write<T>(nint relativeAddress, T data) where T : unmanaged;
@@ -37,7 +36,8 @@ namespace Superintendent.CommandSink
         (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged;
         (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged;
 
-        public void SetTlsValue(int index, nint value);
-        nint GetAbsoluteAddress(nint offset);
+        void SetTlsValue(int index, nint value);
+        void SetThreadLocalPointer(nint value);
+        nint GetThreadLocalPointer();
     }
 }

@@ -46,7 +46,7 @@ struct TableStruct_mombasa_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[19]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -60,6 +60,12 @@ extern CallRequestDefaultTypeInternal _CallRequest_default_instance_;
 class CallResponse;
 struct CallResponseDefaultTypeInternal;
 extern CallResponseDefaultTypeInternal _CallResponse_default_instance_;
+class GetThreadLocalPointerRequest;
+struct GetThreadLocalPointerRequestDefaultTypeInternal;
+extern GetThreadLocalPointerRequestDefaultTypeInternal _GetThreadLocalPointerRequest_default_instance_;
+class GetThreadLocalPointerResponse;
+struct GetThreadLocalPointerResponseDefaultTypeInternal;
+extern GetThreadLocalPointerResponseDefaultTypeInternal _GetThreadLocalPointerResponse_default_instance_;
 class MemoryAllocateRequest;
 struct MemoryAllocateRequestDefaultTypeInternal;
 extern MemoryAllocateRequestDefaultTypeInternal _MemoryAllocateRequest_default_instance_;
@@ -93,6 +99,12 @@ extern MemoryWriteRequestDefaultTypeInternal _MemoryWriteRequest_default_instanc
 class MemoryWriteResponse;
 struct MemoryWriteResponseDefaultTypeInternal;
 extern MemoryWriteResponseDefaultTypeInternal _MemoryWriteResponse_default_instance_;
+class SetThreadLocalPointerRequest;
+struct SetThreadLocalPointerRequestDefaultTypeInternal;
+extern SetThreadLocalPointerRequestDefaultTypeInternal _SetThreadLocalPointerRequest_default_instance_;
+class SetThreadLocalPointerResponse;
+struct SetThreadLocalPointerResponseDefaultTypeInternal;
+extern SetThreadLocalPointerResponseDefaultTypeInternal _SetThreadLocalPointerResponse_default_instance_;
 class SetTlsValueRequest;
 struct SetTlsValueRequestDefaultTypeInternal;
 extern SetTlsValueRequestDefaultTypeInternal _SetTlsValueRequest_default_instance_;
@@ -103,6 +115,8 @@ extern SetTlsValueResponseDefaultTypeInternal _SetTlsValueResponse_default_insta
 PROTOBUF_NAMESPACE_OPEN
 template<> ::mombasa::CallRequest* Arena::CreateMaybeMessage<::mombasa::CallRequest>(Arena*);
 template<> ::mombasa::CallResponse* Arena::CreateMaybeMessage<::mombasa::CallResponse>(Arena*);
+template<> ::mombasa::GetThreadLocalPointerRequest* Arena::CreateMaybeMessage<::mombasa::GetThreadLocalPointerRequest>(Arena*);
+template<> ::mombasa::GetThreadLocalPointerResponse* Arena::CreateMaybeMessage<::mombasa::GetThreadLocalPointerResponse>(Arena*);
 template<> ::mombasa::MemoryAllocateRequest* Arena::CreateMaybeMessage<::mombasa::MemoryAllocateRequest>(Arena*);
 template<> ::mombasa::MemoryAllocateResponse* Arena::CreateMaybeMessage<::mombasa::MemoryAllocateResponse>(Arena*);
 template<> ::mombasa::MemoryFreeRequest* Arena::CreateMaybeMessage<::mombasa::MemoryFreeRequest>(Arena*);
@@ -114,6 +128,8 @@ template<> ::mombasa::MemoryReadRequest* Arena::CreateMaybeMessage<::mombasa::Me
 template<> ::mombasa::MemoryReadResponse* Arena::CreateMaybeMessage<::mombasa::MemoryReadResponse>(Arena*);
 template<> ::mombasa::MemoryWriteRequest* Arena::CreateMaybeMessage<::mombasa::MemoryWriteRequest>(Arena*);
 template<> ::mombasa::MemoryWriteResponse* Arena::CreateMaybeMessage<::mombasa::MemoryWriteResponse>(Arena*);
+template<> ::mombasa::SetThreadLocalPointerRequest* Arena::CreateMaybeMessage<::mombasa::SetThreadLocalPointerRequest>(Arena*);
+template<> ::mombasa::SetThreadLocalPointerResponse* Arena::CreateMaybeMessage<::mombasa::SetThreadLocalPointerResponse>(Arena*);
 template<> ::mombasa::SetTlsValueRequest* Arena::CreateMaybeMessage<::mombasa::SetTlsValueRequest>(Arena*);
 template<> ::mombasa::SetTlsValueResponse* Arena::CreateMaybeMessage<::mombasa::SetTlsValueResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -2474,6 +2490,589 @@ class SetTlsValueResponse final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_mombasa_2eproto;
 };
+// -------------------------------------------------------------------
+
+class SetThreadLocalPointerRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.SetThreadLocalPointerRequest) */ {
+ public:
+  inline SetThreadLocalPointerRequest() : SetThreadLocalPointerRequest(nullptr) {}
+  ~SetThreadLocalPointerRequest() override;
+  explicit constexpr SetThreadLocalPointerRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SetThreadLocalPointerRequest(const SetThreadLocalPointerRequest& from);
+  SetThreadLocalPointerRequest(SetThreadLocalPointerRequest&& from) noexcept
+    : SetThreadLocalPointerRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline SetThreadLocalPointerRequest& operator=(const SetThreadLocalPointerRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SetThreadLocalPointerRequest& operator=(SetThreadLocalPointerRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SetThreadLocalPointerRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SetThreadLocalPointerRequest* internal_default_instance() {
+    return reinterpret_cast<const SetThreadLocalPointerRequest*>(
+               &_SetThreadLocalPointerRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    15;
+
+  friend void swap(SetThreadLocalPointerRequest& a, SetThreadLocalPointerRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SetThreadLocalPointerRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SetThreadLocalPointerRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SetThreadLocalPointerRequest* New() const final {
+    return new SetThreadLocalPointerRequest();
+  }
+
+  SetThreadLocalPointerRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SetThreadLocalPointerRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SetThreadLocalPointerRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const SetThreadLocalPointerRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SetThreadLocalPointerRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.SetThreadLocalPointerRequest";
+  }
+  protected:
+  explicit SetThreadLocalPointerRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kValueFieldNumber = 1,
+  };
+  // fixed64 value = 1;
+  void clear_value();
+  ::PROTOBUF_NAMESPACE_ID::uint64 value() const;
+  void set_value(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_value() const;
+  void _internal_set_value(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.SetThreadLocalPointerRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 value_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SetThreadLocalPointerResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.SetThreadLocalPointerResponse) */ {
+ public:
+  inline SetThreadLocalPointerResponse() : SetThreadLocalPointerResponse(nullptr) {}
+  ~SetThreadLocalPointerResponse() override;
+  explicit constexpr SetThreadLocalPointerResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SetThreadLocalPointerResponse(const SetThreadLocalPointerResponse& from);
+  SetThreadLocalPointerResponse(SetThreadLocalPointerResponse&& from) noexcept
+    : SetThreadLocalPointerResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline SetThreadLocalPointerResponse& operator=(const SetThreadLocalPointerResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SetThreadLocalPointerResponse& operator=(SetThreadLocalPointerResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SetThreadLocalPointerResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SetThreadLocalPointerResponse* internal_default_instance() {
+    return reinterpret_cast<const SetThreadLocalPointerResponse*>(
+               &_SetThreadLocalPointerResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    16;
+
+  friend void swap(SetThreadLocalPointerResponse& a, SetThreadLocalPointerResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SetThreadLocalPointerResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SetThreadLocalPointerResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline SetThreadLocalPointerResponse* New() const final {
+    return new SetThreadLocalPointerResponse();
+  }
+
+  SetThreadLocalPointerResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<SetThreadLocalPointerResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SetThreadLocalPointerResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const SetThreadLocalPointerResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SetThreadLocalPointerResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.SetThreadLocalPointerResponse";
+  }
+  protected:
+  explicit SetThreadLocalPointerResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDurationMicrosecondsFieldNumber = 1,
+  };
+  // uint64 durationMicroseconds = 1;
+  void clear_durationmicroseconds();
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds() const;
+  void set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_durationmicroseconds() const;
+  void _internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.SetThreadLocalPointerResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetThreadLocalPointerRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.GetThreadLocalPointerRequest) */ {
+ public:
+  inline GetThreadLocalPointerRequest() : GetThreadLocalPointerRequest(nullptr) {}
+  ~GetThreadLocalPointerRequest() override;
+  explicit constexpr GetThreadLocalPointerRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetThreadLocalPointerRequest(const GetThreadLocalPointerRequest& from);
+  GetThreadLocalPointerRequest(GetThreadLocalPointerRequest&& from) noexcept
+    : GetThreadLocalPointerRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GetThreadLocalPointerRequest& operator=(const GetThreadLocalPointerRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetThreadLocalPointerRequest& operator=(GetThreadLocalPointerRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetThreadLocalPointerRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetThreadLocalPointerRequest* internal_default_instance() {
+    return reinterpret_cast<const GetThreadLocalPointerRequest*>(
+               &_GetThreadLocalPointerRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(GetThreadLocalPointerRequest& a, GetThreadLocalPointerRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetThreadLocalPointerRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetThreadLocalPointerRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetThreadLocalPointerRequest* New() const final {
+    return new GetThreadLocalPointerRequest();
+  }
+
+  GetThreadLocalPointerRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetThreadLocalPointerRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetThreadLocalPointerRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GetThreadLocalPointerRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetThreadLocalPointerRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.GetThreadLocalPointerRequest";
+  }
+  protected:
+  explicit GetThreadLocalPointerRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kWhyFieldNumber = 1,
+  };
+  // uint64 why = 1;
+  void clear_why();
+  ::PROTOBUF_NAMESPACE_ID::uint64 why() const;
+  void set_why(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_why() const;
+  void _internal_set_why(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.GetThreadLocalPointerRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 why_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetThreadLocalPointerResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:mombasa.GetThreadLocalPointerResponse) */ {
+ public:
+  inline GetThreadLocalPointerResponse() : GetThreadLocalPointerResponse(nullptr) {}
+  ~GetThreadLocalPointerResponse() override;
+  explicit constexpr GetThreadLocalPointerResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetThreadLocalPointerResponse(const GetThreadLocalPointerResponse& from);
+  GetThreadLocalPointerResponse(GetThreadLocalPointerResponse&& from) noexcept
+    : GetThreadLocalPointerResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline GetThreadLocalPointerResponse& operator=(const GetThreadLocalPointerResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetThreadLocalPointerResponse& operator=(GetThreadLocalPointerResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetThreadLocalPointerResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetThreadLocalPointerResponse* internal_default_instance() {
+    return reinterpret_cast<const GetThreadLocalPointerResponse*>(
+               &_GetThreadLocalPointerResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(GetThreadLocalPointerResponse& a, GetThreadLocalPointerResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetThreadLocalPointerResponse* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetThreadLocalPointerResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline GetThreadLocalPointerResponse* New() const final {
+    return new GetThreadLocalPointerResponse();
+  }
+
+  GetThreadLocalPointerResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<GetThreadLocalPointerResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetThreadLocalPointerResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const GetThreadLocalPointerResponse& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetThreadLocalPointerResponse* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "mombasa.GetThreadLocalPointerResponse";
+  }
+  protected:
+  explicit GetThreadLocalPointerResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDurationMicrosecondsFieldNumber = 1,
+    kValueFieldNumber = 2,
+  };
+  // uint64 durationMicroseconds = 1;
+  void clear_durationmicroseconds();
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds() const;
+  void set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_durationmicroseconds() const;
+  void _internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // fixed64 value = 2;
+  void clear_value();
+  ::PROTOBUF_NAMESPACE_ID::uint64 value() const;
+  void set_value(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint64 _internal_value() const;
+  void _internal_set_value(::PROTOBUF_NAMESPACE_ID::uint64 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:mombasa.GetThreadLocalPointerResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 durationmicroseconds_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 value_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_mombasa_2eproto;
+};
 // ===================================================================
 
 
@@ -3260,9 +3859,133 @@ inline void SetTlsValueResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_I
   // @@protoc_insertion_point(field_set:mombasa.SetTlsValueResponse.durationMicroseconds)
 }
 
+// -------------------------------------------------------------------
+
+// SetThreadLocalPointerRequest
+
+// fixed64 value = 1;
+inline void SetThreadLocalPointerRequest::clear_value() {
+  value_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SetThreadLocalPointerRequest::_internal_value() const {
+  return value_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SetThreadLocalPointerRequest::value() const {
+  // @@protoc_insertion_point(field_get:mombasa.SetThreadLocalPointerRequest.value)
+  return _internal_value();
+}
+inline void SetThreadLocalPointerRequest::_internal_set_value(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  value_ = value;
+}
+inline void SetThreadLocalPointerRequest::set_value(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_value(value);
+  // @@protoc_insertion_point(field_set:mombasa.SetThreadLocalPointerRequest.value)
+}
+
+// -------------------------------------------------------------------
+
+// SetThreadLocalPointerResponse
+
+// uint64 durationMicroseconds = 1;
+inline void SetThreadLocalPointerResponse::clear_durationmicroseconds() {
+  durationmicroseconds_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SetThreadLocalPointerResponse::_internal_durationmicroseconds() const {
+  return durationmicroseconds_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 SetThreadLocalPointerResponse::durationmicroseconds() const {
+  // @@protoc_insertion_point(field_get:mombasa.SetThreadLocalPointerResponse.durationMicroseconds)
+  return _internal_durationmicroseconds();
+}
+inline void SetThreadLocalPointerResponse::_internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  durationmicroseconds_ = value;
+}
+inline void SetThreadLocalPointerResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_durationmicroseconds(value);
+  // @@protoc_insertion_point(field_set:mombasa.SetThreadLocalPointerResponse.durationMicroseconds)
+}
+
+// -------------------------------------------------------------------
+
+// GetThreadLocalPointerRequest
+
+// uint64 why = 1;
+inline void GetThreadLocalPointerRequest::clear_why() {
+  why_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerRequest::_internal_why() const {
+  return why_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerRequest::why() const {
+  // @@protoc_insertion_point(field_get:mombasa.GetThreadLocalPointerRequest.why)
+  return _internal_why();
+}
+inline void GetThreadLocalPointerRequest::_internal_set_why(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  why_ = value;
+}
+inline void GetThreadLocalPointerRequest::set_why(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_why(value);
+  // @@protoc_insertion_point(field_set:mombasa.GetThreadLocalPointerRequest.why)
+}
+
+// -------------------------------------------------------------------
+
+// GetThreadLocalPointerResponse
+
+// uint64 durationMicroseconds = 1;
+inline void GetThreadLocalPointerResponse::clear_durationmicroseconds() {
+  durationmicroseconds_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerResponse::_internal_durationmicroseconds() const {
+  return durationmicroseconds_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerResponse::durationmicroseconds() const {
+  // @@protoc_insertion_point(field_get:mombasa.GetThreadLocalPointerResponse.durationMicroseconds)
+  return _internal_durationmicroseconds();
+}
+inline void GetThreadLocalPointerResponse::_internal_set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  durationmicroseconds_ = value;
+}
+inline void GetThreadLocalPointerResponse::set_durationmicroseconds(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_durationmicroseconds(value);
+  // @@protoc_insertion_point(field_set:mombasa.GetThreadLocalPointerResponse.durationMicroseconds)
+}
+
+// fixed64 value = 2;
+inline void GetThreadLocalPointerResponse::clear_value() {
+  value_ = uint64_t{0u};
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerResponse::_internal_value() const {
+  return value_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 GetThreadLocalPointerResponse::value() const {
+  // @@protoc_insertion_point(field_get:mombasa.GetThreadLocalPointerResponse.value)
+  return _internal_value();
+}
+inline void GetThreadLocalPointerResponse::_internal_set_value(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  
+  value_ = value;
+}
+inline void GetThreadLocalPointerResponse::set_value(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _internal_set_value(value);
+  // @@protoc_insertion_point(field_set:mombasa.GetThreadLocalPointerResponse.value)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

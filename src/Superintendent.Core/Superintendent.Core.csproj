@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <VersionPrefix>0.0.3.3</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>local08</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,10 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Net.Client" Version="2.41.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.19.1" />
-    <PackageReference Include="Grpc" Version="2.42.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.42.0">
+    <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.25.1" />
+    <PackageReference Include="Grpc" Version="2.46.6" />
+    <PackageReference Include="Grpc.Tools" Version="2.60.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -25,6 +25,25 @@
     <Content Include="..\Superintendent.Mombasa\x64\bin\$(Configuration)\mombasa.dll">
       <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Modeling.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Modeling.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Modeling.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Modeling.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

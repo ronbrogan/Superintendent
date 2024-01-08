@@ -1,4 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
+#define _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+
+
 #include <chrono>
 #include <thread>
 #include <filesystem>
@@ -88,6 +91,9 @@ __declspec(dllexport) void Initialize()
 
     spdlog::info("mombasa intialize!");
     auto thread = new std::thread(GrpcStartup);
+
+    SetThreadDescription(thread->native_handle(), L"mombasa-worker");
+
     grpcThread = thread;
 }
 
@@ -169,6 +175,14 @@ void HandleRpcs(MombasaBridge::AsyncService* s) {
     new CallData<SetTlsValueRequest, SetTlsValueResponse>(s, cq,
         [s](auto && ...args) { s->RequestSetTlsValue(args...); },
         [i](auto && ...args) { return i->SetTlsValue(args...); });
+
+    new CallData<SetThreadLocalPointerRequest, SetThreadLocalPointerResponse>(s, cq,
+        [s](auto && ...args) { s->RequestSetThreadLocalPointer(args...); },
+        [i](auto && ...args) { return i->SetThreadLocalPointer(args...); });
+
+    new CallData<GetThreadLocalPointerRequest, GetThreadLocalPointerResponse>(s, cq,
+        [s](auto && ...args) { s->RequestGetThreadLocalPointer(args...); },
+        [i](auto && ...args) { return i->GetThreadLocalPointer(args...); });
 
     new PollingStreamCallData<MemoryPollRequest, MemoryReadResponse>(s, cq,
         [s](auto && ...args) { s->RequestPollMemory(args...); },

@@ -1,12 +1,10 @@
 ﻿using Google.Protobuf;
 using Grpc.Core;
 using Mombasa;
-using Superintendent.CommandSink;
 using Superintendent.Core.Native;
 using Superintendent.Core.Remote;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -298,6 +296,31 @@ namespace Superintendent.Core.CommandSink
                 Index = (uint)index,
                 Value = (ulong)value
             });
+        }
+
+        public void SetThreadLocalPointer(nint value)
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
+
+            this.RpcBridge.SetThreadLocalPointer(new SetThreadLocalPointerRequest()
+            {
+                Value = (ulong)value
+            });
+        }
+
+        public nint GetThreadLocalPointer()
+        {
+            this.EnsureRpcBridge();
+
+            var resp = this.RpcBridge.GetThreadLocalPointer(new GetThreadLocalPointerRequest());
+            return (nint)resp.Value;
+        }
+
+        private void EnsureRpcBridge()
+        {
+            if (this.RpcBridge == null)
+                throw new Exception("Process is not attached");
         }
     }
 }

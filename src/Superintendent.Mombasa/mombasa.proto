@@ -14,6 +14,17 @@ service MombasaBridge {
     rpc PollMemory(MemoryPollRequest) returns (stream MemoryReadResponse);
 
     rpc SetTlsValue(SetTlsValueRequest) returns (SetTlsValueResponse);
+
+    rpc SetThreadLocalPointer(SetThreadLocalPointerRequest) returns (SetThreadLocalPointerResponse);
+
+    rpc GetThreadLocalPointer(GetThreadLocalPointerRequest) returns (GetThreadLocalPointerResponse);
+
+    //rpc DxStart() returns (); // install hook and allocate anything
+    //rpc DxEnd() returns (); // remove hook and free things
+    //rpc DxDrawCommandList() returns (); // iterate over some mem and do buffering/drawing
+    //rpc DxCreateShader() returns (); // upload shader source and prepare for use in commands
+    //rpc DxCreateTexture() returns (); // upload texture and prepare for use in commands
+    //rpc DxUseProjectionMatrix() returns (); // specify mem location to read projection matrix from
 }
 
 message CallRequest {
@@ -91,4 +102,21 @@ message SetTlsValueRequest {
 
 message SetTlsValueResponse {
     uint64 durationMicroseconds = 1;
+}
+
+message SetThreadLocalPointerRequest {
+    fixed64 value = 1;
+}
+
+message SetThreadLocalPointerResponse {
+    uint64 durationMicroseconds = 1;
+}
+
+message GetThreadLocalPointerRequest {
+    uint64 why = 1;
+}
+
+message GetThreadLocalPointerResponse {
+    uint64 durationMicroseconds = 1;
+    fixed64 value = 2;
 }

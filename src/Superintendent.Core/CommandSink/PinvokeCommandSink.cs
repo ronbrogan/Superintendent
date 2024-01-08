@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Superintendent.CommandSink
+namespace Superintendent.Core.CommandSink
 {
     public class PinvokeCommandSink : ICommandSink
     {
@@ -190,6 +190,16 @@ namespace Superintendent.CommandSink
                     await Task.Delay((int)intervalMs);
                 }
             });
+        }
+
+        public void SetThreadLocalPointer(nint value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public nint GetThreadLocalPointer()
+        {
+            throw new NotSupportedException();
         }
     }
 }

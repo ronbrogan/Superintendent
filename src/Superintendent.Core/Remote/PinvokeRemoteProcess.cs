@@ -1,4 +1,4 @@
-﻿using Superintendent.CommandSink;
+﻿using Superintendent.Core.CommandSink;
 using Superintendent.Core.Native;
 using System;
 using System.Collections.Generic;
@@ -95,11 +95,11 @@ namespace Superintendent.Core.Remote
         // Implement ICommandSink through 0-offset command sink instance
         public void Write(nint relativeAddress, Span<byte> data) => this.processCommandSink.Write(relativeAddress, data);
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data) => this.processCommandSink.Write(absoluteAddress, data);
+        public void WriteAt(nint absoluteAddress, Span<byte> data) => this.processCommandSink.WriteAt(absoluteAddress, data);
 
         public void Write<T>(nint relativeAddress, T data) where T : unmanaged => this.processCommandSink.Write(relativeAddress, data);
 
-        public void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged => this.processCommandSink.Write(absoluteAddress, data);
+        public void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged => this.processCommandSink.WriteAt(absoluteAddress, data);
 
         public void Read(nint address, Span<byte> data) => this.processCommandSink.Read(address, data);
 
@@ -152,6 +152,16 @@ namespace Superintendent.Core.Remote
         }
 
         public void SetTlsValue(int index, nint value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void SetThreadLocalPointer(nint value)
+        {
+            throw new NotSupportedException();
+        }
+
+        public nint GetThreadLocalPointer()
         {
             throw new NotSupportedException();
         }

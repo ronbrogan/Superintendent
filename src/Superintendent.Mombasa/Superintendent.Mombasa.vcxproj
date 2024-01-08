@@ -123,6 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <MASM Include="function_disaptcher.asm" />
+    <MASM Include="getthreadlocal.asm" />
+    <MASM Include="threadlocal.asm" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Superintendent.Mombasa.rc" />

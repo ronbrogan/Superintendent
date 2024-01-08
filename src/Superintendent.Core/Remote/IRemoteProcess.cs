@@ -1,4 +1,4 @@
-﻿using Superintendent.CommandSink;
+﻿using Superintendent.Core.CommandSink;
 using Superintendent.Core.Native;
 using System;
 using System.Collections.Generic;

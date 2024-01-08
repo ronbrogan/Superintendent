@@ -54,6 +54,12 @@
     <MASM Include="function_disaptcher.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="threadlocal.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="getthreadlocal.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Superintendent.Mombasa.rc">

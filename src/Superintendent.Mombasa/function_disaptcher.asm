@@ -10,10 +10,11 @@ mov rbp, rsp ; set new frame pointer
 .endprolog
 
 ; prepare stack
+and rsp, -16 ; align rsp to 16
 push rsi
 push rbx
 push r8 ; if rax should be replaced with xmm0
-sub rsp, 80h
+sub rsp, 88h ; only need 80h, doing more to make sure we stay aligned to 16 (due to 3 pushes)
 
 mov r10, rcx ; function pointer
 mov rsi, rdx ; arg array, 12 elements
@@ -56,7 +57,7 @@ mov qword ptr [rsp + 58h], rbx
 ; make the call
 call r10
 
-add rsp, 80h
+add rsp, 88h
 pop r8
 
 ; check if we should move float result into return value
@@ -68,6 +69,7 @@ movq rax, xmm0
 done:
 pop rbx
 pop rsi
+mov rsp,rbp
 pop rbp
 
 ret

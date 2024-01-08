@@ -40,6 +40,9 @@ extern "C" {
     uint64 function_dispatcher(void* func, uint64* argv, bool isFloat);
 }
 
+extern "C" void setthreadlocal(uint64 value);
+extern "C" uint64 getthreadlocal();
+
 // Exporting it as a friendly name to easily track down in disassembly, etc
 extern "C" __declspec(dllexport) uint64 FunctionDispatcher(void* func, uint64 * argv, bool isFloat)
 {
@@ -147,11 +150,39 @@ public:
         });
     }
 
+    Status SetThreadLocalPointer(ServerContext* context, const SetThreadLocalPointerRequest* request, SetThreadLocalPointerResponse* reply) override {
+        return Work([&](auto start) {
+            auto val = request->value();
+            spdlog::info("Set ThreadLocalPointer value requested for {0:x}", val);
+            
+            setthreadlocal(val);
+
+            TIMER_STOP;
+        });
+    }
+
+    Status GetThreadLocalPointer(ServerContext* context, const GetThreadLocalPointerRequest* request, GetThreadLocalPointerResponse* reply) override {
+        return Work([&](auto start) {
+
+            spdlog::info("Get ThreadLocalPointer value requested");
+            auto val = getthreadlocal();
+            reply->set_value(val);
+
+            spdlog::info("Get ThreadLocalPointer value requested, val {0:x}", val);
+
+            TIMER_STOP;
+            });
+    }
+
+
+
     Status Work(std::function<void(std::chrono::steady_clock::time_point)> action) {
         std::stringstream ss;
         ss << std::this_thread::get_id();
         unsigned long exception;
-        uint64 exceptionLocation;
+        uint64 data[11];
+        char exceptionMessage[128];
+        data[10] = (uint64) & exceptionMessage;
         grpc::StatusCode statusCode = grpc::StatusCode::OK;
         auto start = high_resolution_clock::now();
 
@@ -159,7 +190,7 @@ public:
             __try {
                 action(start);
             }
-            __except (FilterException(GetExceptionCode(), GetExceptionInformation(), &exceptionLocation)) {
+            __except (FilterException(GetExceptionCode(), GetExceptionInformation(), data)) {
                 statusCode = grpc::StatusCode::ABORTED;
                 exception = GetExceptionCode();
             }
@@ -169,16 +200,44 @@ public:
 
         if (exception != 0)
         {
-            errMessage = fmt::format("Failure during RPC 0x{0:x} at 0x{1:x}", exception, exceptionLocation);
+            errMessage = fmt::format("Failure during RPC 0x{0:x} at 0x{1:x}\r\n RSP:{2:x}\r\n RBP:{3:x}\r\n RAX:{4:x}\r\n RBX:{5:x}\r\n RCX:{6:x}\r\n RDX:{7:x}\r\n R8:{8:x}\r\n R9:{9:x}\r\n LastBranchFrom:{10:x}", exception, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]);
         }
 
         return Status(statusCode, errMessage);
     }
 
-    int FilterException(unsigned long exception, EXCEPTION_POINTERS* exceptionPointers, uint64* outExceptionLocation) {
+    int FilterException(unsigned long exception, EXCEPTION_POINTERS* exceptionPointers, uint64* data) {
         auto loc = (uint64)exceptionPointers->ExceptionRecord->ExceptionAddress;
-        spdlog::error("Failure during RPC 0x{0:x} at 0x{1:x}", exception, loc);
-        *outExceptionLocation = loc;
+
+        auto ctx = exceptionPointers->ContextRecord;
+
+        auto rsp = ctx->Rsp;
+        auto rbp = ctx->Rbp;
+
+        auto rax = ctx->Rax;
+        auto rbx = ctx->Rbx;
+        auto rcx = ctx->Rcx;
+        auto rdx = ctx->Rdx;
+        
+        auto r8 = ctx->R8;
+        auto r9 = ctx->R9;
+        auto lastBranch = ctx->LastBranchFromRip;
+
+        data[0] = loc;
+        data[1] = rsp;
+        data[2] = rbp;
+        data[3] = rax;
+        data[4] = rbx;
+        data[5] = rcx;
+        data[6] = rdx;
+        data[7] = r8;
+        data[8] = r9;
+        data[9] = lastBranch;
+        auto buf = (char*)data[10];
+
+        spdlog::error("Failure during RPC 0x{0:x} at 0x{1:x}\r\n RSP:{2:x}\r\n RBP:{3:x}\r\n RAX:{4:x}\r\n RBX:{5:x}\r\n RCX:{6:x}\r\n RDX:{7:x}\r\n R8:{8:x}\r\n R9:{9:x}\r\n LastBranchFrom:{10:x}", exception, loc, rsp, rbp, rax, rbx, rcx, rdx, r8, r9, lastBranch);
+
+
         return EXCEPTION_EXECUTE_HANDLER;
     }
 };

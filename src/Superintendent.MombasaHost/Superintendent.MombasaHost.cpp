@@ -1,5 +1,6 @@
 // Superintendent.MombasaHost.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+#define _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
 
 #include <iostream>
 #include <string>
@@ -18,6 +19,11 @@ int work2(int a, int b, int c, int d, int e) {
     return 72;
 }
 
+int thrower(int a, int b, int c, int d, int e) {
+    throw std::exception("This is an exception message", 42069);
+}
+
+
 std::string secret = "thisissecretyo";
 
 int main()
@@ -28,6 +34,7 @@ int main()
     std::cout << "Text: " << (void*)secret.c_str() << std::endl;
     std::cout << "Work1: " << (void*)&work1 << std::endl;
     std::cout << "Work2: " << (void*)&work2 << std::endl;
+    std::cout << "Thrower: " << (void*)&thrower << std::endl;
 
     auto mombasa = LoadLibrary(L"mombasa.dll");
 

@@ -1,6 +1,5 @@
 ﻿using Grpc.Net.Client;
 using Mombasa;
-using Superintendent.CommandSink;
 using Superintendent.Core.CommandSink;
 using Superintendent.Core.Native;
 using System;
@@ -35,7 +34,6 @@ namespace Superintendent.Core.Remote
         public IEnumerable<ProcessThread> Threads => this.Process?.Threads.Cast<ProcessThread>() ?? Enumerable.Empty<ProcessThread>();
 
         public IEnumerable<ProcessModule> Modules => this.Process?.Modules.Cast<ProcessModule>() ?? Enumerable.Empty<ProcessModule>();
-
 
         private bool injectedMombasa = false;
 
@@ -247,5 +245,12 @@ namespace Superintendent.Core.Remote
             this.processWatcher?.Dispose();
             this.process?.Dispose();
         }
+
+        public void SetThreadLocalPointer(nint value)
+        {
+            this.processCommandSink?.SetThreadLocalPointer(value);
+        }
+
+        public nint GetThreadLocalPointer() => this.processCommandSink?.GetThreadLocalPointer() ?? 0;
     }
 }

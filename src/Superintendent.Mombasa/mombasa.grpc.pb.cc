@@ -30,6 +30,8 @@ static const char* MombasaBridge_method_names[] = {
   "/mombasa.MombasaBridge/ReadMemory",
   "/mombasa.MombasaBridge/PollMemory",
   "/mombasa.MombasaBridge/SetTlsValue",
+  "/mombasa.MombasaBridge/SetThreadLocalPointer",
+  "/mombasa.MombasaBridge/GetThreadLocalPointer",
 };
 
 std::unique_ptr< MombasaBridge::Stub> MombasaBridge::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -47,6 +49,8 @@ MombasaBridge::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   , rpcmethod_ReadMemory_(MombasaBridge_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_PollMemory_(MombasaBridge_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   , rpcmethod_SetTlsValue_(MombasaBridge_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetThreadLocalPointer_(MombasaBridge_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetThreadLocalPointer_(MombasaBridge_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status MombasaBridge::Stub::CallFunction(::grpc::ClientContext* context, const ::mombasa::CallRequest& request, ::mombasa::CallResponse* response) {
@@ -226,6 +230,52 @@ void MombasaBridge::Stub::async::SetTlsValue(::grpc::ClientContext* context, con
   return result;
 }
 
+::grpc::Status MombasaBridge::Stub::SetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest& request, ::mombasa::SetThreadLocalPointerResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SetThreadLocalPointer_, context, request, response);
+}
+
+void MombasaBridge::Stub::async::SetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SetThreadLocalPointer_, context, request, response, std::move(f));
+}
+
+void MombasaBridge::Stub::async::SetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SetThreadLocalPointer_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::SetThreadLocalPointerResponse>* MombasaBridge::Stub::PrepareAsyncSetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::mombasa::SetThreadLocalPointerResponse, ::mombasa::SetThreadLocalPointerRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SetThreadLocalPointer_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::SetThreadLocalPointerResponse>* MombasaBridge::Stub::AsyncSetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSetThreadLocalPointerRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status MombasaBridge::Stub::GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::mombasa::GetThreadLocalPointerResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetThreadLocalPointer_, context, request, response);
+}
+
+void MombasaBridge::Stub::async::GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetThreadLocalPointer_, context, request, response, std::move(f));
+}
+
+void MombasaBridge::Stub::async::GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetThreadLocalPointer_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>* MombasaBridge::Stub::PrepareAsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::mombasa::GetThreadLocalPointerResponse, ::mombasa::GetThreadLocalPointerRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetThreadLocalPointer_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>* MombasaBridge::Stub::AsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetThreadLocalPointerRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 MombasaBridge::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MombasaBridge_method_names[0],
@@ -307,6 +357,26 @@ MombasaBridge::Service::Service() {
              ::mombasa::SetTlsValueResponse* resp) {
                return service->SetTlsValue(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MombasaBridge_method_names[8],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](MombasaBridge::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::mombasa::SetThreadLocalPointerRequest* req,
+             ::mombasa::SetThreadLocalPointerResponse* resp) {
+               return service->SetThreadLocalPointer(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MombasaBridge_method_names[9],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< MombasaBridge::Service, ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](MombasaBridge::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::mombasa::GetThreadLocalPointerRequest* req,
+             ::mombasa::GetThreadLocalPointerResponse* resp) {
+               return service->GetThreadLocalPointer(ctx, req, resp);
+             }, this)));
 }
 
 MombasaBridge::Service::~Service() {
@@ -362,6 +432,20 @@ MombasaBridge::Service::~Service() {
 }
 
 ::grpc::Status MombasaBridge::Service::SetTlsValue(::grpc::ServerContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status MombasaBridge::Service::SetThreadLocalPointer(::grpc::ServerContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status MombasaBridge::Service::GetThreadLocalPointer(::grpc::ServerContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response) {
   (void) context;
   (void) request;
   (void) response;
