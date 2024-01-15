@@ -172,6 +172,26 @@ void HandleRpcs(MombasaBridge::AsyncService* s) {
         [s](auto && ...args) { s->RequestReadMemory(args...); },
         [i](auto && ...args) { return i->ReadMemory(args...); });
 
+    new CallData<PointerReadRequest, PointerReadResponse>(s, cq,
+        [s](auto && ...args) { s->RequestReadPointer(args...); },
+        [i](auto && ...args) { return i->ReadPointer(args...); });
+
+    new CallData<PointerWriteRequest, PointerWriteResponse>(s, cq,
+        [s](auto && ...args) { s->RequestWritePointer(args...); },
+        [i](auto && ...args) { return i->WritePointer(args...); });
+
+    new CallData<GetWorkerThreadRequest, GetWorkerThreadResponse>(s, cq,
+        [s](auto && ...args) { s->RequestGetWorkerThread(args...); },
+        [i](auto && ...args) { return i->GetWorkerThread(args...); });
+
+    new CallData<PauseAppThreadsRequest, PauseAppThreadsResponse>(s, cq,
+        [s](auto && ...args) { s->RequestPauseAppThreads(args...); },
+        [i](auto && ...args) { return i->PauseAppThreads(args...); });
+
+    new CallData<ResumeAppThreadsRequest, ResumeAppThreadsResponse>(s, cq,
+        [s](auto && ...args) { s->RequestResumeAppThreads(args...); },
+        [i](auto && ...args) { return i->ResumeAppThreads(args...); });
+
     new CallData<SetTlsValueRequest, SetTlsValueResponse>(s, cq,
         [s](auto && ...args) { s->RequestSetTlsValue(args...); },
         [i](auto && ...args) { return i->SetTlsValue(args...); });

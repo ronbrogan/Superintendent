@@ -40,5 +40,7 @@ namespace Superintendent.Core.Remote
         public void Free(nint address, int length = 0, AllocationType freeType = AllocationType.Release);
 
         public void SetTlsValue(int index, nint value);
+        void SuspendAppThreads();
+        void ResumeAppThreads();
     }
 }

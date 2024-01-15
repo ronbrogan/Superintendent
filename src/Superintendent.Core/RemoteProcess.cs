@@ -1,6 +1,7 @@
 ﻿using Superintendent.Core.Remote;
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace Superintendent.Core
 {

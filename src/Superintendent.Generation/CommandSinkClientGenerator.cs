@@ -22,6 +22,8 @@ namespace Superintendent.Generation
         public static DiagnosticDescriptor ParamNamesLength = new DiagnosticDescriptor("SI-1002", "ParamNames must be an equal amount of string literals as parameter type arguments", "ParamNames must be an equal amount of string literals as parameter type arguments", "Usage", DiagnosticSeverity.Error, true);
         public static DiagnosticDescriptor TooManyPointerTypeArgs = new DiagnosticDescriptor("SI-1003", "Pointer references should only have a single type argument", "Pointer references should only have a single type argument", "Usage", DiagnosticSeverity.Error, true);
 
+        
+
         public class GenInfo : IEquatable<GenInfo>
         {
             public GenInfo(TypeDeclarationSyntax typeDecl)
@@ -46,6 +48,7 @@ namespace Superintendent.Generation
                 .Combine(context.CompilationProvider);
 
             context.RegisterSourceOutput(provider, static (c, input) => GenerateOffsetClient(c, input.Right, input.Left));
+
         }
 
         private static void GenerateOffsetClient(SourceProductionContext spc, Compilation comp, TypeDeclarationSyntax decl)
@@ -76,6 +79,7 @@ namespace Superintendent.Generation
                         "Fun" => GenerateFunction(spc, comp, model, prop),
                         "FunVoid" => GenerateFunction(spc, comp, model, prop, typeListContainsReturn: false),
                         "Ptr" => GenerateDataReadWrite(spc, namedType, prop),
+                        "AbsolutePtr" => GenerateDataReadWrite(spc, namedType, prop)
                         _ => Array.Empty<MemberDeclarationSyntax>()
                     });
                 }
@@ -140,7 +144,7 @@ namespace Superintendent.Generation
                         Block());
         }
 
-        private static MemberDeclarationSyntax[] GenerateDataReadWrite(SourceProductionContext spc, INamedTypeSymbol namedType, PropertyDeclarationSyntax prop)
+        private static MemberDeclarationSyntax[]? GenerateDataReadWrite(SourceProductionContext spc, INamedTypeSymbol namedType, PropertyDeclarationSyntax prop)
         {
             if (prop.Type is not GenericNameSyntax propType)
             {
@@ -150,6 +154,7 @@ namespace Superintendent.Generation
             if (propType.TypeArgumentList.Arguments.Count > 1)
             {
                 spc.ReportDiagnostic(Diagnostic.Create(TooManyPointerTypeArgs, prop.GetLocation()));
+                return null;
             }
 
             var dataType = propType.TypeArgumentList.Arguments.First();
@@ -196,7 +201,7 @@ namespace Superintendent.Generation
             return new[] { readMethod, writeMethod };
         }
 
-        private static MemberDeclarationSyntax[] GenerateFunction(SourceProductionContext spc, Compilation compilation, SemanticModel model, PropertyDeclarationSyntax prop, bool typeListContainsReturn = true)
+        private static MemberDeclarationSyntax[]? GenerateFunction(SourceProductionContext spc, Compilation compilation, SemanticModel model, PropertyDeclarationSyntax prop, bool typeListContainsReturn = true)
         {
             var body = new List<StatementSyntax>();
 
@@ -247,11 +252,12 @@ namespace Superintendent.Generation
                         if (paramNames.Length != parameterTypeCount)
                         {
                             spc.ReportDiagnostic(Diagnostic.Create(ParamNamesLength, attr.GetLocation()));
-                            throw new Exception("Inconsistent param names length");
+                            return null;
                         }
                     }
                 }
 
+                var fail = false;
                 for (var i = 0; i < parameterTypeCount; i++)
                 {
                     var targ = typeArgs[i];
@@ -261,9 +267,15 @@ namespace Superintendent.Generation
                     if (!typeSym.IsUnmanagedType)
                     {
                         spc.ReportDiagnostic(Diagnostic.Create(ManagedArgOrRet, targ.GetLocation()));
+                        fail = true;
                     }
 
                     args.Add(Argument(UnsafeAs(paramTypes[i], IdentifierName("nint"), IdentifierName(paramNames[i]))));
+                }
+
+                if(fail)
+                {
+                    return null;
                 }
 
                 if (typeListContainsReturn)

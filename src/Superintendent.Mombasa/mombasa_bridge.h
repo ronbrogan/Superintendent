@@ -20,6 +20,7 @@
 #include <process.h>
 #include <iostream>
 #include <Windows.h>
+#include <tlhelp32.h>
 #include "dbghelp.h"
 
 using grpc::Server;
@@ -113,6 +114,42 @@ public:
         });
     }
 
+    Status ReadPointer(ServerContext* context, const PointerReadRequest* request, PointerReadResponse* reply) override {
+        return Work([&](auto start) {
+            
+            auto address = resolvePointer(request->base(), request->chain(), request->chain_size());
+            reply->set_address(address);
+            spdlog::info("Pointer read requested, reolved to {0:x}", address);
+
+            reply->set_data(std::string((char*)address, request->size()));
+            TIMER_STOP;
+        });
+    }
+
+    Status WritePointer(ServerContext* context, const PointerWriteRequest* request, PointerWriteResponse* reply) override {
+        return Work([&](auto start) {
+            auto address = resolvePointer(request->base(), request->chain(), request->chain_size());
+            reply->set_address(address);
+            spdlog::info("Pointer write requested, reolved to {0:x}", address);
+
+            auto data = request->data();
+            memcpy((char*)address, data.data(), data.length());
+            TIMER_STOP;
+        });
+    }
+
+    uint64 resolvePointer(uint64 base, RepeatedField<uint32> chain, int chainLength)
+    {
+        uint64 address = *(uint64*)base;
+
+        for (int i = 0; i < chainLength; i++)
+        {
+            address = *(uint64*)(address + chain.Get(i));
+        }
+
+        return address;
+    }
+
     Status AllocateMemory(ServerContext* context, const MemoryAllocateRequest* request, MemoryAllocateResponse* reply) override {
         return Work([&](auto start) {
             spdlog::info("Allocate memory requested");
@@ -171,9 +208,97 @@ public:
             spdlog::info("Get ThreadLocalPointer value requested, val {0:x}", val);
 
             TIMER_STOP;
-            });
+        });
     }
 
+
+    Status GetWorkerThread(ServerContext* context, const GetWorkerThreadRequest* request, GetWorkerThreadResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("GetWorkerThread requested");
+            auto me = GetCurrentThreadId();
+            reply->set_threadid(me);
+
+            TIMER_STOP;
+        });
+    }
+
+    Status PauseAppThreads(ServerContext* context, const PauseAppThreadsRequest* request, PauseAppThreadsResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("Pausing app threads");
+
+            SetThreadsExec(false, reply->mutable_threadsuspendcounts());
+            
+            TIMER_STOP;
+        });
+    }
+
+    Status ResumeAppThreads(ServerContext* context, const ResumeAppThreadsRequest* request, ResumeAppThreadsResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("Resuming app threads");
+
+            SetThreadsExec(true, reply->mutable_threadsuspendcounts());
+
+            TIMER_STOP;
+        });
+    }
+
+    bool SetThreadsExec(bool run, Map<uint64, uint32>* map)
+    {
+        auto action = run ? "resuming" : "pausing";
+
+        auto me = GetCurrentThreadId();
+        auto proc = GetCurrentProcessId();
+
+        auto threadSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, proc);
+        if (threadSnapshot == INVALID_HANDLE_VALUE)
+        {
+            spdlog::error("Couldn't create snapshot when {0} app threads", action);
+            return false;
+        }
+
+        THREADENTRY32 thread;
+        thread.dwSize = sizeof(THREADENTRY32);
+
+        if (!Thread32First(threadSnapshot, &thread))
+        {
+            spdlog::error("Couldn't enumerate thread snapshot when {0} app threads", action);
+            CloseHandle(threadSnapshot);
+            return false;
+        }
+
+        do
+        {
+            // sanity check
+            if (thread.th32OwnerProcessID != proc)
+                continue;
+
+            // Don't manip ourselves :)
+            if (thread.th32ThreadID == me)
+                continue;
+
+            auto thandle = OpenThread(THREAD_SUSPEND_RESUME, false, thread.th32ThreadID);
+            
+            // couldn't open handle
+            if (thandle == INVALID_HANDLE_VALUE || thandle == NULL)
+                continue;
+
+            DWORD prev;
+
+            if (run)
+            {
+                prev = ResumeThread(thandle);
+            }
+            else
+            {
+                prev = SuspendThread(thandle);
+            }
+
+            CloseHandle(thandle);
+
+            (*map)[(uint32)thread.th32ThreadID] = prev;
+
+        } while (Thread32Next(threadSnapshot, &thread));
+    }
 
 
     Status Work(std::function<void(std::chrono::steady_clock::time_point)> action) {

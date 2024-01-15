@@ -1,11 +1,13 @@
 ﻿
 using Grpc.Net.Client;
 using Mombasa;
+using Superintendent.Core;
 using Superintendent.Core.Remote;
 using System.Text;
 
 public class Program
 {
+
     public static async Task Main(string[] args)
     {
         var channel = GrpcChannel.ForAddress("http://127.0.0.1:50051");

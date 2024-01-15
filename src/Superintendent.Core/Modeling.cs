@@ -28,11 +28,13 @@ namespace Superintendent.Core
     {
         public readonly ICommandSink CommandSink;
         public readonly TOffsets Offsets;
+        public IAllocator? Allocator { get; set; }
 
-        protected CommandSinkClient(ICommandSink sink, TOffsets offsets)
+        protected CommandSinkClient(ICommandSink sink, TOffsets offsets, IAllocator? allocator = null)
         {
             this.CommandSink = sink;
             this.Offsets = offsets;
+            this.Allocator = allocator;
         }
     }
 
@@ -50,6 +52,7 @@ namespace Superintendent.Core
         public static implicit operator Fun(nint address) => new(address);
     }
 
+    [AttributeUsage(AttributeTargets.Method)]
     public class ParamNamesAttribute : Attribute
     {
         private readonly string[] names;
@@ -59,6 +62,15 @@ namespace Superintendent.Core
             this.names = names;
         }
     }
+
+    ///<summary>Used in Fun<T> args to indicate how to encode the string. Generated function will accept System.String</summary>
+    public class Utf8String { }
+
+    ///<summary>Used in Fun<T> args to indicate how to encode the string. Generated function will accept System.String</summary>
+    public class AsciiString { }
+
+    ///<summary>Used in Fun<T> args to indicate how to encode the string. Generated function will accept System.String</summary>
+    public class Utf16String { }
 
     public class Fun<TRet> : Fun 
     {
@@ -159,27 +171,31 @@ namespace Superintendent.Core
         public static implicit operator nint(FunVoid<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7> fun) => fun.Address;
     }
 
+    ///<summary>An absolute pointer to a value.</summary>
+    public struct AbsolutePtr<T> where T: unmanaged
+    {
+        public nint Address { get; set; }
+        public nint[]? Chain { get; set; }
 
+        public AbsolutePtr(nint address, nint[]? chain)
+        {
+            this.Address = address;
+            this.Chain = chain;
+        }
+
+        public Ptr<T> AsPtr() => new Ptr<T>(this.Address, this.Chain);
+    }
+    
+    ///<summary>A relative (to a module offset) pointer to a value.</summary>
     public struct Ptr<T> where T : unmanaged
     {
-        public T Value { get; set; }
+        public nint Base { get; set; }
+        public nint[]? Chain { get; set; }
 
-        public Ptr(T value)
+        public Ptr(nint baseOffset, nint[]? chain)
         {
-            this.Value = value;
-        }
-
-        public static Ptr<T> From(T value)
-        {
-            return new Ptr<T>(value);
-        }
-
-        public static implicit operator nint(Ptr<T> ptr)
-        {
-            if (ptr is Ptr<nint> nintPtr)
-                return nintPtr.Value;
-
-            return 0;
+            this.Base = baseOffset;
+            this.Chain = chain;
         }
     }
 }

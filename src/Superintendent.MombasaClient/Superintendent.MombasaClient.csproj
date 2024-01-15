@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Superintendent.Core\Superintendent.Core.csproj" />
+	  <ProjectReference Include="..\Superintendent.Core\Superintendent.Core.csproj" />
+	  <ProjectReference Include="..\Superintendent.Generation\Superintendent.Generation.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
 
 </Project>

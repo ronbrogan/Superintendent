@@ -1,9 +1,5 @@
-﻿using Superintendent.CommandSink;
+﻿using Superintendent.Core.CommandSink;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Superintendent.Hooking
 {
@@ -22,9 +18,9 @@ namespace Superintendent.Hooking
 
             if(JitAccess.MethodBodies.TryGetValue(method.Method.MethodHandle.Value, out var location))
             {
-                var bytes = new Span<byte>((void*)location.Item1, location.Item2);
+                var bytes = new ReadOnlySpan<byte>((void*)location.Item1, location.Item2);
 
-                commandSink.WriteAt(address, bytes);
+                commandSink.WriteSpanAt(address, bytes);
             }
         }
     }

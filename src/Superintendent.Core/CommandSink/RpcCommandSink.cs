@@ -6,6 +6,7 @@ using Superintendent.Core.Remote;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,104 +30,219 @@ namespace Superintendent.Core.CommandSink
 
         public nint GetAbsoluteAddress(nint offset) => this.BaseOffset + offset;
 
-        public void Write(nint relativeAddress, Span<byte> data)
+#region Address Read/Write
+
+        public unsafe void Read<T>(nint relativeAddress, out T data) where T : unmanaged
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
-
-            var timer = Stopwatch.StartNew();
-            var resp = this.RpcBridge.WriteMemory(new MemoryWriteRequest
-            {
-                Address = (ulong)(this.BaseOffset + relativeAddress),
-                Data = ByteString.CopyFrom(data)
-            });
-
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Write)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Write)}_Server", resp.DurationMicroseconds);
+            data = default;
+            this.ReadSpan(relativeAddress, MemoryMarshal.CreateSpan(ref data, 1));
         }
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data)
+        public unsafe void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            data = default;
+            this.ReadSpanAt(absoluteAddress, MemoryMarshal.CreateSpan(ref data, 1));
+        }
+
+        public unsafe void Write<T>(nint relativeAddress, T data) where T : unmanaged
+        {
+            this.WriteSpan(relativeAddress, MemoryMarshal.CreateReadOnlySpan(ref data, 1));
+        }
+
+        public unsafe void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged
+        {
+            this.WriteSpanAt(absoluteAddress, MemoryMarshal.CreateReadOnlySpan(ref data, 1));
+        }
+
+        public void ReadSpan<T>(nint relativeAddress, Span<T> data) where T : unmanaged
+        {
+            this.ReadSpanAt(this.BaseOffset + relativeAddress, data);
+        }
+
+        public void WriteSpan<T>(nint relativeAddress, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.WriteSpanAt(this.BaseOffset + relativeAddress, data);
+        }
+
+        public void ReadSpanAt<T>(nint address, Span<T> data) where T : unmanaged
+        {
+            this.EnsureRpcBridge();
+
+            var dataBytes = MemoryMarshal.AsBytes(data);
+
+            var timer = Stopwatch.StartNew();
+            var resp = this.RpcBridge.ReadMemory(new MemoryReadRequest
+            {
+                Address = (ulong)address,
+                Count = (uint)dataBytes.Length
+            });
+
+            resp.Data.Memory.Span.CopyTo(dataBytes);
+
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Server", resp.DurationMicroseconds);
+        }
+
+        public void WriteSpanAt<T>(nint absoluteAddress, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.EnsureRpcBridge();
+
+            var dataBytes = MemoryMarshal.AsBytes(data);
 
             var timer = Stopwatch.StartNew();
             var resp = this.RpcBridge.WriteMemory(new MemoryWriteRequest
             {
                 Address = (ulong)absoluteAddress,
-                Data = ByteString.CopyFrom(data)
+                Data = ByteString.CopyFrom(dataBytes)
             });
 
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(WriteAt)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
             Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(WriteAt)}_Server", resp.DurationMicroseconds);
         }
 
-        public unsafe void Write<T>(nint relativeAddress, T data) where T : unmanaged
+
+#endregion
+
+#region Pointer Read/Write
+
+        public unsafe void ReadPointer<T>(Ptr<T> relativePointer, out T data) where T : unmanaged
         {
-            var bytes = new Span<byte>(&data, sizeof(T));
-            this.Write(relativeAddress, bytes);
+            data = default;
+            var dataBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref data, 1));
+            ReadPointerBytes(relativePointer, dataBytes, addBaseOffset: true);
         }
 
-        public unsafe void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged
+        public void ReadPointerSpan<T>(Ptr<T> relativePointer, Span<T> data) where T : unmanaged
         {
-            var bytes = new Span<byte>(&data, sizeof(T));
-            this.WriteAt(absoluteAddress, bytes);
+            var dataBytes = MemoryMarshal.AsBytes(data);
+            ReadPointerBytes(relativePointer, dataBytes, addBaseOffset: true);
         }
 
-        public void Read(nint address, Span<byte> data)
+        public void ReadAbsolutePointer<T>(Ptr<T> absolutePointer, out T data) where T : unmanaged
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            data = default;
+            var dataBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref data, 1));
+            ReadPointerBytes(absolutePointer, dataBytes);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(Ptr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            var dataBytes = MemoryMarshal.AsBytes(data);
+            ReadPointerBytes(absolutePointer, dataBytes);
+        }
+
+        public void WritePointer<T>(Ptr<T> relativePointer, T data) where T : unmanaged
+        {
+            var dataBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref data, 1));
+            WritePointerBytes(relativePointer, dataBytes, addBaseOffset: true);
+        }
+
+        public void WritePointerSpan<T>(Ptr<T> relativePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            var dataBytes = MemoryMarshal.AsBytes(data);
+            WritePointerBytes(relativePointer, dataBytes, addBaseOffset: true);
+        }
+
+        public void WriteAbsolutePointer<T>(Ptr<T> absolutePointer, T data) where T : unmanaged
+        {
+            var dataBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref data, 1));
+            WritePointerBytes(absolutePointer, dataBytes);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(Ptr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            var dataBytes = MemoryMarshal.AsBytes(data);
+            WritePointerBytes(absolutePointer, dataBytes);
+        }
+
+        public void ReadPointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            this.ReadAbsolutePointer(absolutePointer.AsPtr(), out data);
+        }
+
+        public void ReadPointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            this.ReadAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void ReadAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            this.ReadAbsolutePointer(absolutePointer.AsPtr(), out data);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            this.ReadAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void WritePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            this.WriteAbsolutePointer(absolutePointer.AsPtr(), data);
+        }
+
+        public void WritePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.WriteAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void WriteAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            this.WriteAbsolutePointer(absolutePointer.AsPtr(), data);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.WriteAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        private void ReadPointerBytes<T>(Ptr<T> pointer, Span<byte> output, bool addBaseOffset = false) where T : unmanaged
+        {
+            this.EnsureRpcBridge();
+
+            var req = new PointerReadRequest()
+            {
+                Size = (uint)output.Length,
+                Base = (ulong)(pointer.Base + (addBaseOffset ? this.BaseOffset : 0)),
+            };
+
+            foreach (var link in pointer.Chain)
+            {
+                req.Chain.Add((uint)link);
+            }
 
             var timer = Stopwatch.StartNew();
-            var resp = this.RpcBridge.ReadMemory(new MemoryReadRequest
+            var resp = this.RpcBridge.ReadPointer(req);
+            resp.Data.Memory.Span.CopyTo(output);
+
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadPointerBytes)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadPointerBytes)}_Server", resp.DurationMicroseconds);
+        }
+
+        private void WritePointerBytes<T>(Ptr<T> pointer, ReadOnlySpan<byte> input, bool addBaseOffset = false) where T : unmanaged
+        {
+            this.EnsureRpcBridge();
+
+            var req = new PointerWriteRequest()
             {
-                Address = (ulong)(this.BaseOffset + address),
-                Count = (uint)data.Length
-            });
+                Base = (ulong)(pointer.Base + (addBaseOffset ? this.BaseOffset : 0)),
+                Data = ByteString.CopyFrom(input)
+            };
 
-            resp.Data.Memory.Span.CopyTo(data);
-
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Read)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(Read)}_Server", resp.DurationMicroseconds);
-        }
-
-        public void Read(Ptr<nint> ptrToaddress, Span<byte> data)
-        {
-            this.Read(ptrToaddress.Value, data);
-        }
-
-        public void ReadAt(nint address, Span<byte> data)
-        {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            foreach (var link in pointer.Chain)
+            {
+                req.Chain.Add((uint)link);
+            }
 
             var timer = Stopwatch.StartNew();
-            var resp = this.RpcBridge.ReadMemory(new MemoryReadRequest
-            {
-                Address = (ulong)address,
-                Count = (uint)data.Length
-            });
+            var resp = this.RpcBridge.WritePointer(req);
 
-            resp.Data.Memory.Span.CopyTo(data);
-
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
-            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(ReadAt)}_Server", resp.DurationMicroseconds);
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(WritePointerBytes)}_Client", (ulong)(timer.Elapsed.TotalMilliseconds * 1000));
+            Tracer.Instance.TraceMicroseconds($"Rpc_{nameof(WritePointerBytes)}_Server", resp.DurationMicroseconds);
         }
 
-        public unsafe void Read<T>(nint relativeAddress, out T data) where T : unmanaged
-        {
-            Unsafe.SkipInit(out data);
-            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
-            this.Read(relativeAddress, bytes);
-        }
+        #endregion
 
-        public unsafe void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged
-        {
-            Unsafe.SkipInit(out data);
-            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
-            this.ReadAt(absoluteAddress, bytes);
-        }
+#region Polling
 
         public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
         {
@@ -221,18 +337,14 @@ namespace Superintendent.Core.CommandSink
             }
         }
 
-        public void SetProtection(nint address, MemoryProtection desiredProtection)
-        {
-            throw new NotImplementedException();
-        }
+#endregion
 
         public (bool, T) CallFunction<T>(nint functionPointerOffset, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
             => CallFunctionAt<T>(this.BaseOffset + functionPointerOffset, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
 
         public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            this.EnsureRpcBridge();
 
             var timer = Stopwatch.StartNew();
 
@@ -288,8 +400,7 @@ namespace Superintendent.Core.CommandSink
 
         public void SetTlsValue(int index, nint value)
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            this.EnsureRpcBridge();
 
             this.RpcBridge.SetTlsValue(new SetTlsValueRequest()
             {
@@ -300,8 +411,7 @@ namespace Superintendent.Core.CommandSink
 
         public void SetThreadLocalPointer(nint value)
         {
-            if (this.RpcBridge == null)
-                throw new Exception("Process is not attached");
+            this.EnsureRpcBridge();
 
             this.RpcBridge.SetThreadLocalPointer(new SetThreadLocalPointerRequest()
             {

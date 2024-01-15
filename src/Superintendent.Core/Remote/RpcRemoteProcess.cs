@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core.Interceptors;
+using Grpc.Net.Client;
 using Mombasa;
 using Superintendent.Core.CommandSink;
 using Superintendent.Core.Native;
@@ -52,7 +53,7 @@ namespace Superintendent.Core.Remote
             processWatcher = new ProcessWatcher(processNames);
             processWatcher.Run(
                 p => {
-                    if(attachGuard?.Invoke(p) ?? true)
+                    if (attachGuard?.Invoke(p) ?? true)
                     {
                         process = p;
                         processCommandSink = this.GetCommandSink();
@@ -64,7 +65,7 @@ namespace Superintendent.Core.Remote
                     return false;
                 },
                 () => DetachFromProcess(),
-                (i,e) => HandleAttachFailure(i,e));
+                (i, e) => HandleAttachFailure(i, e));
         }
 
         public void AttachToProcess(Process proc)
@@ -93,7 +94,7 @@ namespace Superintendent.Core.Remote
 
         public void EjectMombasa()
         {
-            if(this.process != null)
+            if (this.process != null)
                 Win32.EjectModule(this.process.Id, MombasaPath);
         }
 
@@ -191,19 +192,39 @@ namespace Superintendent.Core.Remote
             });
         }
 
-        public void Write(nint relativeAddress, Span<byte> data) => processCommandSink?.Write(relativeAddress, data);
+        public void SuspendAppThreads()
+        {
+            if (this.Bridge == null)
+                throw new Exception("Process is not attached");
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data) => processCommandSink?.WriteAt(absoluteAddress, data);
+            var resp = this.Bridge.PauseAppThreads(new PauseAppThreadsRequest());
+
+            var suspendCounts = string.Join(", ", resp.ThreadSuspendCounts.Select(kv => $"TID:{kv.Key} ({kv.Value})"));
+            Logger.LogInformation($"ThreadSuspend complete, suspend counts before op: {suspendCounts}");
+        }
+
+        public void ResumeAppThreads()
+        {
+            if (this.Bridge == null)
+                throw new Exception("Process is not attached");
+
+            var resp = this.Bridge.ResumeAppThreads(new ResumeAppThreadsRequest());
+
+            var suspendCounts = string.Join(", ", resp.ThreadSuspendCounts.Select(kv => $"TID:{kv.Key} ({kv.Value})"));
+            Logger.LogInformation($"ThreadResume complete, suspend counts before op: {suspendCounts}");
+        }
+
+        public void WriteSpan<T>(nint relativeAddress, ReadOnlySpan<T> data) where T : unmanaged => processCommandSink?.WriteSpan<T>(relativeAddress, data);
+
+        public void WriteSpanAt<T>(nint absoluteAddress, ReadOnlySpan<T> data) where T : unmanaged => processCommandSink?.WriteSpanAt<T>(absoluteAddress, data);
 
         public void Write<T>(nint relativeAddress, T data) where T : unmanaged => processCommandSink?.Write(relativeAddress, data);
 
         public void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged => processCommandSink?.WriteAt(absoluteAddress, data);
 
-        public void Read(nint address, Span<byte> data) => processCommandSink?.Read(address, data);
+        public void ReadSpan<T>(nint address, Span<T> data) where T : unmanaged => processCommandSink?.ReadSpan<T>(address, data);
 
-        public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => processCommandSink?.Read(ptrToaddress, data);
-
-        public void ReadAt(nint address, Span<byte> data) => processCommandSink?.ReadAt(address, data);
+        public void ReadSpanAt<T>(nint address, Span<T> data) where T : unmanaged => processCommandSink?.ReadSpanAt<T>(address, data);
 
         public void Read<T>(nint address, out T data) where T : unmanaged { data = default; processCommandSink?.Read(address, out data); }
 
@@ -211,7 +232,7 @@ namespace Superintendent.Core.Remote
 
         public nint GetBaseOffset() => processCommandSink?.GetBaseOffset() ?? -1;
 
-        public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T: unmanaged
+        public (bool, T) CallFunctionAt<T>(nint functionPointer, nint? arg1 = null, nint? arg2 = null, nint? arg3 = null, nint? arg4 = null, nint? arg5 = null, nint? arg6 = null, nint? arg7 = null, nint? arg8 = null, nint? arg9 = null, nint? arg10 = null, nint? arg11 = null, nint? arg12 = null) where T : unmanaged
         {
             if (processCommandSink == null) return (false, default(T));
 
@@ -252,5 +273,37 @@ namespace Superintendent.Core.Remote
         }
 
         public nint GetThreadLocalPointer() => this.processCommandSink?.GetThreadLocalPointer() ?? 0;
+
+        public void ReadPointer<T>(Ptr<T> relativePointer, out T data) where T : unmanaged { data = default; this.processCommandSink?.ReadPointer(relativePointer, out data); }
+
+        public void ReadPointerSpan<T>(Ptr<T> relativePointer, Span<T> data) where T : unmanaged { data = default; this.processCommandSink?.ReadPointerSpan(relativePointer, data); }
+
+        public void ReadAbsolutePointer<T>(Ptr<T> absolutePointer, out T data) where T : unmanaged { data = default; this.processCommandSink?.ReadAbsolutePointer(absolutePointer, out data); }
+
+        public void ReadAbsolutePointerSpan<T>(Ptr<T> absolutePointer, Span<T> data) where T : unmanaged { data = default; this.processCommandSink?.ReadAbsolutePointerSpan(absolutePointer, data); }
+
+        public void WritePointer<T>(Ptr<T> relativePointer, T data) where T : unmanaged => this.processCommandSink?.WritePointer(relativePointer, data);
+
+        public void WritePointerSpan<T>(Ptr<T> relativePointer, ReadOnlySpan<T> data) where T : unmanaged => this.processCommandSink?.WritePointerSpan(relativePointer, data);
+
+        public void WriteAbsolutePointer<T>(Ptr<T> absolutePointer, T data) where T : unmanaged => this.processCommandSink?.WriteAbsolutePointer(absolutePointer, data);
+
+        public void WriteAbsolutePointerSpan<T>(Ptr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged => this.processCommandSink?.WriteAbsolutePointerSpan(absolutePointer, data);
+
+        public void ReadPointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged { data = default; this.processCommandSink?.ReadPointer(absolutePointer, out data); }
+
+        public void ReadPointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged => this.processCommandSink?.ReadPointerSpan(absolutePointer, data);
+
+        public void ReadAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged { data = default; this.processCommandSink?.ReadAbsolutePointer(absolutePointer, out data); }
+
+        public void ReadAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged => this.processCommandSink?.ReadAbsolutePointerSpan(absolutePointer, data);
+
+        public void WritePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged => this.processCommandSink?.WritePointer(absolutePointer, data);
+
+        public void WritePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged => this.processCommandSink?.WritePointerSpan(absolutePointer, data);
+
+        public void WriteAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged => this.processCommandSink?.WriteAbsolutePointer(absolutePointer, data);
+
+        public void WriteAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged => this.processCommandSink?.WriteAbsolutePointerSpan(absolutePointer, data);
     }
 }

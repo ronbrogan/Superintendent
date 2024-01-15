@@ -93,21 +93,19 @@ namespace Superintendent.Core.Remote
         }
 
         // Implement ICommandSink through 0-offset command sink instance
-        public void Write(nint relativeAddress, Span<byte> data) => this.processCommandSink.Write(relativeAddress, data);
+        public void WriteSpan<T>(nint relativeAddress, ReadOnlySpan<T> data) where T: unmanaged => this.processCommandSink.WriteSpan<T>(relativeAddress, data);
 
-        public void WriteAt(nint absoluteAddress, Span<byte> data) => this.processCommandSink.WriteAt(absoluteAddress, data);
+        public void WriteSpanAt<T>(nint absoluteAddress, ReadOnlySpan<T> data) where T : unmanaged => this.processCommandSink.WriteSpanAt<T>(absoluteAddress, data);
 
         public void Write<T>(nint relativeAddress, T data) where T : unmanaged => this.processCommandSink.Write(relativeAddress, data);
 
         public void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged => this.processCommandSink.WriteAt(absoluteAddress, data);
 
-        public void Read(nint address, Span<byte> data) => this.processCommandSink.Read(address, data);
-
-        public void Read(Ptr<nint> ptrToaddress, Span<byte> data) => this.processCommandSink.Read(ptrToaddress, data);
+        public void ReadSpan<T>(nint address, Span<T> data) where T : unmanaged => this.processCommandSink.ReadSpan<T>(address, data);
 
         public void Read<T>(nint relativeAddress, out T data) where T : unmanaged => this.processCommandSink.Read(relativeAddress, out data);
         
-        public void ReadAt(nint address, Span<byte> data) => this.processCommandSink.ReadAt(address, data);
+        public void ReadSpanAt<T>(nint address, Span<T> data) where T : unmanaged => this.processCommandSink.ReadSpanAt<T>(address, data);
 
         public void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged => this.processCommandSink.ReadAt(absoluteAddress, out data);
 
@@ -177,5 +175,110 @@ namespace Superintendent.Core.Remote
 
         public Task PollMemoryAt<T>(nint absoluteAddress, uint intervalMs, Action<T> callback, CancellationToken token = default) where T : unmanaged
             => this.processCommandSink.PollMemoryAt<T>(absoluteAddress, intervalMs, callback, token);
+
+
+        public void ReadPointer<T>(Ptr<T> relativePointer, out T data) where T : unmanaged
+        {
+            this.processCommandSink.ReadPointer<T>(relativePointer, out data);
+        }
+
+        public void ReadPointerSpan<T>(Ptr<T> relativePointer, Span<T> data) where T : unmanaged
+        {
+            this.processCommandSink.ReadPointerSpan<T>(relativePointer, data);
+        }
+
+        public void ReadAbsolutePointer<T>(Ptr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            this.processCommandSink.ReadAbsolutePointer<T>(absolutePointer, out data);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(Ptr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            this.processCommandSink.ReadAbsolutePointerSpan<T>(absolutePointer, data);
+        }
+
+        public void WritePointer<T>(Ptr<T> relativePointer, T data) where T : unmanaged
+        {
+            this.processCommandSink.WritePointer<T>(relativePointer, data);
+        }
+
+        public void WritePointerSpan<T>(Ptr<T> relativePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.processCommandSink.WritePointerSpan<T>(relativePointer, data);
+        }
+
+        public void WriteAbsolutePointer<T>(Ptr<T> absolutePointer, T data) where T : unmanaged
+        {
+            this.processCommandSink.WriteAbsolutePointer<T>(absolutePointer, data);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(Ptr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.processCommandSink.WriteAbsolutePointerSpan<T>(absolutePointer, data);
+        }
+
+        public void ReadPointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            processCommandSink.ReadPointer(absolutePointer, out data);
+        }
+
+        public void ReadPointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            processCommandSink.ReadPointerSpan(absolutePointer, data);
+        }
+
+        public void ReadAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            processCommandSink.ReadAbsolutePointer(absolutePointer, out data);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            processCommandSink.ReadAbsolutePointerSpan(absolutePointer, data);
+        }
+
+        public void WritePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            processCommandSink.WritePointer(absolutePointer, data);
+        }
+
+        public void WritePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            processCommandSink.WritePointerSpan(absolutePointer, data);
+        }
+
+        public void WriteAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            processCommandSink.WriteAbsolutePointer(absolutePointer, data);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            processCommandSink.WriteAbsolutePointerSpan(absolutePointer, data);
+        }
+
+        public void SuspendAppThreads()
+        {
+            foreach(var thread in this.Threads)
+            {
+                var thandle = Win32.OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
+
+                Win32.SuspendThread(thandle);
+
+                Win32.CloseHandle(thandle);
+            }
+        }
+
+        public void ResumeAppThreads()
+        {
+            foreach (var thread in this.Threads)
+            {
+                var thandle = Win32.OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)thread.Id);
+
+                Win32.ResumeThread(thandle);
+
+                Win32.CloseHandle(thandle);
+            }
+        }
     }
 }

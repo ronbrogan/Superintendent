@@ -25,60 +25,46 @@ namespace Superintendent.Core.CommandSink
 
         public nint GetAbsoluteAddress(nint offset) => this.baseOffset + offset;
 
-        public unsafe void Read(nint address, Span<byte> data)
+        public unsafe void ReadSpan<T>(nint relativeAddress, Span<T> data) where T : unmanaged
         {
-            fixed (byte* b = &MemoryMarshal.GetReference(data))
+            fixed (T* b = &MemoryMarshal.GetReference(data))
             {
-                Read(this.baseOffset + address, b, data.Length);
+                Read(this.baseOffset + relativeAddress, (byte*)b, data.Length * sizeof(T));
             }
         }
 
-        public unsafe void Read(Ptr<nint> pointerToAddress, Span<byte> data)
+        public unsafe void ReadSpanAt<T>(nint absoluteAddress, Span<T> data) where T : unmanaged
         {
-            byte* ptrVal = stackalloc byte[8];
-
-            Read(this.baseOffset + pointerToAddress, ptrVal, 8);
-
-            fixed (byte* b = &MemoryMarshal.GetReference(data))
+            fixed (T* b = &MemoryMarshal.GetReference(data))
             {
-                Read(*(nint*)ptrVal, b, data.Length);
+                Read(absoluteAddress, (byte*)b, data.Length * sizeof(T));
             }
         }
 
-        public unsafe void ReadAt(nint address, Span<byte> data)
+        public unsafe void WriteSpan<T>(nint relativeAddress, ReadOnlySpan<T> data) where T : unmanaged
         {
-            fixed (byte* b = &MemoryMarshal.GetReference(data))
+            fixed (T* b = &MemoryMarshal.GetReference(data))
             {
-                Read(address, b, data.Length);
+                Write(this.baseOffset + relativeAddress, (byte*)b, data.Length * sizeof(T));
             }
         }
 
-        public unsafe void Write(nint relativeAddress, Span<byte> data)
+        public unsafe void WriteSpanAt<T>(nint absoluteAddress, ReadOnlySpan<T> data) where T : unmanaged
         {
-            fixed (byte* b = &MemoryMarshal.GetReference(data))
+            fixed (T* b = &MemoryMarshal.GetReference(data))
             {
-                Write(this.baseOffset + relativeAddress, b, data.Length);
-            }
-        }
-
-        public unsafe void WriteAt(nint absoluteAddress, Span<byte> data)
-        {
-            fixed (byte* b = &MemoryMarshal.GetReference(data))
-            {
-                Write(absoluteAddress, b, data.Length);
+                Write(absoluteAddress, (byte*)b, data.Length * sizeof(T));
             }
         }
 
         public unsafe void Write<T>(nint relativeAddress, T data) where T : unmanaged
         {
-            var bytes = new Span<byte>(&data, sizeof(T));
-            this.Write(relativeAddress, bytes);
+            this.Write(this.baseOffset + relativeAddress, (byte*)&data, sizeof(T));
         }
 
         public unsafe void WriteAt<T>(nint absoluteAddress, T data) where T : unmanaged
         {
-            var bytes = new Span<byte>(&data, sizeof(T));
-            this.WriteAt(absoluteAddress, bytes);
+            this.Write(absoluteAddress, (byte*)&data, sizeof(T));
         }
 
         private unsafe void Read(nint address, byte* destination, int length)
@@ -97,15 +83,13 @@ namespace Superintendent.Core.CommandSink
         public unsafe void Read<T>(nint relativeAddress, out T data) where T : unmanaged
         {
             Unsafe.SkipInit(out data);
-            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
-            this.Read(relativeAddress, bytes);
+            this.Read(this.baseOffset + relativeAddress, (byte*)Unsafe.AsPointer(ref data), sizeof(T));
         }
 
         public unsafe void ReadAt<T>(nint absoluteAddress, out T data) where T : unmanaged
         {
             Unsafe.SkipInit(out data);
-            var bytes = new Span<byte>(Unsafe.AsPointer(ref data), sizeof(T));
-            this.ReadAt(absoluteAddress, bytes);
+            this.Read(absoluteAddress, (byte*)Unsafe.AsPointer(ref data), sizeof(T));
         }
 
         private unsafe void Write(nint address, byte* source, int length)
@@ -140,12 +124,12 @@ namespace Superintendent.Core.CommandSink
 
         public Task PollMemory(nint relativeAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
         {
-            var data = new byte[byteCount];
+            var data = GC.AllocateArray<byte>((int)byteCount, pinned: true);
             return Task.Run(async () =>
             {
                 while (!token.IsCancellationRequested)
                 {
-                    this.Read(relativeAddress, data);
+                    this.ReadSpan<byte>(this.baseOffset + relativeAddress, data);
                     callback(data);
                     await Task.Delay((int)intervalMs);
                 }
@@ -154,12 +138,12 @@ namespace Superintendent.Core.CommandSink
 
         public Task PollMemoryAt(nint absoluteAddress, uint intervalMs, uint byteCount, ReadOnlySpanAction<byte> callback, CancellationToken token = default)
         {
-            var data = new byte[byteCount];
+            var data = GC.AllocateArray<byte>((int)byteCount, pinned: true);
             return Task.Run(async () =>
             {
                 while (!token.IsCancellationRequested)
                 {
-                    this.ReadAt(absoluteAddress, data);
+                    this.ReadSpanAt<byte>(absoluteAddress, data);
                     callback(data);
                     await Task.Delay((int)intervalMs);
                 }
@@ -200,6 +184,107 @@ namespace Superintendent.Core.CommandSink
         public nint GetThreadLocalPointer()
         {
             throw new NotSupportedException();
+        }
+
+        public void ReadPointer<T>(Ptr<T> relativePointer, out T data) where T : unmanaged
+        {
+            var address = ResolvePointer(relativePointer, this.baseOffset);
+            this.ReadAt(address, out data);
+        }
+
+        public void ReadPointerSpan<T>(Ptr<T> relativePointer, Span<T> data) where T : unmanaged
+        {
+            var address = ResolvePointer(relativePointer, this.baseOffset);
+            this.ReadSpanAt(address, data);
+        }
+
+        public void ReadAbsolutePointer<T>(Ptr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            var address = ResolvePointer(absolutePointer);
+            this.ReadAt(address, out data);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(Ptr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            var address = ResolvePointer(absolutePointer);
+            this.ReadSpanAt(address, data);
+        }
+
+        public void WritePointer<T>(Ptr<T> relativePointer, T data) where T : unmanaged
+        {
+            var address = ResolvePointer(relativePointer, this.baseOffset);
+            this.WriteAt(address, data);
+        }
+
+        public void WritePointerSpan<T>(Ptr<T> relativePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            var address = ResolvePointer(relativePointer, this.baseOffset);
+            this.WriteSpanAt(address, data);
+        }
+
+        public void WriteAbsolutePointer<T>(Ptr<T> absolutePointer, T data) where T : unmanaged
+        {
+            var address = ResolvePointer(absolutePointer);
+            this.WriteAt(address, data);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(Ptr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            var address = ResolvePointer(absolutePointer);
+            this.WriteSpanAt(address, data);
+        }
+
+        private nint ResolvePointer<T>(Ptr<T> pointer, nint baseOffset = 0) where T: unmanaged
+        {
+            nint address;
+            this.ReadAt<nint>(pointer.Base + this.baseOffset, out address);
+
+            foreach(var next in pointer.Chain)
+            {
+                this.ReadAt<nint>(address + next, out address);
+            }
+
+            return address;
+        }
+
+        public void ReadPointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            this.ReadAbsolutePointer(absolutePointer.AsPtr(), out data);
+        }
+
+        public void ReadPointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            this.ReadAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void ReadAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, out T data) where T : unmanaged
+        {
+            this.ReadAbsolutePointer(absolutePointer.AsPtr(), out data);
+        }
+
+        public void ReadAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, Span<T> data) where T : unmanaged
+        {
+            this.ReadAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void WritePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            this.WriteAbsolutePointer(absolutePointer.AsPtr(), data);
+        }
+
+        public void WritePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.WriteAbsolutePointerSpan(absolutePointer.AsPtr(), data);
+        }
+
+        public void WriteAbsolutePointer<T>(AbsolutePtr<T> absolutePointer, T data) where T : unmanaged
+        {
+            this.WriteAbsolutePointer(absolutePointer.AsPtr(), data);
+        }
+
+        public void WriteAbsolutePointerSpan<T>(AbsolutePtr<T> absolutePointer, ReadOnlySpan<T> data) where T : unmanaged
+        {
+            this.WriteAbsolutePointerSpan(absolutePointer.AsPtr(), data);
         }
     }
 }
