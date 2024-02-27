@@ -17,11 +17,13 @@ stages:
       vmImage: 'windows-2022'
 
     steps:
+    - checkout: self
+      submodules: true
+    
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
         vsVersion: '17.0'
-        msbuildArgs: '/p:VcpkgEnableManifest=false /p:VCPKG_INSTALLATION_ROOT="$(Build.BinariesDirectory)\$(vcpkgExportVersion)" /p:ForceImportBeforeCppProps="$(Build.BinariesDirectory)\$(vcpkgExportVersion)\scripts\buildsystems\msbuild\vcpkg.props" /p:ForceImportAfterCppTargets="$(Build.BinariesDirectory)\$(vcpkgExportVersion)\scripts\buildsystems\msbuild\vcpkg.targets"'
         platform: 'x64'
         configuration: 'Release'
         msbuildArchitecture: 'x64'
