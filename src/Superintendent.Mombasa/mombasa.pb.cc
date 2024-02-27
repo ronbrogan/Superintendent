@@ -111,6 +111,33 @@ struct MemoryReadResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemoryReadResponseDefaultTypeInternal _MemoryReadResponse_default_instance_;
+constexpr MemoryReadWriteMonitorRequest::MemoryReadWriteMonitorRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : address_(uint64_t{0u})
+  , count_(0u){}
+struct MemoryReadWriteMonitorRequestDefaultTypeInternal {
+  constexpr MemoryReadWriteMonitorRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~MemoryReadWriteMonitorRequestDefaultTypeInternal() {}
+  union {
+    MemoryReadWriteMonitorRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemoryReadWriteMonitorRequestDefaultTypeInternal _MemoryReadWriteMonitorRequest_default_instance_;
+constexpr MemoryReadWriteMonitorResponse::MemoryReadWriteMonitorResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : ripaddress_(uint64_t{0u})
+  , memoryaddress_(uint64_t{0u})
+  , durationmicroseconds_(uint64_t{0u}){}
+struct MemoryReadWriteMonitorResponseDefaultTypeInternal {
+  constexpr MemoryReadWriteMonitorResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~MemoryReadWriteMonitorResponseDefaultTypeInternal() {}
+  union {
+    MemoryReadWriteMonitorResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MemoryReadWriteMonitorResponseDefaultTypeInternal _MemoryReadWriteMonitorResponse_default_instance_;
 constexpr PointerReadRequest::PointerReadRequest(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : chain_()
@@ -414,8 +441,54 @@ struct ResumeAppThreadsResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResumeAppThreadsResponseDefaultTypeInternal _ResumeAppThreadsResponse_default_instance_;
+constexpr DxStartRequest::DxStartRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct DxStartRequestDefaultTypeInternal {
+  constexpr DxStartRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DxStartRequestDefaultTypeInternal() {}
+  union {
+    DxStartRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DxStartRequestDefaultTypeInternal _DxStartRequest_default_instance_;
+constexpr DxStartResponse::DxStartResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : durationmicroseconds_(uint64_t{0u}){}
+struct DxStartResponseDefaultTypeInternal {
+  constexpr DxStartResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DxStartResponseDefaultTypeInternal() {}
+  union {
+    DxStartResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DxStartResponseDefaultTypeInternal _DxStartResponse_default_instance_;
+constexpr DxEndRequest::DxEndRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized){}
+struct DxEndRequestDefaultTypeInternal {
+  constexpr DxEndRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DxEndRequestDefaultTypeInternal() {}
+  union {
+    DxEndRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DxEndRequestDefaultTypeInternal _DxEndRequest_default_instance_;
+constexpr DxEndResponse::DxEndResponse(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : durationmicroseconds_(uint64_t{0u}){}
+struct DxEndResponseDefaultTypeInternal {
+  constexpr DxEndResponseDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~DxEndResponseDefaultTypeInternal() {}
+  union {
+    DxEndResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT DxEndResponseDefaultTypeInternal _DxEndResponse_default_instance_;
 }  // namespace mombasa
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mombasa_2eproto[31];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mombasa_2eproto[37];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_mombasa_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_mombasa_2eproto = nullptr;
 
@@ -479,6 +552,23 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mombasa_2eproto::offsets[] PRO
   PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadResponse, durationmicroseconds_),
   PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadResponse, address_),
   PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadResponse, data_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorRequest, address_),
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorRequest, count_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorResponse, ripaddress_),
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorResponse, memoryaddress_),
+  PROTOBUF_FIELD_OFFSET(::mombasa::MemoryReadWriteMonitorResponse, durationmicroseconds_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::mombasa::PointerReadRequest, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -668,6 +758,32 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mombasa_2eproto::offsets[] PRO
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::mombasa::ResumeAppThreadsResponse, durationmicroseconds_),
   PROTOBUF_FIELD_OFFSET(::mombasa::ResumeAppThreadsResponse, threadsuspendcounts_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxStartRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxStartResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxStartResponse, durationmicroseconds_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxEndRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxEndResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::mombasa::DxEndResponse, durationmicroseconds_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::mombasa::CallRequest)},
@@ -677,30 +793,36 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 33, -1, -1, sizeof(::mombasa::MemoryPollRequest)},
   { 42, -1, -1, sizeof(::mombasa::MemoryReadRequest)},
   { 50, -1, -1, sizeof(::mombasa::MemoryReadResponse)},
-  { 59, -1, -1, sizeof(::mombasa::PointerReadRequest)},
-  { 68, -1, -1, sizeof(::mombasa::PointerReadResponse)},
-  { 77, -1, -1, sizeof(::mombasa::PointerWriteRequest)},
-  { 86, -1, -1, sizeof(::mombasa::PointerWriteResponse)},
-  { 94, -1, -1, sizeof(::mombasa::MemoryAllocateRequest)},
-  { 102, -1, -1, sizeof(::mombasa::MemoryAllocateResponse)},
-  { 110, -1, -1, sizeof(::mombasa::MemoryFreeRequest)},
-  { 119, -1, -1, sizeof(::mombasa::MemoryFreeResponse)},
-  { 126, -1, -1, sizeof(::mombasa::MemoryProtectRequest)},
-  { 135, -1, -1, sizeof(::mombasa::MemoryProtectResponse)},
-  { 142, -1, -1, sizeof(::mombasa::SetTlsValueRequest)},
-  { 150, -1, -1, sizeof(::mombasa::SetTlsValueResponse)},
-  { 157, -1, -1, sizeof(::mombasa::SetThreadLocalPointerRequest)},
-  { 164, -1, -1, sizeof(::mombasa::SetThreadLocalPointerResponse)},
-  { 171, -1, -1, sizeof(::mombasa::GetThreadLocalPointerRequest)},
-  { 178, -1, -1, sizeof(::mombasa::GetThreadLocalPointerResponse)},
-  { 186, -1, -1, sizeof(::mombasa::GetWorkerThreadRequest)},
-  { 192, -1, -1, sizeof(::mombasa::GetWorkerThreadResponse)},
-  { 200, -1, -1, sizeof(::mombasa::PauseAppThreadsRequest)},
-  { 206, 214, -1, sizeof(::mombasa::PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse)},
-  { 216, -1, -1, sizeof(::mombasa::PauseAppThreadsResponse)},
-  { 224, -1, -1, sizeof(::mombasa::ResumeAppThreadsRequest)},
-  { 230, 238, -1, sizeof(::mombasa::ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse)},
-  { 240, -1, -1, sizeof(::mombasa::ResumeAppThreadsResponse)},
+  { 59, -1, -1, sizeof(::mombasa::MemoryReadWriteMonitorRequest)},
+  { 67, -1, -1, sizeof(::mombasa::MemoryReadWriteMonitorResponse)},
+  { 76, -1, -1, sizeof(::mombasa::PointerReadRequest)},
+  { 85, -1, -1, sizeof(::mombasa::PointerReadResponse)},
+  { 94, -1, -1, sizeof(::mombasa::PointerWriteRequest)},
+  { 103, -1, -1, sizeof(::mombasa::PointerWriteResponse)},
+  { 111, -1, -1, sizeof(::mombasa::MemoryAllocateRequest)},
+  { 119, -1, -1, sizeof(::mombasa::MemoryAllocateResponse)},
+  { 127, -1, -1, sizeof(::mombasa::MemoryFreeRequest)},
+  { 136, -1, -1, sizeof(::mombasa::MemoryFreeResponse)},
+  { 143, -1, -1, sizeof(::mombasa::MemoryProtectRequest)},
+  { 152, -1, -1, sizeof(::mombasa::MemoryProtectResponse)},
+  { 159, -1, -1, sizeof(::mombasa::SetTlsValueRequest)},
+  { 167, -1, -1, sizeof(::mombasa::SetTlsValueResponse)},
+  { 174, -1, -1, sizeof(::mombasa::SetThreadLocalPointerRequest)},
+  { 181, -1, -1, sizeof(::mombasa::SetThreadLocalPointerResponse)},
+  { 188, -1, -1, sizeof(::mombasa::GetThreadLocalPointerRequest)},
+  { 195, -1, -1, sizeof(::mombasa::GetThreadLocalPointerResponse)},
+  { 203, -1, -1, sizeof(::mombasa::GetWorkerThreadRequest)},
+  { 209, -1, -1, sizeof(::mombasa::GetWorkerThreadResponse)},
+  { 217, -1, -1, sizeof(::mombasa::PauseAppThreadsRequest)},
+  { 223, 231, -1, sizeof(::mombasa::PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse)},
+  { 233, -1, -1, sizeof(::mombasa::PauseAppThreadsResponse)},
+  { 241, -1, -1, sizeof(::mombasa::ResumeAppThreadsRequest)},
+  { 247, 255, -1, sizeof(::mombasa::ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse)},
+  { 257, -1, -1, sizeof(::mombasa::ResumeAppThreadsResponse)},
+  { 265, -1, -1, sizeof(::mombasa::DxStartRequest)},
+  { 271, -1, -1, sizeof(::mombasa::DxStartResponse)},
+  { 278, -1, -1, sizeof(::mombasa::DxEndRequest)},
+  { 284, -1, -1, sizeof(::mombasa::DxEndResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -711,6 +833,8 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryPollRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadWriteMonitorRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_MemoryReadWriteMonitorResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_PointerReadRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_PointerReadResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_PointerWriteRequest_default_instance_),
@@ -735,6 +859,10 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_ResumeAppThreadsRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_ResumeAppThreadsResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_DxStartRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_DxStartResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_DxEndRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::mombasa::_DxEndResponse_default_instance_),
 };
 
 const char descriptor_table_protodef_mombasa_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -750,82 +878,95 @@ const char descriptor_table_protodef_mombasa_2eproto[] PROTOBUF_SECTION_VARIABLE
   "emoryReadRequest\022\017\n\007address\030\001 \001(\006\022\r\n\005cou"
   "nt\030\002 \001(\r\"Q\n\022MemoryReadResponse\022\034\n\024durati"
   "onMicroseconds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\022\014\n"
-  "\004data\030\003 \001(\014\"\?\n\022PointerReadRequest\022\014\n\004siz"
-  "e\030\001 \001(\r\022\014\n\004base\030\002 \001(\006\022\r\n\005chain\030\003 \003(\r\"R\n\023"
-  "PointerReadResponse\022\034\n\024durationMicroseco"
-  "nds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\022\014\n\004data\030\003 \001(\014"
-  "\"@\n\023PointerWriteRequest\022\014\n\004base\030\001 \001(\006\022\r\n"
-  "\005chain\030\002 \003(\r\022\014\n\004data\030\003 \001(\014\"E\n\024PointerWri"
-  "teResponse\022\034\n\024durationMicroseconds\030\001 \001(\004"
-  "\022\017\n\007address\030\002 \001(\006\";\n\025MemoryAllocateReque"
-  "st\022\016\n\006length\030\001 \001(\r\022\022\n\nprotection\030\002 \001(\r\"G"
-  "\n\026MemoryAllocateResponse\022\034\n\024durationMicr"
-  "oseconds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\"F\n\021Memor"
-  "yFreeRequest\022\017\n\007address\030\001 \001(\006\022\016\n\006length\030"
-  "\002 \001(\r\022\020\n\010freeType\030\003 \001(\r\"2\n\022MemoryFreeRes"
-  "ponse\022\034\n\024durationMicroseconds\030\001 \001(\004\"K\n\024M"
-  "emoryProtectRequest\022\017\n\007address\030\001 \001(\006\022\016\n\006"
-  "length\030\002 \001(\r\022\022\n\nprotection\030\003 \001(\r\"5\n\025Memo"
-  "ryProtectResponse\022\034\n\024durationMicrosecond"
-  "s\030\001 \001(\004\"2\n\022SetTlsValueRequest\022\r\n\005index\030\001"
-  " \001(\r\022\r\n\005value\030\002 \001(\006\"3\n\023SetTlsValueRespon"
-  "se\022\034\n\024durationMicroseconds\030\001 \001(\004\"-\n\034SetT"
-  "hreadLocalPointerRequest\022\r\n\005value\030\001 \001(\006\""
-  "=\n\035SetThreadLocalPointerResponse\022\034\n\024dura"
-  "tionMicroseconds\030\001 \001(\004\"+\n\034GetThreadLocal"
-  "PointerRequest\022\013\n\003why\030\001 \001(\004\"L\n\035GetThread"
-  "LocalPointerResponse\022\034\n\024durationMicrosec"
-  "onds\030\001 \001(\004\022\r\n\005value\030\002 \001(\006\"\030\n\026GetWorkerTh"
-  "readRequest\"I\n\027GetWorkerThreadResponse\022\034"
-  "\n\024durationMicroseconds\030\001 \001(\004\022\020\n\010threadId"
-  "\030\002 \001(\006\"\030\n\026PauseAppThreadsRequest\"\313\001\n\027Pau"
-  "seAppThreadsResponse\022\034\n\024durationMicrosec"
-  "onds\030\001 \001(\004\022V\n\023threadSuspendCounts\030\002 \003(\0132"
-  "9.mombasa.PauseAppThreadsResponse.Thread"
-  "SuspendCountsEntry\032:\n\030ThreadSuspendCount"
-  "sEntry\022\013\n\003key\030\001 \001(\006\022\r\n\005value\030\002 \001(\r:\0028\001\"\031"
-  "\n\027ResumeAppThreadsRequest\"\315\001\n\030ResumeAppT"
-  "hreadsResponse\022\034\n\024durationMicroseconds\030\001"
-  " \001(\004\022W\n\023threadSuspendCounts\030\002 \003(\0132:.momb"
-  "asa.ResumeAppThreadsResponse.ThreadSuspe"
-  "ndCountsEntry\032:\n\030ThreadSuspendCountsEntr"
-  "y\022\013\n\003key\030\001 \001(\006\022\r\n\005value\030\002 \001(\r:\0028\0012\306\t\n\rMo"
-  "mbasaBridge\022;\n\014CallFunction\022\024.mombasa.Ca"
-  "llRequest\032\025.mombasa.CallResponse\022Q\n\016Allo"
-  "cateMemory\022\036.mombasa.MemoryAllocateReque"
-  "st\032\037.mombasa.MemoryAllocateResponse\022E\n\nF"
-  "reeMemory\022\032.mombasa.MemoryFreeRequest\032\033."
-  "mombasa.MemoryFreeResponse\022N\n\rProtectMem"
-  "ory\022\035.mombasa.MemoryProtectRequest\032\036.mom"
-  "basa.MemoryProtectResponse\022H\n\013WriteMemor"
-  "y\022\033.mombasa.MemoryWriteRequest\032\034.mombasa"
-  ".MemoryWriteResponse\022E\n\nReadMemory\022\032.mom"
-  "basa.MemoryReadRequest\032\033.mombasa.MemoryR"
-  "eadResponse\022H\n\013ReadPointer\022\033.mombasa.Poi"
-  "nterReadRequest\032\034.mombasa.PointerReadRes"
-  "ponse\022K\n\014WritePointer\022\034.mombasa.PointerW"
-  "riteRequest\032\035.mombasa.PointerWriteRespon"
-  "se\022G\n\nPollMemory\022\032.mombasa.MemoryPollReq"
-  "uest\032\033.mombasa.MemoryReadResponse0\001\022T\n\017G"
-  "etWorkerThread\022\037.mombasa.GetWorkerThread"
-  "Request\032 .mombasa.GetWorkerThreadRespons"
-  "e\022T\n\017PauseAppThreads\022\037.mombasa.PauseAppT"
-  "hreadsRequest\032 .mombasa.PauseAppThreadsR"
-  "esponse\022W\n\020ResumeAppThreads\022 .mombasa.Re"
-  "sumeAppThreadsRequest\032!.mombasa.ResumeAp"
-  "pThreadsResponse\022H\n\013SetTlsValue\022\033.mombas"
-  "a.SetTlsValueRequest\032\034.mombasa.SetTlsVal"
-  "ueResponse\022f\n\025SetThreadLocalPointer\022%.mo"
-  "mbasa.SetThreadLocalPointerRequest\032&.mom"
-  "basa.SetThreadLocalPointerResponse\022f\n\025Ge"
-  "tThreadLocalPointer\022%.mombasa.GetThreadL"
-  "ocalPointerRequest\032&.mombasa.GetThreadLo"
-  "calPointerResponseb\006proto3"
+  "\004data\030\003 \001(\014\"\?\n\035MemoryReadWriteMonitorReq"
+  "uest\022\017\n\007address\030\001 \001(\006\022\r\n\005count\030\002 \001(\r\"i\n\036"
+  "MemoryReadWriteMonitorResponse\022\022\n\nripAdd"
+  "ress\030\001 \001(\006\022\025\n\rmemoryAddress\030\002 \001(\006\022\034\n\024dur"
+  "ationMicroseconds\030\004 \001(\004\"\?\n\022PointerReadRe"
+  "quest\022\014\n\004size\030\001 \001(\r\022\014\n\004base\030\002 \001(\006\022\r\n\005cha"
+  "in\030\003 \003(\r\"R\n\023PointerReadResponse\022\034\n\024durat"
+  "ionMicroseconds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\022\014"
+  "\n\004data\030\003 \001(\014\"@\n\023PointerWriteRequest\022\014\n\004b"
+  "ase\030\001 \001(\006\022\r\n\005chain\030\002 \003(\r\022\014\n\004data\030\003 \001(\014\"E"
+  "\n\024PointerWriteResponse\022\034\n\024durationMicros"
+  "econds\030\001 \001(\004\022\017\n\007address\030\002 \001(\006\";\n\025MemoryA"
+  "llocateRequest\022\016\n\006length\030\001 \001(\r\022\022\n\nprotec"
+  "tion\030\002 \001(\r\"G\n\026MemoryAllocateResponse\022\034\n\024"
+  "durationMicroseconds\030\001 \001(\004\022\017\n\007address\030\002 "
+  "\001(\006\"F\n\021MemoryFreeRequest\022\017\n\007address\030\001 \001("
+  "\006\022\016\n\006length\030\002 \001(\r\022\020\n\010freeType\030\003 \001(\r\"2\n\022M"
+  "emoryFreeResponse\022\034\n\024durationMicrosecond"
+  "s\030\001 \001(\004\"K\n\024MemoryProtectRequest\022\017\n\007addre"
+  "ss\030\001 \001(\006\022\016\n\006length\030\002 \001(\r\022\022\n\nprotection\030\003"
+  " \001(\r\"5\n\025MemoryProtectResponse\022\034\n\024duratio"
+  "nMicroseconds\030\001 \001(\004\"2\n\022SetTlsValueReques"
+  "t\022\r\n\005index\030\001 \001(\r\022\r\n\005value\030\002 \001(\006\"3\n\023SetTl"
+  "sValueResponse\022\034\n\024durationMicroseconds\030\001"
+  " \001(\004\"-\n\034SetThreadLocalPointerRequest\022\r\n\005"
+  "value\030\001 \001(\006\"=\n\035SetThreadLocalPointerResp"
+  "onse\022\034\n\024durationMicroseconds\030\001 \001(\004\"+\n\034Ge"
+  "tThreadLocalPointerRequest\022\013\n\003why\030\001 \001(\004\""
+  "L\n\035GetThreadLocalPointerResponse\022\034\n\024dura"
+  "tionMicroseconds\030\001 \001(\004\022\r\n\005value\030\002 \001(\006\"\030\n"
+  "\026GetWorkerThreadRequest\"I\n\027GetWorkerThre"
+  "adResponse\022\034\n\024durationMicroseconds\030\001 \001(\004"
+  "\022\020\n\010threadId\030\002 \001(\006\"\030\n\026PauseAppThreadsReq"
+  "uest\"\313\001\n\027PauseAppThreadsResponse\022\034\n\024dura"
+  "tionMicroseconds\030\001 \001(\004\022V\n\023threadSuspendC"
+  "ounts\030\002 \003(\01329.mombasa.PauseAppThreadsRes"
+  "ponse.ThreadSuspendCountsEntry\032:\n\030Thread"
+  "SuspendCountsEntry\022\013\n\003key\030\001 \001(\r\022\r\n\005value"
+  "\030\002 \001(\r:\0028\001\"\031\n\027ResumeAppThreadsRequest\"\315\001"
+  "\n\030ResumeAppThreadsResponse\022\034\n\024durationMi"
+  "croseconds\030\001 \001(\004\022W\n\023threadSuspendCounts\030"
+  "\002 \003(\0132:.mombasa.ResumeAppThreadsResponse"
+  ".ThreadSuspendCountsEntry\032:\n\030ThreadSuspe"
+  "ndCountsEntry\022\013\n\003key\030\001 \001(\r\022\r\n\005value\030\002 \001("
+  "\r:\0028\001\"\020\n\016DxStartRequest\"/\n\017DxStartRespon"
+  "se\022\034\n\024durationMicroseconds\030\001 \001(\004\"\016\n\014DxEn"
+  "dRequest\"-\n\rDxEndResponse\022\034\n\024durationMic"
+  "roseconds\030\001 \001(\0042\240\013\n\rMombasaBridge\022;\n\014Cal"
+  "lFunction\022\024.mombasa.CallRequest\032\025.mombas"
+  "a.CallResponse\022Q\n\016AllocateMemory\022\036.momba"
+  "sa.MemoryAllocateRequest\032\037.mombasa.Memor"
+  "yAllocateResponse\022E\n\nFreeMemory\022\032.mombas"
+  "a.MemoryFreeRequest\032\033.mombasa.MemoryFree"
+  "Response\022N\n\rProtectMemory\022\035.mombasa.Memo"
+  "ryProtectRequest\032\036.mombasa.MemoryProtect"
+  "Response\022H\n\013WriteMemory\022\033.mombasa.Memory"
+  "WriteRequest\032\034.mombasa.MemoryWriteRespon"
+  "se\022E\n\nReadMemory\022\032.mombasa.MemoryReadReq"
+  "uest\032\033.mombasa.MemoryReadResponse\022H\n\013Rea"
+  "dPointer\022\033.mombasa.PointerReadRequest\032\034."
+  "mombasa.PointerReadResponse\022K\n\014WritePoin"
+  "ter\022\034.mombasa.PointerWriteRequest\032\035.momb"
+  "asa.PointerWriteResponse\022G\n\nPollMemory\022\032"
+  ".mombasa.MemoryPollRequest\032\033.mombasa.Mem"
+  "oryReadResponse0\001\022b\n\rMonitorMemory\022&.mom"
+  "basa.MemoryReadWriteMonitorRequest\032\'.mom"
+  "basa.MemoryReadWriteMonitorResponse0\001\022T\n"
+  "\017GetWorkerThread\022\037.mombasa.GetWorkerThre"
+  "adRequest\032 .mombasa.GetWorkerThreadRespo"
+  "nse\022T\n\017PauseAppThreads\022\037.mombasa.PauseAp"
+  "pThreadsRequest\032 .mombasa.PauseAppThread"
+  "sResponse\022W\n\020ResumeAppThreads\022 .mombasa."
+  "ResumeAppThreadsRequest\032!.mombasa.Resume"
+  "AppThreadsResponse\022H\n\013SetTlsValue\022\033.momb"
+  "asa.SetTlsValueRequest\032\034.mombasa.SetTlsV"
+  "alueResponse\022f\n\025SetThreadLocalPointer\022%."
+  "mombasa.SetThreadLocalPointerRequest\032&.m"
+  "ombasa.SetThreadLocalPointerResponse\022f\n\025"
+  "GetThreadLocalPointer\022%.mombasa.GetThrea"
+  "dLocalPointerRequest\032&.mombasa.GetThread"
+  "LocalPointerResponse\022<\n\007DxStart\022\027.mombas"
+  "a.DxStartRequest\032\030.mombasa.DxStartRespon"
+  "se\0226\n\005DxEnd\022\025.mombasa.DxEndRequest\032\026.mom"
+  "basa.DxEndResponseb\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_mombasa_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mombasa_2eproto = {
-  false, false, 3306, descriptor_table_protodef_mombasa_2eproto, "mombasa.proto", 
-  &descriptor_table_mombasa_2eproto_once, nullptr, 0, 31,
+  false, false, 3826, descriptor_table_protodef_mombasa_2eproto, "mombasa.proto", 
+  &descriptor_table_mombasa_2eproto_once, nullptr, 0, 37,
   schemas, file_default_instances, TableStruct_mombasa_2eproto::offsets,
   file_level_metadata_mombasa_2eproto, file_level_enum_descriptors_mombasa_2eproto, file_level_service_descriptors_mombasa_2eproto,
 };
@@ -2412,6 +2553,452 @@ void MemoryReadResponse::InternalSwap(MemoryReadResponse* other) {
 
 // ===================================================================
 
+class MemoryReadWriteMonitorRequest::_Internal {
+ public:
+};
+
+MemoryReadWriteMonitorRequest::MemoryReadWriteMonitorRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:mombasa.MemoryReadWriteMonitorRequest)
+}
+MemoryReadWriteMonitorRequest::MemoryReadWriteMonitorRequest(const MemoryReadWriteMonitorRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&address_, &from.address_,
+    static_cast<size_t>(reinterpret_cast<char*>(&count_) -
+    reinterpret_cast<char*>(&address_)) + sizeof(count_));
+  // @@protoc_insertion_point(copy_constructor:mombasa.MemoryReadWriteMonitorRequest)
+}
+
+void MemoryReadWriteMonitorRequest::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&address_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&count_) -
+    reinterpret_cast<char*>(&address_)) + sizeof(count_));
+}
+
+MemoryReadWriteMonitorRequest::~MemoryReadWriteMonitorRequest() {
+  // @@protoc_insertion_point(destructor:mombasa.MemoryReadWriteMonitorRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void MemoryReadWriteMonitorRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void MemoryReadWriteMonitorRequest::ArenaDtor(void* object) {
+  MemoryReadWriteMonitorRequest* _this = reinterpret_cast< MemoryReadWriteMonitorRequest* >(object);
+  (void)_this;
+}
+void MemoryReadWriteMonitorRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void MemoryReadWriteMonitorRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void MemoryReadWriteMonitorRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:mombasa.MemoryReadWriteMonitorRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&address_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&count_) -
+      reinterpret_cast<char*>(&address_)) + sizeof(count_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* MemoryReadWriteMonitorRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // fixed64 address = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 9)) {
+          address_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint64>(ptr);
+          ptr += sizeof(::PROTOBUF_NAMESPACE_ID::uint64);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 count = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* MemoryReadWriteMonitorRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:mombasa.MemoryReadWriteMonitorRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // fixed64 address = 1;
+  if (this->_internal_address() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed64ToArray(1, this->_internal_address(), target);
+  }
+
+  // uint32 count = 2;
+  if (this->_internal_count() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_count(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:mombasa.MemoryReadWriteMonitorRequest)
+  return target;
+}
+
+size_t MemoryReadWriteMonitorRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:mombasa.MemoryReadWriteMonitorRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // fixed64 address = 1;
+  if (this->_internal_address() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // uint32 count = 2;
+  if (this->_internal_count() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32SizePlusOne(this->_internal_count());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MemoryReadWriteMonitorRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    MemoryReadWriteMonitorRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MemoryReadWriteMonitorRequest::GetClassData() const { return &_class_data_; }
+
+void MemoryReadWriteMonitorRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<MemoryReadWriteMonitorRequest *>(to)->MergeFrom(
+      static_cast<const MemoryReadWriteMonitorRequest &>(from));
+}
+
+
+void MemoryReadWriteMonitorRequest::MergeFrom(const MemoryReadWriteMonitorRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:mombasa.MemoryReadWriteMonitorRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_address() != 0) {
+    _internal_set_address(from._internal_address());
+  }
+  if (from._internal_count() != 0) {
+    _internal_set_count(from._internal_count());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void MemoryReadWriteMonitorRequest::CopyFrom(const MemoryReadWriteMonitorRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:mombasa.MemoryReadWriteMonitorRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MemoryReadWriteMonitorRequest::IsInitialized() const {
+  return true;
+}
+
+void MemoryReadWriteMonitorRequest::InternalSwap(MemoryReadWriteMonitorRequest* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MemoryReadWriteMonitorRequest, count_)
+      + sizeof(MemoryReadWriteMonitorRequest::count_)
+      - PROTOBUF_FIELD_OFFSET(MemoryReadWriteMonitorRequest, address_)>(
+          reinterpret_cast<char*>(&address_),
+          reinterpret_cast<char*>(&other->address_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata MemoryReadWriteMonitorRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[7]);
+}
+
+// ===================================================================
+
+class MemoryReadWriteMonitorResponse::_Internal {
+ public:
+};
+
+MemoryReadWriteMonitorResponse::MemoryReadWriteMonitorResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:mombasa.MemoryReadWriteMonitorResponse)
+}
+MemoryReadWriteMonitorResponse::MemoryReadWriteMonitorResponse(const MemoryReadWriteMonitorResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&ripaddress_, &from.ripaddress_,
+    static_cast<size_t>(reinterpret_cast<char*>(&durationmicroseconds_) -
+    reinterpret_cast<char*>(&ripaddress_)) + sizeof(durationmicroseconds_));
+  // @@protoc_insertion_point(copy_constructor:mombasa.MemoryReadWriteMonitorResponse)
+}
+
+void MemoryReadWriteMonitorResponse::SharedCtor() {
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&ripaddress_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&durationmicroseconds_) -
+    reinterpret_cast<char*>(&ripaddress_)) + sizeof(durationmicroseconds_));
+}
+
+MemoryReadWriteMonitorResponse::~MemoryReadWriteMonitorResponse() {
+  // @@protoc_insertion_point(destructor:mombasa.MemoryReadWriteMonitorResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void MemoryReadWriteMonitorResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void MemoryReadWriteMonitorResponse::ArenaDtor(void* object) {
+  MemoryReadWriteMonitorResponse* _this = reinterpret_cast< MemoryReadWriteMonitorResponse* >(object);
+  (void)_this;
+}
+void MemoryReadWriteMonitorResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void MemoryReadWriteMonitorResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void MemoryReadWriteMonitorResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:mombasa.MemoryReadWriteMonitorResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&ripaddress_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&durationmicroseconds_) -
+      reinterpret_cast<char*>(&ripaddress_)) + sizeof(durationmicroseconds_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* MemoryReadWriteMonitorResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // fixed64 ripAddress = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 9)) {
+          ripaddress_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint64>(ptr);
+          ptr += sizeof(::PROTOBUF_NAMESPACE_ID::uint64);
+        } else
+          goto handle_unusual;
+        continue;
+      // fixed64 memoryAddress = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 17)) {
+          memoryaddress_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint64>(ptr);
+          ptr += sizeof(::PROTOBUF_NAMESPACE_ID::uint64);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 durationMicroseconds = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          durationmicroseconds_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* MemoryReadWriteMonitorResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:mombasa.MemoryReadWriteMonitorResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // fixed64 ripAddress = 1;
+  if (this->_internal_ripaddress() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed64ToArray(1, this->_internal_ripaddress(), target);
+  }
+
+  // fixed64 memoryAddress = 2;
+  if (this->_internal_memoryaddress() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed64ToArray(2, this->_internal_memoryaddress(), target);
+  }
+
+  // uint64 durationMicroseconds = 4;
+  if (this->_internal_durationmicroseconds() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_durationmicroseconds(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:mombasa.MemoryReadWriteMonitorResponse)
+  return target;
+}
+
+size_t MemoryReadWriteMonitorResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:mombasa.MemoryReadWriteMonitorResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // fixed64 ripAddress = 1;
+  if (this->_internal_ripaddress() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // fixed64 memoryAddress = 2;
+  if (this->_internal_memoryaddress() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // uint64 durationMicroseconds = 4;
+  if (this->_internal_durationmicroseconds() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_durationmicroseconds());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MemoryReadWriteMonitorResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    MemoryReadWriteMonitorResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MemoryReadWriteMonitorResponse::GetClassData() const { return &_class_data_; }
+
+void MemoryReadWriteMonitorResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<MemoryReadWriteMonitorResponse *>(to)->MergeFrom(
+      static_cast<const MemoryReadWriteMonitorResponse &>(from));
+}
+
+
+void MemoryReadWriteMonitorResponse::MergeFrom(const MemoryReadWriteMonitorResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:mombasa.MemoryReadWriteMonitorResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_ripaddress() != 0) {
+    _internal_set_ripaddress(from._internal_ripaddress());
+  }
+  if (from._internal_memoryaddress() != 0) {
+    _internal_set_memoryaddress(from._internal_memoryaddress());
+  }
+  if (from._internal_durationmicroseconds() != 0) {
+    _internal_set_durationmicroseconds(from._internal_durationmicroseconds());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void MemoryReadWriteMonitorResponse::CopyFrom(const MemoryReadWriteMonitorResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:mombasa.MemoryReadWriteMonitorResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MemoryReadWriteMonitorResponse::IsInitialized() const {
+  return true;
+}
+
+void MemoryReadWriteMonitorResponse::InternalSwap(MemoryReadWriteMonitorResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MemoryReadWriteMonitorResponse, durationmicroseconds_)
+      + sizeof(MemoryReadWriteMonitorResponse::durationmicroseconds_)
+      - PROTOBUF_FIELD_OFFSET(MemoryReadWriteMonitorResponse, ripaddress_)>(
+          reinterpret_cast<char*>(&ripaddress_),
+          reinterpret_cast<char*>(&other->ripaddress_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata MemoryReadWriteMonitorResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[8]);
+}
+
+// ===================================================================
+
 class PointerReadRequest::_Internal {
  public:
 };
@@ -2659,7 +3246,7 @@ void PointerReadRequest::InternalSwap(PointerReadRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PointerReadRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[7]);
+      file_level_metadata_mombasa_2eproto[9]);
 }
 
 // ===================================================================
@@ -2911,7 +3498,7 @@ void PointerReadResponse::InternalSwap(PointerReadResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PointerReadResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[8]);
+      file_level_metadata_mombasa_2eproto[10]);
 }
 
 // ===================================================================
@@ -3169,7 +3756,7 @@ void PointerWriteRequest::InternalSwap(PointerWriteRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PointerWriteRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[9]);
+      file_level_metadata_mombasa_2eproto[11]);
 }
 
 // ===================================================================
@@ -3381,7 +3968,7 @@ void PointerWriteResponse::InternalSwap(PointerWriteResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PointerWriteResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[10]);
+      file_level_metadata_mombasa_2eproto[12]);
 }
 
 // ===================================================================
@@ -3593,7 +4180,7 @@ void MemoryAllocateRequest::InternalSwap(MemoryAllocateRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryAllocateRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[11]);
+      file_level_metadata_mombasa_2eproto[13]);
 }
 
 // ===================================================================
@@ -3805,7 +4392,7 @@ void MemoryAllocateResponse::InternalSwap(MemoryAllocateResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryAllocateResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[12]);
+      file_level_metadata_mombasa_2eproto[14]);
 }
 
 // ===================================================================
@@ -4039,7 +4626,7 @@ void MemoryFreeRequest::InternalSwap(MemoryFreeRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryFreeRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[13]);
+      file_level_metadata_mombasa_2eproto[15]);
 }
 
 // ===================================================================
@@ -4217,7 +4804,7 @@ void MemoryFreeResponse::InternalSwap(MemoryFreeResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryFreeResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[14]);
+      file_level_metadata_mombasa_2eproto[16]);
 }
 
 // ===================================================================
@@ -4451,7 +5038,7 @@ void MemoryProtectRequest::InternalSwap(MemoryProtectRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryProtectRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[15]);
+      file_level_metadata_mombasa_2eproto[17]);
 }
 
 // ===================================================================
@@ -4629,7 +5216,7 @@ void MemoryProtectResponse::InternalSwap(MemoryProtectResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata MemoryProtectResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[16]);
+      file_level_metadata_mombasa_2eproto[18]);
 }
 
 // ===================================================================
@@ -4841,7 +5428,7 @@ void SetTlsValueRequest::InternalSwap(SetTlsValueRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SetTlsValueRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[17]);
+      file_level_metadata_mombasa_2eproto[19]);
 }
 
 // ===================================================================
@@ -5019,7 +5606,7 @@ void SetTlsValueResponse::InternalSwap(SetTlsValueResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SetTlsValueResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[18]);
+      file_level_metadata_mombasa_2eproto[20]);
 }
 
 // ===================================================================
@@ -5197,7 +5784,7 @@ void SetThreadLocalPointerRequest::InternalSwap(SetThreadLocalPointerRequest* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata SetThreadLocalPointerRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[19]);
+      file_level_metadata_mombasa_2eproto[21]);
 }
 
 // ===================================================================
@@ -5375,7 +5962,7 @@ void SetThreadLocalPointerResponse::InternalSwap(SetThreadLocalPointerResponse* 
 ::PROTOBUF_NAMESPACE_ID::Metadata SetThreadLocalPointerResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[20]);
+      file_level_metadata_mombasa_2eproto[22]);
 }
 
 // ===================================================================
@@ -5553,7 +6140,7 @@ void GetThreadLocalPointerRequest::InternalSwap(GetThreadLocalPointerRequest* ot
 ::PROTOBUF_NAMESPACE_ID::Metadata GetThreadLocalPointerRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[21]);
+      file_level_metadata_mombasa_2eproto[23]);
 }
 
 // ===================================================================
@@ -5765,7 +6352,7 @@ void GetThreadLocalPointerResponse::InternalSwap(GetThreadLocalPointerResponse* 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetThreadLocalPointerResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[22]);
+      file_level_metadata_mombasa_2eproto[24]);
 }
 
 // ===================================================================
@@ -5804,7 +6391,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetWorkerThreadRequest::GetCla
 ::PROTOBUF_NAMESPACE_ID::Metadata GetWorkerThreadRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[23]);
+      file_level_metadata_mombasa_2eproto[25]);
 }
 
 // ===================================================================
@@ -6016,7 +6603,7 @@ void GetWorkerThreadResponse::InternalSwap(GetWorkerThreadResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GetWorkerThreadResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[24]);
+      file_level_metadata_mombasa_2eproto[26]);
 }
 
 // ===================================================================
@@ -6055,7 +6642,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PauseAppThreadsRequest::GetCla
 ::PROTOBUF_NAMESPACE_ID::Metadata PauseAppThreadsRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[25]);
+      file_level_metadata_mombasa_2eproto[27]);
 }
 
 // ===================================================================
@@ -6069,7 +6656,7 @@ void PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::MergeFrom(const 
 ::PROTOBUF_NAMESPACE_ID::Metadata PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[26]);
+      file_level_metadata_mombasa_2eproto[28]);
 }
 
 // ===================================================================
@@ -6150,7 +6737,7 @@ const char* PauseAppThreadsResponse::_InternalParse(const char* ptr, ::PROTOBUF_
         } else
           goto handle_unusual;
         continue;
-      // map<fixed64, uint32> threadSuspendCounts = 2;
+      // map<uint32, uint32> threadSuspendCounts = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr -= 1;
@@ -6198,20 +6785,20 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_durationmicroseconds(), target);
   }
 
-  // map<fixed64, uint32> threadSuspendCounts = 2;
+  // map<uint32, uint32> threadSuspendCounts = 2;
   if (!this->_internal_threadsuspendcounts().empty()) {
-    typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_pointer
+    typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_pointer
         ConstPtr;
-    typedef ::PROTOBUF_NAMESPACE_ID::internal::SortItem< ::PROTOBUF_NAMESPACE_ID::uint64, ConstPtr > SortItem;
+    typedef ::PROTOBUF_NAMESPACE_ID::internal::SortItem< ::PROTOBUF_NAMESPACE_ID::uint32, ConstPtr > SortItem;
     typedef ::PROTOBUF_NAMESPACE_ID::internal::CompareByFirstField<SortItem> Less;
 
     if (stream->IsSerializationDeterministic() &&
         this->_internal_threadsuspendcounts().size() > 1) {
       ::std::unique_ptr<SortItem[]> items(
           new SortItem[this->_internal_threadsuspendcounts().size()]);
-      typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::size_type size_type;
+      typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::size_type size_type;
       size_type n = 0;
-      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
           it = this->_internal_threadsuspendcounts().begin();
           it != this->_internal_threadsuspendcounts().end(); ++it, ++n) {
         items[static_cast<ptrdiff_t>(n)] = SortItem(&*it);
@@ -6221,7 +6808,7 @@ failure:
         target = PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::InternalSerialize(2, items[static_cast<ptrdiff_t>(i)].second->first, items[static_cast<ptrdiff_t>(i)].second->second, target, stream);
       }
     } else {
-      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
           it = this->_internal_threadsuspendcounts().begin();
           it != this->_internal_threadsuspendcounts().end(); ++it) {
         target = PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::InternalSerialize(2, it->first, it->second, target, stream);
@@ -6245,10 +6832,10 @@ size_t PauseAppThreadsResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // map<fixed64, uint32> threadSuspendCounts = 2;
+  // map<uint32, uint32> threadSuspendCounts = 2;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_threadsuspendcounts_size());
-  for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+  for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
       it = this->_internal_threadsuspendcounts().begin();
       it != this->_internal_threadsuspendcounts().end(); ++it) {
     total_size += PauseAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::ByteSizeLong(it->first, it->second);
@@ -6309,7 +6896,7 @@ void PauseAppThreadsResponse::InternalSwap(PauseAppThreadsResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PauseAppThreadsResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[27]);
+      file_level_metadata_mombasa_2eproto[29]);
 }
 
 // ===================================================================
@@ -6348,7 +6935,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResumeAppThreadsRequest::GetCl
 ::PROTOBUF_NAMESPACE_ID::Metadata ResumeAppThreadsRequest::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[28]);
+      file_level_metadata_mombasa_2eproto[30]);
 }
 
 // ===================================================================
@@ -6362,7 +6949,7 @@ void ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::MergeFrom(const
 ::PROTOBUF_NAMESPACE_ID::Metadata ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[29]);
+      file_level_metadata_mombasa_2eproto[31]);
 }
 
 // ===================================================================
@@ -6443,7 +7030,7 @@ const char* ResumeAppThreadsResponse::_InternalParse(const char* ptr, ::PROTOBUF
         } else
           goto handle_unusual;
         continue;
-      // map<fixed64, uint32> threadSuspendCounts = 2;
+      // map<uint32, uint32> threadSuspendCounts = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr -= 1;
@@ -6491,20 +7078,20 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_durationmicroseconds(), target);
   }
 
-  // map<fixed64, uint32> threadSuspendCounts = 2;
+  // map<uint32, uint32> threadSuspendCounts = 2;
   if (!this->_internal_threadsuspendcounts().empty()) {
-    typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_pointer
+    typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_pointer
         ConstPtr;
-    typedef ::PROTOBUF_NAMESPACE_ID::internal::SortItem< ::PROTOBUF_NAMESPACE_ID::uint64, ConstPtr > SortItem;
+    typedef ::PROTOBUF_NAMESPACE_ID::internal::SortItem< ::PROTOBUF_NAMESPACE_ID::uint32, ConstPtr > SortItem;
     typedef ::PROTOBUF_NAMESPACE_ID::internal::CompareByFirstField<SortItem> Less;
 
     if (stream->IsSerializationDeterministic() &&
         this->_internal_threadsuspendcounts().size() > 1) {
       ::std::unique_ptr<SortItem[]> items(
           new SortItem[this->_internal_threadsuspendcounts().size()]);
-      typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::size_type size_type;
+      typedef ::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::size_type size_type;
       size_type n = 0;
-      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
           it = this->_internal_threadsuspendcounts().begin();
           it != this->_internal_threadsuspendcounts().end(); ++it, ++n) {
         items[static_cast<ptrdiff_t>(n)] = SortItem(&*it);
@@ -6514,7 +7101,7 @@ failure:
         target = ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::InternalSerialize(2, items[static_cast<ptrdiff_t>(i)].second->first, items[static_cast<ptrdiff_t>(i)].second->second, target, stream);
       }
     } else {
-      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+      for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
           it = this->_internal_threadsuspendcounts().begin();
           it != this->_internal_threadsuspendcounts().end(); ++it) {
         target = ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::InternalSerialize(2, it->first, it->second, target, stream);
@@ -6538,10 +7125,10 @@ size_t ResumeAppThreadsResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // map<fixed64, uint32> threadSuspendCounts = 2;
+  // map<uint32, uint32> threadSuspendCounts = 2;
   total_size += 1 *
       ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(this->_internal_threadsuspendcounts_size());
-  for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
+  for (::PROTOBUF_NAMESPACE_ID::Map< ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::uint32 >::const_iterator
       it = this->_internal_threadsuspendcounts().begin();
       it != this->_internal_threadsuspendcounts().end(); ++it) {
     total_size += ResumeAppThreadsResponse_ThreadSuspendCountsEntry_DoNotUse::Funcs::ByteSizeLong(it->first, it->second);
@@ -6602,7 +7189,441 @@ void ResumeAppThreadsResponse::InternalSwap(ResumeAppThreadsResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResumeAppThreadsResponse::GetMetadata() const {
   return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
       &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
-      file_level_metadata_mombasa_2eproto[30]);
+      file_level_metadata_mombasa_2eproto[32]);
+}
+
+// ===================================================================
+
+class DxStartRequest::_Internal {
+ public:
+};
+
+DxStartRequest::DxStartRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:mombasa.DxStartRequest)
+}
+DxStartRequest::DxStartRequest(const DxStartRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:mombasa.DxStartRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DxStartRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DxStartRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata DxStartRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[33]);
+}
+
+// ===================================================================
+
+class DxStartResponse::_Internal {
+ public:
+};
+
+DxStartResponse::DxStartResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:mombasa.DxStartResponse)
+}
+DxStartResponse::DxStartResponse(const DxStartResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  durationmicroseconds_ = from.durationmicroseconds_;
+  // @@protoc_insertion_point(copy_constructor:mombasa.DxStartResponse)
+}
+
+void DxStartResponse::SharedCtor() {
+durationmicroseconds_ = uint64_t{0u};
+}
+
+DxStartResponse::~DxStartResponse() {
+  // @@protoc_insertion_point(destructor:mombasa.DxStartResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void DxStartResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void DxStartResponse::ArenaDtor(void* object) {
+  DxStartResponse* _this = reinterpret_cast< DxStartResponse* >(object);
+  (void)_this;
+}
+void DxStartResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void DxStartResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void DxStartResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:mombasa.DxStartResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  durationmicroseconds_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DxStartResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 durationMicroseconds = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          durationmicroseconds_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DxStartResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:mombasa.DxStartResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 durationMicroseconds = 1;
+  if (this->_internal_durationmicroseconds() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_durationmicroseconds(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:mombasa.DxStartResponse)
+  return target;
+}
+
+size_t DxStartResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:mombasa.DxStartResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 durationMicroseconds = 1;
+  if (this->_internal_durationmicroseconds() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_durationmicroseconds());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DxStartResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    DxStartResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DxStartResponse::GetClassData() const { return &_class_data_; }
+
+void DxStartResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<DxStartResponse *>(to)->MergeFrom(
+      static_cast<const DxStartResponse &>(from));
+}
+
+
+void DxStartResponse::MergeFrom(const DxStartResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:mombasa.DxStartResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_durationmicroseconds() != 0) {
+    _internal_set_durationmicroseconds(from._internal_durationmicroseconds());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DxStartResponse::CopyFrom(const DxStartResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:mombasa.DxStartResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DxStartResponse::IsInitialized() const {
+  return true;
+}
+
+void DxStartResponse::InternalSwap(DxStartResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(durationmicroseconds_, other->durationmicroseconds_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DxStartResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[34]);
+}
+
+// ===================================================================
+
+class DxEndRequest::_Internal {
+ public:
+};
+
+DxEndRequest::DxEndRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:mombasa.DxEndRequest)
+}
+DxEndRequest::DxEndRequest(const DxEndRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:mombasa.DxEndRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DxEndRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DxEndRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata DxEndRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[35]);
+}
+
+// ===================================================================
+
+class DxEndResponse::_Internal {
+ public:
+};
+
+DxEndResponse::DxEndResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:mombasa.DxEndResponse)
+}
+DxEndResponse::DxEndResponse(const DxEndResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  durationmicroseconds_ = from.durationmicroseconds_;
+  // @@protoc_insertion_point(copy_constructor:mombasa.DxEndResponse)
+}
+
+void DxEndResponse::SharedCtor() {
+durationmicroseconds_ = uint64_t{0u};
+}
+
+DxEndResponse::~DxEndResponse() {
+  // @@protoc_insertion_point(destructor:mombasa.DxEndResponse)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void DxEndResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void DxEndResponse::ArenaDtor(void* object) {
+  DxEndResponse* _this = reinterpret_cast< DxEndResponse* >(object);
+  (void)_this;
+}
+void DxEndResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void DxEndResponse::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void DxEndResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:mombasa.DxEndResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  durationmicroseconds_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DxEndResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 durationMicroseconds = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          durationmicroseconds_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* DxEndResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:mombasa.DxEndResponse)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 durationMicroseconds = 1;
+  if (this->_internal_durationmicroseconds() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_durationmicroseconds(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:mombasa.DxEndResponse)
+  return target;
+}
+
+size_t DxEndResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:mombasa.DxEndResponse)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 durationMicroseconds = 1;
+  if (this->_internal_durationmicroseconds() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64SizePlusOne(this->_internal_durationmicroseconds());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DxEndResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    DxEndResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DxEndResponse::GetClassData() const { return &_class_data_; }
+
+void DxEndResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+  static_cast<DxEndResponse *>(to)->MergeFrom(
+      static_cast<const DxEndResponse &>(from));
+}
+
+
+void DxEndResponse::MergeFrom(const DxEndResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:mombasa.DxEndResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_durationmicroseconds() != 0) {
+    _internal_set_durationmicroseconds(from._internal_durationmicroseconds());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DxEndResponse::CopyFrom(const DxEndResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:mombasa.DxEndResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DxEndResponse::IsInitialized() const {
+  return true;
+}
+
+void DxEndResponse::InternalSwap(DxEndResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(durationmicroseconds_, other->durationmicroseconds_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DxEndResponse::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_mombasa_2eproto_getter, &descriptor_table_mombasa_2eproto_once,
+      file_level_metadata_mombasa_2eproto[36]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -6628,6 +7649,12 @@ template<> PROTOBUF_NOINLINE ::mombasa::MemoryReadRequest* Arena::CreateMaybeMes
 }
 template<> PROTOBUF_NOINLINE ::mombasa::MemoryReadResponse* Arena::CreateMaybeMessage< ::mombasa::MemoryReadResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::mombasa::MemoryReadResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::MemoryReadWriteMonitorRequest* Arena::CreateMaybeMessage< ::mombasa::MemoryReadWriteMonitorRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::MemoryReadWriteMonitorRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::MemoryReadWriteMonitorResponse* Arena::CreateMaybeMessage< ::mombasa::MemoryReadWriteMonitorResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::MemoryReadWriteMonitorResponse >(arena);
 }
 template<> PROTOBUF_NOINLINE ::mombasa::PointerReadRequest* Arena::CreateMaybeMessage< ::mombasa::PointerReadRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::mombasa::PointerReadRequest >(arena);
@@ -6700,6 +7727,18 @@ template<> PROTOBUF_NOINLINE ::mombasa::ResumeAppThreadsResponse_ThreadSuspendCo
 }
 template<> PROTOBUF_NOINLINE ::mombasa::ResumeAppThreadsResponse* Arena::CreateMaybeMessage< ::mombasa::ResumeAppThreadsResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::mombasa::ResumeAppThreadsResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::DxStartRequest* Arena::CreateMaybeMessage< ::mombasa::DxStartRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::DxStartRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::DxStartResponse* Arena::CreateMaybeMessage< ::mombasa::DxStartResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::DxStartResponse >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::DxEndRequest* Arena::CreateMaybeMessage< ::mombasa::DxEndRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::DxEndRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::mombasa::DxEndResponse* Arena::CreateMaybeMessage< ::mombasa::DxEndResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::mombasa::DxEndResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

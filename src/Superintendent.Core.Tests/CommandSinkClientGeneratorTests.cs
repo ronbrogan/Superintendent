@@ -1,13 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Superintendent.Generation;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Basic.Reference.Assemblies;
 
@@ -43,6 +39,11 @@ namespace MyCode
 
         public Ptr<float> Val { get; set; }
 
+        public AbsolutePtr<float> Val2 { get; set; }
+        
+        [SpanPointer]
+        public Ptr<float> Vals { get; set; }
+
         public static ProgramOffsets V1 = new()
         {
         };
@@ -57,10 +58,18 @@ namespace MyCode
             ProgramOffsets offsets = ProgramOffsets.V1;
             ProgramOffsets.Client client = offsets.CreateClient(sink);
             
-            client.DoWork(v: 2);
+            int a = client.DoWork(v: 2);            
+            client.DoWork2(arg0: 2);
+
 
             var v = client.ReadVal();
             client.WriteVal(v+1f);
+
+            var v2 = client.ReadVal2();
+            client.WriteVal2(v+1f);
+
+            float[] vals = new float[32];
+            client.ReadVals(vals);
         }
     }
 }
@@ -80,7 +89,7 @@ namespace MyCode
         public (GeneratorRunResult, Compilation) Compile(string source)
         {
             var references = AdditionalReferences
-                .Concat(Net60.References.All);
+                .Concat(Net80.References.All);
 
             var compilation = CSharpCompilation.Create("compilation",
                 new[] { CSharpSyntaxTree.ParseText(source) },

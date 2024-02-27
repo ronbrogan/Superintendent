@@ -46,8 +46,15 @@ namespace Superintendent.Core
 
     public class InvocationException : Exception { }
 
-    public class Fun 
+    public interface IFun<T> where T: Fun
     {
+        static abstract T Create(nint address);
+    }
+
+    public class Fun : IFun<Fun>
+    {
+        public static Fun Create(nint address) => new(address);
+
         public Fun(nint address)
         {
             this.Address = address;
@@ -58,7 +65,7 @@ namespace Superintendent.Core
         public static implicit operator Fun(nint address) => new(address);
     }
 
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class ParamNamesAttribute : Attribute
     {
         private readonly string[] names;
@@ -66,6 +73,14 @@ namespace Superintendent.Core
         public ParamNamesAttribute(params string[] names)
         {
             this.names = names;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SpanPointerAttribute : Attribute
+    {
+        public SpanPointerAttribute()
+        {
         }
     }
 
@@ -91,8 +106,9 @@ namespace Superintendent.Core
         typeArgs += "TRet>";
     
 #>
-    public class Fun<#=typeArgs#> : Fun 
+    public class Fun<#=typeArgs#> : Fun, IFun<Fun<#=typeArgs#>>
     {
+        public static Fun<#=typeArgs#> Create(nint address) => new(address);
         public Fun(nint address) : base(address) { } 
         public static implicit operator Fun<#=typeArgs#>(nint address) => new (address); 
         public static implicit operator nint(Fun<#=typeArgs#> fun) => fun.Address;
@@ -101,8 +117,9 @@ namespace Superintendent.Core
     }
 #>
 
-    public class FunVoid : Fun 
+    public class FunVoid : Fun, IFun<FunVoid>
     {
+        public static FunVoid Create(nint address) => new(address);
         public FunVoid(nint address) : base(address) { } 
         public static implicit operator FunVoid(nint address) => new (address); 
         public static implicit operator nint(FunVoid fun) => fun.Address;
@@ -126,8 +143,9 @@ namespace Superintendent.Core
         typeArgs += ">";
     
 #>
-    public class FunVoid<#=typeArgs#> : Fun 
+    public class FunVoid<#=typeArgs#> : Fun, IFun<FunVoid<#=typeArgs#>>
     {
+        public static FunVoid<#=typeArgs#> Create(nint address) => new(address);
         public FunVoid(nint address) : base(address) { } 
         public static implicit operator FunVoid<#=typeArgs#>(nint address) => new (address); 
         public static implicit operator nint(FunVoid<#=typeArgs#> fun) => fun.Address;
@@ -135,32 +153,42 @@ namespace Superintendent.Core
 <#
     }
 #>
+    public interface IPtr<T> where T: IPtr<T>
+    {
+        static abstract T Create(nint baseOffset, nint[]? chain);
+        nint Base { get; set; }
+        nint[] Chain { get; set; }
+    }
 
     ///<summary>An absolute pointer to a value.</summary>
-    public struct AbsolutePtr<T> where T: unmanaged
+    public struct AbsolutePtr<T> : IPtr<AbsolutePtr<T>> where T:  unmanaged
     {
-        public nint Address { get; set; }
-        public nint[]? Chain { get; set; }
+        public nint Base { get; set; }
+        public nint[] Chain { get; set; }
 
-        public AbsolutePtr(nint address, nint[]? chain)
+        public AbsolutePtr(nint baseOffset, nint[]? chain)
         {
-            this.Address = address;
-            this.Chain = chain;
+            this.Base = baseOffset;
+            this.Chain = chain ?? Array.Empty<nint>();
         }
 
-        public Ptr<T> AsPtr<T>() => new Ptr<T>(this.Address, this.Chain);
+        public Ptr<T> AsPtr() => new Ptr<T>(this.Base, this.Chain);
+
+        public static AbsolutePtr<T> Create(nint baseOffset, nint[]? chain) => new AbsolutePtr<T>(baseOffset, chain);
     }
     
     ///<summary>A relative (to a module offset) pointer to a value.</summary>
-    public struct Ptr<T> where T : unmanaged
+    public struct Ptr<T> : IPtr<Ptr<T>> where T : unmanaged
     {
         public nint Base { get; set; }
-        public nint[]? Chain { get; set; }
+        public nint[] Chain { get; set; }
 
         public Ptr(nint baseOffset, nint[]? chain)
         {
             this.Base = baseOffset;
-            this.Chain = chain;
+            this.Chain = chain ?? Array.Empty<nint>();
         }
+
+         public static Ptr<T> Create(nint baseOffset, nint[]? chain) => new Ptr<T>(baseOffset, chain);
     }
 }

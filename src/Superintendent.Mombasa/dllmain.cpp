@@ -25,6 +25,7 @@ using grpc::ServerContext;
 using grpc::Status;
 using grpc::StatusCode;
 
+static std::thread* shutdownThread;
 static std::thread* grpcThread;
 static std::shared_ptr<Server> grpcServer;
 static std::shared_ptr<ServerCompletionQueue> grpcCompletionQueue;
@@ -32,6 +33,8 @@ static std::shared_ptr<ServerCompletionQueue> grpcCompletionQueue;
 __declspec(dllexport) void Initialize();
 __declspec(dllexport) void Teardown();
 void GrpcStartup();
+void Shutdown();
+void ShutdownFailsafe();
 void HandleRpcs(MombasaBridge::AsyncService* service);
 
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -100,18 +103,40 @@ __declspec(dllexport) void Initialize()
 __declspec(dllexport) void Teardown()
 {
     spdlog::info("mombasa teardown!");
+    shutdownThread = new std::thread(Shutdown);
+}
 
-    auto deadline = std::chrono::system_clock::now();
-    
+void Shutdown()
+{
+    const std::chrono::milliseconds waitDuration = std::chrono::milliseconds(50);
+    const std::chrono::time_point<std::chrono::system_clock> deadline = std::chrono::system_clock::now() + waitDuration;
+
+    auto failsafe = new std::thread(ShutdownFailsafe);
+
     grpcServer->Shutdown(deadline);
     spdlog::info("mombasa server has shutdown");
 
     grpcCompletionQueue->Shutdown();
     spdlog::info("mombasa cq has shutdown");
 
-    grpcThread->join();
+    // if we make it to here, we can safely join and terminate
+    failsafe->join();
+}
+
+void ShutdownFailsafe()
+{
+    Sleep(100);
+
+    // ideall we'd join after shutdowns, however even with deadline
+    // the server shutdown can just hang forever :) really nice software
+    grpcThread->detach();
     delete grpcThread;
-    spdlog::info("mombasa server thread has joined");
+    spdlog::info("mombasa server thread detached");
+
+
+    shutdownThread->detach();
+    delete shutdownThread;
+    spdlog::info("mombasa shutdown thread detached");
 }
 
 void GrpcStartup() 
@@ -208,6 +233,14 @@ void HandleRpcs(MombasaBridge::AsyncService* s) {
         [s](auto && ...args) { s->RequestPollMemory(args...); },
         [i](auto && ...args) { return i->ReadMemory(args...); },
         [s](const MemoryPollRequest* request) { return PollingState(request->interval()); });
+
+    new CallData<DxStartRequest, DxStartResponse>(s, cq,
+        [s](auto && ...args) { s->RequestDxStart(args...); },
+        [i](auto && ...args) { return i->DxStart(args...); });
+
+    new CallData<DxEndRequest, DxEndResponse>(s, cq,
+        [s](auto && ...args) { s->RequestDxEnd(args...); },
+        [i](auto && ...args) { return i->DxEnd(args...); });
 
     void* tag;
     bool ok;

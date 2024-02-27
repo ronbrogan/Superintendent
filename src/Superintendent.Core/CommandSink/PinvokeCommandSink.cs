@@ -1,5 +1,4 @@
-﻿using Superintendent.Core;
-using Superintendent.Core.Native;
+﻿using Superintendent.Core.Native;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -236,8 +235,7 @@ namespace Superintendent.Core.CommandSink
 
         private nint ResolvePointer<T>(Ptr<T> pointer, nint baseOffset = 0) where T: unmanaged
         {
-            nint address;
-            this.ReadAt<nint>(pointer.Base + this.baseOffset, out address);
+            nint address = pointer.Base + this.baseOffset;
 
             foreach(var next in pointer.Chain)
             {

@@ -1,8 +1,6 @@
 ﻿
 using Grpc.Net.Client;
 using Mombasa;
-using Superintendent.Core;
-using Superintendent.Core.Remote;
 using System.Text;
 
 public class Program

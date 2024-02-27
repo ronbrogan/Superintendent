@@ -119,7 +119,7 @@ public:
             
             auto address = resolvePointer(request->base(), request->chain(), request->chain_size());
             reply->set_address(address);
-            spdlog::info("Pointer read requested, reolved to {0:x}", address);
+            spdlog::info("Pointer read requested, resolved to 0x{0:x}", address);
 
             reply->set_data(std::string((char*)address, request->size()));
             TIMER_STOP;
@@ -130,7 +130,7 @@ public:
         return Work([&](auto start) {
             auto address = resolvePointer(request->base(), request->chain(), request->chain_size());
             reply->set_address(address);
-            spdlog::info("Pointer write requested, reolved to {0:x}", address);
+            spdlog::info("Pointer write requested, resolved to 0x{0:x}", address);
 
             auto data = request->data();
             memcpy((char*)address, data.data(), data.length());
@@ -140,7 +140,7 @@ public:
 
     uint64 resolvePointer(uint64 base, RepeatedField<uint32> chain, int chainLength)
     {
-        uint64 address = *(uint64*)base;
+        uint64 address = base;
 
         for (int i = 0; i < chainLength; i++)
         {
@@ -242,7 +242,29 @@ public:
         });
     }
 
-    bool SetThreadsExec(bool run, Map<uint64, uint32>* map)
+    
+
+    Status DxStart(ServerContext* context, const DxStartRequest* request, DxStartResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("Hooking DX");
+
+            
+
+            TIMER_STOP;
+        });
+    }
+
+
+    Status DxEnd(ServerContext* context, const DxEndRequest* request, DxEndResponse* reply) override {
+        return Work([&](auto start) {
+            spdlog::info("Unhooking DX");
+
+
+            TIMER_STOP;
+        });
+    }
+
+    bool SetThreadsExec(bool run, Map<uint32, uint32>* map)
     {
         auto action = run ? "resuming" : "pausing";
 

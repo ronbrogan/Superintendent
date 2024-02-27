@@ -100,6 +100,15 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>> PrepareAsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>>(PrepareAsyncPollMemoryRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>> MonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>>(MonitorMemoryRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>> AsyncMonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>>(AsyncMonitorMemoryRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>> PrepareAsyncMonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>>(PrepareAsyncMonitorMemoryRaw(context, request, cq));
+    }
     virtual ::grpc::Status GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::mombasa::GetWorkerThreadResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetWorkerThreadResponse>> AsyncGetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetWorkerThreadResponse>>(AsyncGetWorkerThreadRaw(context, request, cq));
@@ -142,6 +151,26 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetThreadLocalPointerResponse>> PrepareAsyncGetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetThreadLocalPointerResponse>>(PrepareAsyncGetThreadLocalPointerRaw(context, request, cq));
     }
+    // TODO first class function hooking?
+    //
+    // TODO lock/semaphore sync? might not be worth it, could just hook funcs
+    //
+    virtual ::grpc::Status DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::mombasa::DxStartResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>> AsyncDxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>>(AsyncDxStartRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>> PrepareAsyncDxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>>(PrepareAsyncDxStartRaw(context, request, cq));
+    }
+    // install hook and allocate anything
+    virtual ::grpc::Status DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::mombasa::DxEndResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>> AsyncDxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>>(AsyncDxEndRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>> PrepareAsyncDxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>>(PrepareAsyncDxEndRaw(context, request, cq));
+    }
+    // remove hook and free things
     class async_interface {
      public:
       virtual ~async_interface() {}
@@ -162,6 +191,7 @@ class MombasaBridge final {
       virtual void WritePointer(::grpc::ClientContext* context, const ::mombasa::PointerWriteRequest* request, ::mombasa::PointerWriteResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void WritePointer(::grpc::ClientContext* context, const ::mombasa::PointerWriteRequest* request, ::mombasa::PointerWriteResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadResponse>* reactor) = 0;
+      virtual void MonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadWriteMonitorResponse>* reactor) = 0;
       virtual void GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void PauseAppThreads(::grpc::ClientContext* context, const ::mombasa::PauseAppThreadsRequest* request, ::mombasa::PauseAppThreadsResponse* response, std::function<void(::grpc::Status)>) = 0;
@@ -174,6 +204,16 @@ class MombasaBridge final {
       virtual void SetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // TODO first class function hooking?
+      //
+      // TODO lock/semaphore sync? might not be worth it, could just hook funcs
+      //
+      virtual void DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // install hook and allocate anything
+      virtual void DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // remove hook and free things
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -198,6 +238,9 @@ class MombasaBridge final {
     virtual ::grpc::ClientReaderInterface< ::mombasa::MemoryReadResponse>* PollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>* AsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadResponse>* PrepareAsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>* MonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>* AsyncMonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::mombasa::MemoryReadWriteMonitorResponse>* PrepareAsyncMonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetWorkerThreadResponse>* AsyncGetWorkerThreadRaw(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetWorkerThreadResponse>* PrepareAsyncGetWorkerThreadRaw(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::PauseAppThreadsResponse>* AsyncPauseAppThreadsRaw(::grpc::ClientContext* context, const ::mombasa::PauseAppThreadsRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -210,6 +253,10 @@ class MombasaBridge final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::SetThreadLocalPointerResponse>* PrepareAsyncSetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetThreadLocalPointerResponse>* AsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::GetThreadLocalPointerResponse>* PrepareAsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>* AsyncDxStartRaw(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxStartResponse>* PrepareAsyncDxStartRaw(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>* AsyncDxEndRaw(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::mombasa::DxEndResponse>* PrepareAsyncDxEndRaw(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -279,6 +326,15 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>> PrepareAsyncPollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>>(PrepareAsyncPollMemoryRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientReader< ::mombasa::MemoryReadWriteMonitorResponse>> MonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::mombasa::MemoryReadWriteMonitorResponse>>(MonitorMemoryRaw(context, request));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>> AsyncMonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>>(AsyncMonitorMemoryRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>> PrepareAsyncMonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>>(PrepareAsyncMonitorMemoryRaw(context, request, cq));
+    }
     ::grpc::Status GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::mombasa::GetWorkerThreadResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::GetWorkerThreadResponse>> AsyncGetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::GetWorkerThreadResponse>>(AsyncGetWorkerThreadRaw(context, request, cq));
@@ -321,6 +377,20 @@ class MombasaBridge final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>> PrepareAsyncGetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>>(PrepareAsyncGetThreadLocalPointerRaw(context, request, cq));
     }
+    ::grpc::Status DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::mombasa::DxStartResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>> AsyncDxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>>(AsyncDxStartRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>> PrepareAsyncDxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>>(PrepareAsyncDxStartRaw(context, request, cq));
+    }
+    ::grpc::Status DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::mombasa::DxEndResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>> AsyncDxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>>(AsyncDxEndRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>> PrepareAsyncDxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>>(PrepareAsyncDxEndRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
@@ -341,6 +411,7 @@ class MombasaBridge final {
       void WritePointer(::grpc::ClientContext* context, const ::mombasa::PointerWriteRequest* request, ::mombasa::PointerWriteResponse* response, std::function<void(::grpc::Status)>) override;
       void WritePointer(::grpc::ClientContext* context, const ::mombasa::PointerWriteRequest* request, ::mombasa::PointerWriteResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void PollMemory(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadResponse>* reactor) override;
+      void MonitorMemory(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest* request, ::grpc::ClientReadReactor< ::mombasa::MemoryReadWriteMonitorResponse>* reactor) override;
       void GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response, std::function<void(::grpc::Status)>) override;
       void GetWorkerThread(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void PauseAppThreads(::grpc::ClientContext* context, const ::mombasa::PauseAppThreadsRequest* request, ::mombasa::PauseAppThreadsResponse* response, std::function<void(::grpc::Status)>) override;
@@ -353,6 +424,10 @@ class MombasaBridge final {
       void SetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, std::function<void(::grpc::Status)>) override;
       void GetThreadLocalPointer(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response, std::function<void(::grpc::Status)>) override;
+      void DxStart(::grpc::ClientContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response, std::function<void(::grpc::Status)>) override;
+      void DxEnd(::grpc::ClientContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -383,6 +458,9 @@ class MombasaBridge final {
     ::grpc::ClientReader< ::mombasa::MemoryReadResponse>* PollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request) override;
     ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* AsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::mombasa::MemoryReadResponse>* PrepareAsyncPollMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryPollRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::mombasa::MemoryReadWriteMonitorResponse>* MonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request) override;
+    ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>* AsyncMonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::mombasa::MemoryReadWriteMonitorResponse>* PrepareAsyncMonitorMemoryRaw(::grpc::ClientContext* context, const ::mombasa::MemoryReadWriteMonitorRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::GetWorkerThreadResponse>* AsyncGetWorkerThreadRaw(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::GetWorkerThreadResponse>* PrepareAsyncGetWorkerThreadRaw(::grpc::ClientContext* context, const ::mombasa::GetWorkerThreadRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::PauseAppThreadsResponse>* AsyncPauseAppThreadsRaw(::grpc::ClientContext* context, const ::mombasa::PauseAppThreadsRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -395,6 +473,10 @@ class MombasaBridge final {
     ::grpc::ClientAsyncResponseReader< ::mombasa::SetThreadLocalPointerResponse>* PrepareAsyncSetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::SetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>* AsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::mombasa::GetThreadLocalPointerResponse>* PrepareAsyncGetThreadLocalPointerRaw(::grpc::ClientContext* context, const ::mombasa::GetThreadLocalPointerRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>* AsyncDxStartRaw(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::mombasa::DxStartResponse>* PrepareAsyncDxStartRaw(::grpc::ClientContext* context, const ::mombasa::DxStartRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>* AsyncDxEndRaw(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::mombasa::DxEndResponse>* PrepareAsyncDxEndRaw(::grpc::ClientContext* context, const ::mombasa::DxEndRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_CallFunction_;
     const ::grpc::internal::RpcMethod rpcmethod_AllocateMemory_;
     const ::grpc::internal::RpcMethod rpcmethod_FreeMemory_;
@@ -404,12 +486,15 @@ class MombasaBridge final {
     const ::grpc::internal::RpcMethod rpcmethod_ReadPointer_;
     const ::grpc::internal::RpcMethod rpcmethod_WritePointer_;
     const ::grpc::internal::RpcMethod rpcmethod_PollMemory_;
+    const ::grpc::internal::RpcMethod rpcmethod_MonitorMemory_;
     const ::grpc::internal::RpcMethod rpcmethod_GetWorkerThread_;
     const ::grpc::internal::RpcMethod rpcmethod_PauseAppThreads_;
     const ::grpc::internal::RpcMethod rpcmethod_ResumeAppThreads_;
     const ::grpc::internal::RpcMethod rpcmethod_SetTlsValue_;
     const ::grpc::internal::RpcMethod rpcmethod_SetThreadLocalPointer_;
     const ::grpc::internal::RpcMethod rpcmethod_GetThreadLocalPointer_;
+    const ::grpc::internal::RpcMethod rpcmethod_DxStart_;
+    const ::grpc::internal::RpcMethod rpcmethod_DxEnd_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -426,12 +511,21 @@ class MombasaBridge final {
     virtual ::grpc::Status ReadPointer(::grpc::ServerContext* context, const ::mombasa::PointerReadRequest* request, ::mombasa::PointerReadResponse* response);
     virtual ::grpc::Status WritePointer(::grpc::ServerContext* context, const ::mombasa::PointerWriteRequest* request, ::mombasa::PointerWriteResponse* response);
     virtual ::grpc::Status PollMemory(::grpc::ServerContext* context, const ::mombasa::MemoryPollRequest* request, ::grpc::ServerWriter< ::mombasa::MemoryReadResponse>* writer);
+    virtual ::grpc::Status MonitorMemory(::grpc::ServerContext* context, const ::mombasa::MemoryReadWriteMonitorRequest* request, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* writer);
     virtual ::grpc::Status GetWorkerThread(::grpc::ServerContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response);
     virtual ::grpc::Status PauseAppThreads(::grpc::ServerContext* context, const ::mombasa::PauseAppThreadsRequest* request, ::mombasa::PauseAppThreadsResponse* response);
     virtual ::grpc::Status ResumeAppThreads(::grpc::ServerContext* context, const ::mombasa::ResumeAppThreadsRequest* request, ::mombasa::ResumeAppThreadsResponse* response);
     virtual ::grpc::Status SetTlsValue(::grpc::ServerContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response);
     virtual ::grpc::Status SetThreadLocalPointer(::grpc::ServerContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response);
     virtual ::grpc::Status GetThreadLocalPointer(::grpc::ServerContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response);
+    // TODO first class function hooking?
+    //
+    // TODO lock/semaphore sync? might not be worth it, could just hook funcs
+    //
+    virtual ::grpc::Status DxStart(::grpc::ServerContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response);
+    // install hook and allocate anything
+    virtual ::grpc::Status DxEnd(::grpc::ServerContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response);
+    // remove hook and free things
   };
   template <class BaseClass>
   class WithAsyncMethod_CallFunction : public BaseClass {
@@ -614,12 +708,32 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodAsync(9);
+    }
+    ~WithAsyncMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestMonitorMemory(::grpc::ServerContext* context, ::mombasa::MemoryReadWriteMonitorRequest* request, ::grpc::ServerAsyncWriter< ::mombasa::MemoryReadWriteMonitorResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(9, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_GetWorkerThread : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodAsync(9);
+      ::grpc::Service::MarkMethodAsync(10);
     }
     ~WithAsyncMethod_GetWorkerThread() override {
       BaseClassMustBeDerivedFromService(this);
@@ -630,7 +744,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWorkerThread(::grpc::ServerContext* context, ::mombasa::GetWorkerThreadRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::GetWorkerThreadResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -639,7 +753,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodAsync(10);
+      ::grpc::Service::MarkMethodAsync(11);
     }
     ~WithAsyncMethod_PauseAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -650,7 +764,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPauseAppThreads(::grpc::ServerContext* context, ::mombasa::PauseAppThreadsRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::PauseAppThreadsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -659,7 +773,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodAsync(11);
+      ::grpc::Service::MarkMethodAsync(12);
     }
     ~WithAsyncMethod_ResumeAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -670,7 +784,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResumeAppThreads(::grpc::ServerContext* context, ::mombasa::ResumeAppThreadsRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::ResumeAppThreadsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -679,7 +793,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodAsync(12);
+      ::grpc::Service::MarkMethodAsync(13);
     }
     ~WithAsyncMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -690,7 +804,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTlsValue(::grpc::ServerContext* context, ::mombasa::SetTlsValueRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::SetTlsValueResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -699,7 +813,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodAsync(13);
+      ::grpc::Service::MarkMethodAsync(14);
     }
     ~WithAsyncMethod_SetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
@@ -710,7 +824,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetThreadLocalPointer(::grpc::ServerContext* context, ::mombasa::SetThreadLocalPointerRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::SetThreadLocalPointerResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -719,7 +833,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodAsync(14);
+      ::grpc::Service::MarkMethodAsync(15);
     }
     ~WithAsyncMethod_GetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
@@ -730,10 +844,50 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetThreadLocalPointer(::grpc::ServerContext* context, ::mombasa::GetThreadLocalPointerRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::GetThreadLocalPointerResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_CallFunction<WithAsyncMethod_AllocateMemory<WithAsyncMethod_FreeMemory<WithAsyncMethod_ProtectMemory<WithAsyncMethod_WriteMemory<WithAsyncMethod_ReadMemory<WithAsyncMethod_ReadPointer<WithAsyncMethod_WritePointer<WithAsyncMethod_PollMemory<WithAsyncMethod_GetWorkerThread<WithAsyncMethod_PauseAppThreads<WithAsyncMethod_ResumeAppThreads<WithAsyncMethod_SetTlsValue<WithAsyncMethod_SetThreadLocalPointer<WithAsyncMethod_GetThreadLocalPointer<Service > > > > > > > > > > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_DxStart() {
+      ::grpc::Service::MarkMethodAsync(16);
+    }
+    ~WithAsyncMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDxStart(::grpc::ServerContext* context, ::mombasa::DxStartRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::DxStartResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_DxEnd() {
+      ::grpc::Service::MarkMethodAsync(17);
+    }
+    ~WithAsyncMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDxEnd(::grpc::ServerContext* context, ::mombasa::DxEndRequest* request, ::grpc::ServerAsyncResponseWriter< ::mombasa::DxEndResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_CallFunction<WithAsyncMethod_AllocateMemory<WithAsyncMethod_FreeMemory<WithAsyncMethod_ProtectMemory<WithAsyncMethod_WriteMemory<WithAsyncMethod_ReadMemory<WithAsyncMethod_ReadPointer<WithAsyncMethod_WritePointer<WithAsyncMethod_PollMemory<WithAsyncMethod_MonitorMemory<WithAsyncMethod_GetWorkerThread<WithAsyncMethod_PauseAppThreads<WithAsyncMethod_ResumeAppThreads<WithAsyncMethod_SetTlsValue<WithAsyncMethod_SetThreadLocalPointer<WithAsyncMethod_GetThreadLocalPointer<WithAsyncMethod_DxStart<WithAsyncMethod_DxEnd<Service > > > > > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_CallFunction : public BaseClass {
    private:
@@ -973,18 +1127,40 @@ class MombasaBridge final {
       ::grpc::CallbackServerContext* /*context*/, const ::mombasa::MemoryPollRequest* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodCallback(9,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::mombasa::MemoryReadWriteMonitorRequest, ::mombasa::MemoryReadWriteMonitorResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::mombasa::MemoryReadWriteMonitorRequest* request) { return this->MonitorMemory(context, request); }));
+    }
+    ~WithCallbackMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::mombasa::MemoryReadWriteMonitorResponse>* MonitorMemory(
+      ::grpc::CallbackServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_GetWorkerThread : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodCallback(9,
+      ::grpc::Service::MarkMethodCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::GetWorkerThreadRequest, ::mombasa::GetWorkerThreadResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::GetWorkerThreadRequest* request, ::mombasa::GetWorkerThreadResponse* response) { return this->GetWorkerThread(context, request, response); }));}
     void SetMessageAllocatorFor_GetWorkerThread(
         ::grpc::MessageAllocator< ::mombasa::GetWorkerThreadRequest, ::mombasa::GetWorkerThreadResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::GetWorkerThreadRequest, ::mombasa::GetWorkerThreadResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1005,13 +1181,13 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodCallback(10,
+      ::grpc::Service::MarkMethodCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::PauseAppThreadsRequest, ::mombasa::PauseAppThreadsResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::PauseAppThreadsRequest* request, ::mombasa::PauseAppThreadsResponse* response) { return this->PauseAppThreads(context, request, response); }));}
     void SetMessageAllocatorFor_PauseAppThreads(
         ::grpc::MessageAllocator< ::mombasa::PauseAppThreadsRequest, ::mombasa::PauseAppThreadsResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::PauseAppThreadsRequest, ::mombasa::PauseAppThreadsResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1032,13 +1208,13 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodCallback(11,
+      ::grpc::Service::MarkMethodCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::ResumeAppThreadsRequest, ::mombasa::ResumeAppThreadsResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::ResumeAppThreadsRequest* request, ::mombasa::ResumeAppThreadsResponse* response) { return this->ResumeAppThreads(context, request, response); }));}
     void SetMessageAllocatorFor_ResumeAppThreads(
         ::grpc::MessageAllocator< ::mombasa::ResumeAppThreadsRequest, ::mombasa::ResumeAppThreadsResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::ResumeAppThreadsRequest, ::mombasa::ResumeAppThreadsResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1059,13 +1235,13 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodCallback(12,
+      ::grpc::Service::MarkMethodCallback(13,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::SetTlsValueRequest* request, ::mombasa::SetTlsValueResponse* response) { return this->SetTlsValue(context, request, response); }));}
     void SetMessageAllocatorFor_SetTlsValue(
         ::grpc::MessageAllocator< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1086,13 +1262,13 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodCallback(13,
+      ::grpc::Service::MarkMethodCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::SetThreadLocalPointerRequest* request, ::mombasa::SetThreadLocalPointerResponse* response) { return this->SetThreadLocalPointer(context, request, response); }));}
     void SetMessageAllocatorFor_SetThreadLocalPointer(
         ::grpc::MessageAllocator< ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1113,13 +1289,13 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodCallback(14,
+      ::grpc::Service::MarkMethodCallback(15,
           new ::grpc::internal::CallbackUnaryHandler< ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::mombasa::GetThreadLocalPointerRequest* request, ::mombasa::GetThreadLocalPointerResponse* response) { return this->GetThreadLocalPointer(context, request, response); }));}
     void SetMessageAllocatorFor_GetThreadLocalPointer(
         ::grpc::MessageAllocator< ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1134,7 +1310,61 @@ class MombasaBridge final {
     virtual ::grpc::ServerUnaryReactor* GetThreadLocalPointer(
       ::grpc::CallbackServerContext* /*context*/, const ::mombasa::GetThreadLocalPointerRequest* /*request*/, ::mombasa::GetThreadLocalPointerResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_CallFunction<WithCallbackMethod_AllocateMemory<WithCallbackMethod_FreeMemory<WithCallbackMethod_ProtectMemory<WithCallbackMethod_WriteMemory<WithCallbackMethod_ReadMemory<WithCallbackMethod_ReadPointer<WithCallbackMethod_WritePointer<WithCallbackMethod_PollMemory<WithCallbackMethod_GetWorkerThread<WithCallbackMethod_PauseAppThreads<WithCallbackMethod_ResumeAppThreads<WithCallbackMethod_SetTlsValue<WithCallbackMethod_SetThreadLocalPointer<WithCallbackMethod_GetThreadLocalPointer<Service > > > > > > > > > > > > > > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_DxStart() {
+      ::grpc::Service::MarkMethodCallback(16,
+          new ::grpc::internal::CallbackUnaryHandler< ::mombasa::DxStartRequest, ::mombasa::DxStartResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::mombasa::DxStartRequest* request, ::mombasa::DxStartResponse* response) { return this->DxStart(context, request, response); }));}
+    void SetMessageAllocatorFor_DxStart(
+        ::grpc::MessageAllocator< ::mombasa::DxStartRequest, ::mombasa::DxStartResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::DxStartRequest, ::mombasa::DxStartResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* DxStart(
+      ::grpc::CallbackServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_DxEnd() {
+      ::grpc::Service::MarkMethodCallback(17,
+          new ::grpc::internal::CallbackUnaryHandler< ::mombasa::DxEndRequest, ::mombasa::DxEndResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::mombasa::DxEndRequest* request, ::mombasa::DxEndResponse* response) { return this->DxEnd(context, request, response); }));}
+    void SetMessageAllocatorFor_DxEnd(
+        ::grpc::MessageAllocator< ::mombasa::DxEndRequest, ::mombasa::DxEndResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::mombasa::DxEndRequest, ::mombasa::DxEndResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* DxEnd(
+      ::grpc::CallbackServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_CallFunction<WithCallbackMethod_AllocateMemory<WithCallbackMethod_FreeMemory<WithCallbackMethod_ProtectMemory<WithCallbackMethod_WriteMemory<WithCallbackMethod_ReadMemory<WithCallbackMethod_ReadPointer<WithCallbackMethod_WritePointer<WithCallbackMethod_PollMemory<WithCallbackMethod_MonitorMemory<WithCallbackMethod_GetWorkerThread<WithCallbackMethod_PauseAppThreads<WithCallbackMethod_ResumeAppThreads<WithCallbackMethod_SetTlsValue<WithCallbackMethod_SetThreadLocalPointer<WithCallbackMethod_GetThreadLocalPointer<WithCallbackMethod_DxStart<WithCallbackMethod_DxEnd<Service > > > > > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_CallFunction : public BaseClass {
@@ -1290,12 +1520,29 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodGeneric(9);
+    }
+    ~WithGenericMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_GetWorkerThread : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodGeneric(9);
+      ::grpc::Service::MarkMethodGeneric(10);
     }
     ~WithGenericMethod_GetWorkerThread() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1312,7 +1559,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodGeneric(10);
+      ::grpc::Service::MarkMethodGeneric(11);
     }
     ~WithGenericMethod_PauseAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1329,7 +1576,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodGeneric(11);
+      ::grpc::Service::MarkMethodGeneric(12);
     }
     ~WithGenericMethod_ResumeAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1346,7 +1593,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodGeneric(12);
+      ::grpc::Service::MarkMethodGeneric(13);
     }
     ~WithGenericMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1363,7 +1610,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodGeneric(13);
+      ::grpc::Service::MarkMethodGeneric(14);
     }
     ~WithGenericMethod_SetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1380,13 +1627,47 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodGeneric(14);
+      ::grpc::Service::MarkMethodGeneric(15);
     }
     ~WithGenericMethod_GetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
     ::grpc::Status GetThreadLocalPointer(::grpc::ServerContext* /*context*/, const ::mombasa::GetThreadLocalPointerRequest* /*request*/, ::mombasa::GetThreadLocalPointerResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_DxStart() {
+      ::grpc::Service::MarkMethodGeneric(16);
+    }
+    ~WithGenericMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_DxEnd() {
+      ::grpc::Service::MarkMethodGeneric(17);
+    }
+    ~WithGenericMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1572,12 +1853,32 @@ class MombasaBridge final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodRaw(9);
+    }
+    ~WithRawMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestMonitorMemory(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(9, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_GetWorkerThread : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodRaw(9);
+      ::grpc::Service::MarkMethodRaw(10);
     }
     ~WithRawMethod_GetWorkerThread() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1588,7 +1889,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWorkerThread(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1597,7 +1898,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodRaw(10);
+      ::grpc::Service::MarkMethodRaw(11);
     }
     ~WithRawMethod_PauseAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1608,7 +1909,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPauseAppThreads(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1617,7 +1918,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodRaw(11);
+      ::grpc::Service::MarkMethodRaw(12);
     }
     ~WithRawMethod_ResumeAppThreads() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1628,7 +1929,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestResumeAppThreads(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1637,7 +1938,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodRaw(12);
+      ::grpc::Service::MarkMethodRaw(13);
     }
     ~WithRawMethod_SetTlsValue() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1648,7 +1949,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetTlsValue(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1657,7 +1958,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodRaw(13);
+      ::grpc::Service::MarkMethodRaw(14);
     }
     ~WithRawMethod_SetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1668,7 +1969,7 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetThreadLocalPointer(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1677,7 +1978,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodRaw(14);
+      ::grpc::Service::MarkMethodRaw(15);
     }
     ~WithRawMethod_GetThreadLocalPointer() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1688,7 +1989,47 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetThreadLocalPointer(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_DxStart() {
+      ::grpc::Service::MarkMethodRaw(16);
+    }
+    ~WithRawMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDxStart(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_DxEnd() {
+      ::grpc::Service::MarkMethodRaw(17);
+    }
+    ~WithRawMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestDxEnd(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1890,12 +2231,34 @@ class MombasaBridge final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodRawCallback(9,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->MonitorMemory(context, request); }));
+    }
+    ~WithRawCallbackMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* MonitorMemory(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_GetWorkerThread : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodRawCallback(9,
+      ::grpc::Service::MarkMethodRawCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetWorkerThread(context, request, response); }));
@@ -1917,7 +2280,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodRawCallback(10,
+      ::grpc::Service::MarkMethodRawCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PauseAppThreads(context, request, response); }));
@@ -1939,7 +2302,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodRawCallback(11,
+      ::grpc::Service::MarkMethodRawCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ResumeAppThreads(context, request, response); }));
@@ -1961,7 +2324,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodRawCallback(12,
+      ::grpc::Service::MarkMethodRawCallback(13,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetTlsValue(context, request, response); }));
@@ -1983,7 +2346,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodRawCallback(13,
+      ::grpc::Service::MarkMethodRawCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetThreadLocalPointer(context, request, response); }));
@@ -2005,7 +2368,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodRawCallback(14,
+      ::grpc::Service::MarkMethodRawCallback(15,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetThreadLocalPointer(context, request, response); }));
@@ -2019,6 +2382,50 @@ class MombasaBridge final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* GetThreadLocalPointer(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_DxStart() {
+      ::grpc::Service::MarkMethodRawCallback(16,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DxStart(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* DxStart(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_DxEnd() {
+      ::grpc::Service::MarkMethodRawCallback(17,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DxEnd(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* DxEnd(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -2243,7 +2650,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetWorkerThread() {
-      ::grpc::Service::MarkMethodStreamed(9,
+      ::grpc::Service::MarkMethodStreamed(10,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::GetWorkerThreadRequest, ::mombasa::GetWorkerThreadResponse>(
             [this](::grpc::ServerContext* context,
@@ -2270,7 +2677,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_PauseAppThreads() {
-      ::grpc::Service::MarkMethodStreamed(10,
+      ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::PauseAppThreadsRequest, ::mombasa::PauseAppThreadsResponse>(
             [this](::grpc::ServerContext* context,
@@ -2297,7 +2704,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ResumeAppThreads() {
-      ::grpc::Service::MarkMethodStreamed(11,
+      ::grpc::Service::MarkMethodStreamed(12,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::ResumeAppThreadsRequest, ::mombasa::ResumeAppThreadsResponse>(
             [this](::grpc::ServerContext* context,
@@ -2324,7 +2731,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetTlsValue() {
-      ::grpc::Service::MarkMethodStreamed(12,
+      ::grpc::Service::MarkMethodStreamed(13,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::SetTlsValueRequest, ::mombasa::SetTlsValueResponse>(
             [this](::grpc::ServerContext* context,
@@ -2351,7 +2758,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodStreamed(13,
+      ::grpc::Service::MarkMethodStreamed(14,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::SetThreadLocalPointerRequest, ::mombasa::SetThreadLocalPointerResponse>(
             [this](::grpc::ServerContext* context,
@@ -2378,7 +2785,7 @@ class MombasaBridge final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetThreadLocalPointer() {
-      ::grpc::Service::MarkMethodStreamed(14,
+      ::grpc::Service::MarkMethodStreamed(15,
         new ::grpc::internal::StreamedUnaryHandler<
           ::mombasa::GetThreadLocalPointerRequest, ::mombasa::GetThreadLocalPointerResponse>(
             [this](::grpc::ServerContext* context,
@@ -2399,7 +2806,61 @@ class MombasaBridge final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetThreadLocalPointer(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::mombasa::GetThreadLocalPointerRequest,::mombasa::GetThreadLocalPointerResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_ProtectMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_ReadPointer<WithStreamedUnaryMethod_WritePointer<WithStreamedUnaryMethod_GetWorkerThread<WithStreamedUnaryMethod_PauseAppThreads<WithStreamedUnaryMethod_ResumeAppThreads<WithStreamedUnaryMethod_SetTlsValue<WithStreamedUnaryMethod_SetThreadLocalPointer<WithStreamedUnaryMethod_GetThreadLocalPointer<Service > > > > > > > > > > > > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_DxStart : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_DxStart() {
+      ::grpc::Service::MarkMethodStreamed(16,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::mombasa::DxStartRequest, ::mombasa::DxStartResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::mombasa::DxStartRequest, ::mombasa::DxStartResponse>* streamer) {
+                       return this->StreamedDxStart(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_DxStart() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status DxStart(::grpc::ServerContext* /*context*/, const ::mombasa::DxStartRequest* /*request*/, ::mombasa::DxStartResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedDxStart(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::mombasa::DxStartRequest,::mombasa::DxStartResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_DxEnd : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_DxEnd() {
+      ::grpc::Service::MarkMethodStreamed(17,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::mombasa::DxEndRequest, ::mombasa::DxEndResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::mombasa::DxEndRequest, ::mombasa::DxEndResponse>* streamer) {
+                       return this->StreamedDxEnd(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_DxEnd() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status DxEnd(::grpc::ServerContext* /*context*/, const ::mombasa::DxEndRequest* /*request*/, ::mombasa::DxEndResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedDxEnd(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::mombasa::DxEndRequest,::mombasa::DxEndResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_ProtectMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_ReadPointer<WithStreamedUnaryMethod_WritePointer<WithStreamedUnaryMethod_GetWorkerThread<WithStreamedUnaryMethod_PauseAppThreads<WithStreamedUnaryMethod_ResumeAppThreads<WithStreamedUnaryMethod_SetTlsValue<WithStreamedUnaryMethod_SetThreadLocalPointer<WithStreamedUnaryMethod_GetThreadLocalPointer<WithStreamedUnaryMethod_DxStart<WithStreamedUnaryMethod_DxEnd<Service > > > > > > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_PollMemory : public BaseClass {
    private:
@@ -2427,8 +2888,35 @@ class MombasaBridge final {
     // replace default version of method with split streamed
     virtual ::grpc::Status StreamedPollMemory(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::mombasa::MemoryPollRequest,::mombasa::MemoryReadResponse>* server_split_streamer) = 0;
   };
-  typedef WithSplitStreamingMethod_PollMemory<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_ProtectMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_ReadPointer<WithStreamedUnaryMethod_WritePointer<WithSplitStreamingMethod_PollMemory<WithStreamedUnaryMethod_GetWorkerThread<WithStreamedUnaryMethod_PauseAppThreads<WithStreamedUnaryMethod_ResumeAppThreads<WithStreamedUnaryMethod_SetTlsValue<WithStreamedUnaryMethod_SetThreadLocalPointer<WithStreamedUnaryMethod_GetThreadLocalPointer<Service > > > > > > > > > > > > > > > StreamedService;
+  template <class BaseClass>
+  class WithSplitStreamingMethod_MonitorMemory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithSplitStreamingMethod_MonitorMemory() {
+      ::grpc::Service::MarkMethodStreamed(9,
+        new ::grpc::internal::SplitServerStreamingHandler<
+          ::mombasa::MemoryReadWriteMonitorRequest, ::mombasa::MemoryReadWriteMonitorResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerSplitStreamer<
+                     ::mombasa::MemoryReadWriteMonitorRequest, ::mombasa::MemoryReadWriteMonitorResponse>* streamer) {
+                       return this->StreamedMonitorMemory(context,
+                         streamer);
+                  }));
+    }
+    ~WithSplitStreamingMethod_MonitorMemory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status MonitorMemory(::grpc::ServerContext* /*context*/, const ::mombasa::MemoryReadWriteMonitorRequest* /*request*/, ::grpc::ServerWriter< ::mombasa::MemoryReadWriteMonitorResponse>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with split streamed
+    virtual ::grpc::Status StreamedMonitorMemory(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::mombasa::MemoryReadWriteMonitorRequest,::mombasa::MemoryReadWriteMonitorResponse>* server_split_streamer) = 0;
+  };
+  typedef WithSplitStreamingMethod_PollMemory<WithSplitStreamingMethod_MonitorMemory<Service > > SplitStreamedService;
+  typedef WithStreamedUnaryMethod_CallFunction<WithStreamedUnaryMethod_AllocateMemory<WithStreamedUnaryMethod_FreeMemory<WithStreamedUnaryMethod_ProtectMemory<WithStreamedUnaryMethod_WriteMemory<WithStreamedUnaryMethod_ReadMemory<WithStreamedUnaryMethod_ReadPointer<WithStreamedUnaryMethod_WritePointer<WithSplitStreamingMethod_PollMemory<WithSplitStreamingMethod_MonitorMemory<WithStreamedUnaryMethod_GetWorkerThread<WithStreamedUnaryMethod_PauseAppThreads<WithStreamedUnaryMethod_ResumeAppThreads<WithStreamedUnaryMethod_SetTlsValue<WithStreamedUnaryMethod_SetThreadLocalPointer<WithStreamedUnaryMethod_GetThreadLocalPointer<WithStreamedUnaryMethod_DxStart<WithStreamedUnaryMethod_DxEnd<Service > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace mombasa

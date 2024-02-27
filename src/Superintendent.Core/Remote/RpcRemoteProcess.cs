@@ -1,5 +1,4 @@
-﻿using Grpc.Core.Interceptors;
-using Grpc.Net.Client;
+﻿using Grpc.Net.Client;
 using Mombasa;
 using Superintendent.Core.CommandSink;
 using Superintendent.Core.Native;

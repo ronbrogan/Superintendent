@@ -4,6 +4,7 @@
   "dependencies": [
     "spdlog",
     "grpc",
+    "minhook",
     {
       "name": "protobuf",
       "features": [ "zlib" ]

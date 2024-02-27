@@ -4,14 +4,6 @@ using System.Threading.Tasks;
 
 namespace Superintendent.Core.CommandSink
 {
-    [Flags]
-    public enum RegionProtection
-    {
-        Read = 1,
-        Write = 2,
-        Execute = 4
-    }
-
     /// <summary>
     /// A way to interface with a process, scoped to a particular module (dll).
     /// Any realtive commands will add the BaseOffset of the module automatically.

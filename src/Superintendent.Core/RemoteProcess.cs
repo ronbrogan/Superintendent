@@ -1,7 +1,7 @@
 ﻿using Superintendent.Core.Remote;
 using System;
 using System.Diagnostics;
-using System.Text;
+using System.Threading;
 
 namespace Superintendent.Core
 {
@@ -62,13 +62,25 @@ namespace Superintendent.Core
             return this;
         }
 
-        public RpcRemoteProcess AttachRpc()
+        public RpcRemoteProcess AttachRpc(bool blockUntilAttached = false)
         {
+            ManualResetEventSlim attachBlocker = new();
+
             var proc = new RpcRemoteProcess();
-            proc.ProcessAttached += (s, a) => this.attach?.Invoke(a);
+            proc.ProcessAttached += (s, a) => 
+            {
+                this.attach?.Invoke(a);
+                attachBlocker.Set();
+            };
             proc.ProcessDetached += (s, a) => this.detach?.Invoke();
             proc.AttachException += (s, a) => this.except?.Invoke(a);
             proc.Attach(this.guard, this.processNames);
+
+            if(blockUntilAttached)
+            {
+                attachBlocker.Wait();
+            }
+
             return proc;
         }
     }

@@ -1,0 +1,3 @@
+[submodule "src/kiero"]
+	path = src/kiero
+	url = https://github.com/Rebzzel/kiero

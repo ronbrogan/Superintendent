@@ -27,9 +27,10 @@ service MombasaBridge {
  
     // TODO lock/semaphore sync? might not be worth it, could just hook funcs
 
-    // TODO DX injection
-    //rpc DxStart() returns (); // install hook and allocate anything
-    //rpc DxEnd() returns (); // remove hook and free things
+
+    //rpc DxStart(DxStartRequest) returns (DxStartResponse); // install hook and allocate anything
+    //rpc DxEnd(DxEndRequest) returns (DxEndResponse); // remove hook and free things
+
     //rpc DxDrawCommandList() returns (); // iterate over some mem and do buffering/drawing
     //rpc DxCreateShader() returns (); // upload shader source and prepare for use in commands
     //rpc DxCreateTexture() returns (); // upload texture and prepare for use in commands
@@ -175,4 +176,19 @@ message ResumeAppThreadsRequest {
 message ResumeAppThreadsResponse {
     uint64 durationMicroseconds = 1;
     map<uint32, uint32> threadSuspendCounts = 2;
+}
+
+
+message DxStartRequest {
+}
+
+message DxStartResponse {
+    uint64 durationMicroseconds = 1;
+}
+
+message DxEndRequest {
+}
+
+message DxEndResponse {
+    uint64 durationMicroseconds = 1;
 }

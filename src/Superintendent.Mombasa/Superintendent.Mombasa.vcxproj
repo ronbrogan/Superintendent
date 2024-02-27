@@ -75,7 +75,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Ws2_32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;Ws2_32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -106,6 +106,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\kiero\kiero.h" />
     <ClInclude Include="mombasa.grpc.pb.h" />
     <ClInclude Include="mombasa.pb.h" />
     <ClInclude Include="mombasa_base.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\kiero\kiero.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mombasa.grpc.pb.cc" />
     <ClCompile Include="mombasa.pb.cc" />

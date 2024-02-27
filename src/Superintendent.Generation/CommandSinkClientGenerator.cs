@@ -62,6 +62,7 @@ namespace Superintendent.Generation
             var clientName = "Client";
 
             var model = comp.GetSemanticModel(decl.SyntaxTree);
+            var spanPtrAttribute = comp.GetTypeByMetadataName("Superintendent.Core.SpanPointerAttribute");
 
             var props = decl.Members.OfType<PropertyDeclarationSyntax>();
 
@@ -74,12 +75,14 @@ namespace Superintendent.Generation
             {
                 if (model.GetSymbolInfo(prop.Type).Symbol is INamedTypeSymbol namedType)
                 {
+                    var propSymbol = model.GetDeclaredSymbol(prop);
+
                     clientClassMembers.AddRange(namedType.Name switch
                     {
                         "Fun" => GenerateFunction(spc, comp, model, prop),
                         "FunVoid" => GenerateFunction(spc, comp, model, prop, typeListContainsReturn: false),
-                        "Ptr" => GenerateDataReadWrite(spc, namedType, prop),
-                        "AbsolutePtr" => GenerateDataReadWrite(spc, namedType, prop)
+                        "Ptr" => GenerateDataReadWrite(spc, namedType, prop, propSymbol, spanPtrAttribute),
+                        "AbsolutePtr" => GenerateDataReadWrite(spc, namedType, prop, propSymbol, spanPtrAttribute),
                         _ => Array.Empty<MemberDeclarationSyntax>()
                     });
                 }
@@ -95,6 +98,7 @@ namespace Superintendent.Generation
 
             var newRoot = CopyNamespaceWithUsingsFor(decl, new[]
                 {
+                    "System",
                     "Superintendent.Core.CommandSink",
                     "System.Runtime.CompilerServices"
                 })
@@ -144,7 +148,7 @@ namespace Superintendent.Generation
                         Block());
         }
 
-        private static MemberDeclarationSyntax[]? GenerateDataReadWrite(SourceProductionContext spc, INamedTypeSymbol namedType, PropertyDeclarationSyntax prop)
+        private static MemberDeclarationSyntax[]? GenerateDataReadWrite(SourceProductionContext spc, INamedTypeSymbol namedType, PropertyDeclarationSyntax prop, IPropertySymbol? propSymbol, INamedTypeSymbol? spanPtrAttribute)
         {
             if (prop.Type is not GenericNameSyntax propType)
             {
@@ -164,39 +168,85 @@ namespace Superintendent.Generation
                 IdentifierName("Offsets"),
                 IdentifierName(prop.Identifier.ToString()));
 
+            bool isSpanPointer = false;
+            var readFunc = "ReadPointer";
+            var writeFunc = "WritePointer";
+
+            if((propSymbol?.GetAttributes().Any(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, spanPtrAttribute))).GetValueOrDefault())
+            {
+                isSpanPointer = true;
+                readFunc = "ReadPointerSpan";
+                writeFunc = "WritePointerSpan";
+            }
+
             var sinkRead = MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 IdentifierName("CommandSink"),
-                GenericName("Read")
+                GenericName(readFunc)
                     .WithTypeArgumentList(
                         TypeArgumentList(
                             SingletonSeparatedList<TypeSyntax>(dataType))));
 
             var readMethod = MethodDeclaration(dataType, "Read" + prop.Identifier.ToString())
-                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithBody(Block(
-                    ExpressionStatement(InvocationExpression(sinkRead, ArgumentList(SeparatedList(new[]{ 
-                        Argument(offsetAccess), 
-                        Argument(DeclarationExpression(IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList())),
-                            SingleVariableDesignation(Identifier("value")))).WithRefOrOutKeyword(Token(SyntaxKind.OutKeyword))})))),
-                    ReturnStatement(IdentifierName("value"))
+                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)));
+
+            if(isSpanPointer)
+            {
+                readMethod = readMethod
+                    .WithReturnType(PredefinedType(Token(SyntaxKind.VoidKeyword)))
+                    .WithParameterList(ParameterList(SingletonSeparatedList(
+                        Parameter(Identifier("data"))
+                        .WithType(GenericName(Identifier("Span"))
+                            .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(dataType)))))))
+                    .WithBody(Block(
+                        ExpressionStatement(InvocationExpression(sinkRead, ArgumentList(SeparatedList(new[]{
+                            Argument(offsetAccess),
+                            Argument(IdentifierName("data"))}))))
                 ));
+            }
+            else
+            {
+                readMethod = readMethod
+                    .WithBody(Block(
+                        ExpressionStatement(InvocationExpression(sinkRead, ArgumentList(SeparatedList(new[]{
+                            Argument(offsetAccess),
+                            Argument(DeclarationExpression(IdentifierName(Identifier(TriviaList(), SyntaxKind.VarKeyword, "var", "var", TriviaList())),
+                                SingleVariableDesignation(Identifier("value")))).WithRefOrOutKeyword(Token(SyntaxKind.OutKeyword))})))),
+                        ReturnStatement(IdentifierName("value"))
+                ));
+            }
 
             var sinkWrite = MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 IdentifierName("CommandSink"),
-                GenericName("Write")
+                GenericName(writeFunc)
                     .WithTypeArgumentList(
                         TypeArgumentList(
                             SingletonSeparatedList<TypeSyntax>(dataType))));
 
-            var writeMethod = MethodDeclaration(IdentifierName("void"), "Write" + prop.Identifier.ToString())
-                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)))
-                .WithParameterList(ParameterList(SingletonSeparatedList(
-                    Parameter(Identifier("value")).WithType(dataType))))
-                .WithBody(Block(
-                    ExpressionStatement(InvocationExpression(sinkWrite, ArgumentList(SeparatedList(new[] { Argument(offsetAccess), Argument(IdentifierName("value")) }))))
+            var writeMethod = MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), "Write" + prop.Identifier.ToString())
+                .WithModifiers(TokenList(Token(SyntaxKind.PublicKeyword)));
+
+            if (isSpanPointer)
+            {
+                writeMethod = writeMethod
+                    .WithParameterList(ParameterList(SingletonSeparatedList(
+                        Parameter(Identifier("data"))
+                        .WithType(GenericName(Identifier("ReadOnlySpan"))
+                            .WithTypeArgumentList(TypeArgumentList(SingletonSeparatedList(dataType)))))))
+                    .WithBody(Block(
+                    ExpressionStatement(InvocationExpression(sinkWrite, ArgumentList(SeparatedList(new[] { Argument(offsetAccess), Argument(IdentifierName("data")) }))))
                 ));
+            }
+            else
+            {
+                writeMethod = writeMethod
+                    .WithParameterList(ParameterList(SingletonSeparatedList(
+                        Parameter(Identifier("value")).WithType(dataType))))
+                    .WithBody(Block(
+                        ExpressionStatement(InvocationExpression(sinkWrite, ArgumentList(SeparatedList(new[] { Argument(offsetAccess), Argument(IdentifierName("value")) }))))
+                ));
+            }
 
             return new[] { readMethod, writeMethod };
         }

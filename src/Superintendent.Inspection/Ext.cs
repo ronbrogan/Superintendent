@@ -1,7 +1,6 @@
 ﻿using Gee.External.Capstone.X86;
 using Iced.Intel;
 using PeNet.Header.Pe;
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
