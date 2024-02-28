@@ -19,11 +19,18 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    
+        
+    - task: PowerShell@2
+      displayName: 'Setup VCPKG'
+      inputs:
+        targetType: 'inline'
+        script: |
+          vcpkg integrate install
+
     - task: VSBuild@1
       inputs:
         solution: '$(workingDirectory)\Superintendent.Mombasa\Superintendent.Mombasa.vcxproj'
-        vsVersion: '17.0'
+        vsVersion: 'latest'
         platform: 'x64'
         configuration: 'Release'
         msbuildArchitecture: 'x64'
