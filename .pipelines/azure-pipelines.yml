@@ -84,7 +84,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          & sign code azure-key-vault "$(Build.ArtifactStagingDirectory)/**/*.nupkg" `
+          ./sign.exe code azure-key-vault "$(Build.ArtifactStagingDirectory)/**/*.nupkg" `
           --azure-key-vault-url "$(AzureKeyVaultUrl)" `
           --azure-key-vault-tenant-id "$(AzureKeyVaultTenantId)" `
           --azure-key-vault-client-id "$(AzureKeyVaultClientId)" `
