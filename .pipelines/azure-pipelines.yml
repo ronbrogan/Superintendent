@@ -41,6 +41,12 @@ stages:
         packageType: sdk
         version: 8.0.x
         
+    - task: UseDotNet@2
+      displayName: 'Use .NET 6 sdk for signtool'
+      inputs:
+        packageType: sdk
+        version: 6.0.x
+        
     - task: DotNetCoreCLI@2
       displayName: 'Install Azure SignTool'
       inputs:
