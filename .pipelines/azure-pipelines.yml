@@ -85,7 +85,7 @@ stages:
         targetType: 'inline'
         script: |
           ./sign.exe code azure-key-vault "$(Build.ArtifactStagingDirectory)/**/*.nupkg" `
-          -d "Helical Software, LLC" -u "https://helical.dev"
+          -d "Helical Software, LLC" -u "https://helical.dev" `
           --azure-key-vault-url "$(AzureKeyVaultUrl)" `
           --azure-key-vault-tenant-id "$(AzureKeyVaultTenantId)" `
           --azure-key-vault-client-id "$(AzureKeyVaultClientId)" `
