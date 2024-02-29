@@ -13,8 +13,7 @@ stages:
   jobs:
   - job: Build
     displayName: Build
-    pool:
-      vmImage: 'windows-2022'
+    pool: 'Homelab'
 
     steps:
     - checkout: self
