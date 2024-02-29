@@ -48,34 +48,18 @@ stages:
         version: 6.0.x
         
     - task: DotNetCoreCLI@2
-      displayName: 'Install Azure SignTool'
+      displayName: 'Install Dotnet Sign Tool'
       inputs:
         command: custom
         custom: tool
-        arguments: 'install --global AzureSignTool'
+        arguments: 'install sign --version 0.9.1-beta.24123.2'
         
-    - task: PowerShell@2
-      displayName: 'Sign mombasa'
-      condition: ne(variables.AzureKeyVaultClientSecret, '')
-      inputs:
-        targetType: 'inline'
-        script: |
-          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com -v "$(workingDirectory)\Superintendent.Mombasa\x64\bin\Release\mombasa.dll"
-
     - task: DotNetCoreCLI@2
-      displayName: Build Superintendent.Core
+      displayName: Test Superintendent.Core
       inputs:
-        command: 'build'
-        projects: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
-        arguments: --configuration Release
-        
-    - task: PowerShell@2
-      displayName: 'Sign Superintendent.Core'
-      condition: ne(variables.AzureKeyVaultClientSecret, '')
-      inputs:
-        targetType: 'inline'
-        script: |
-          & AzureSignTool sign -kvu $(AzureKeyVaultUrl) -kvt $(AzureKeyVaultTenantId) -kvi $(AzureKeyVaultClientId) -kvs $(AzureKeyVaultClientSecret) -kvc $(AzureKeyVaultCert) -tr http://timestamp.digicert.com --continue-on-error -v "$(workingDirectory)\Superintendent.Core\bin\Release\net6.0\Superintendent.Core.dll"
+        command: 'test'
+        projects: '$(workingDirectory)/Superintendent.Core.Tests/Superintendent.Core.Tests.csproj'
+
         
     - task: DotNetCoreCLI@2
       displayName: Pack Superintendent.Core NuGet
@@ -83,8 +67,31 @@ stages:
         command: 'pack'
         packagesToPack: '$(workingDirectory)/Superintendent.Core/Superintendent.Core.csproj'
         configuration: 'Release'
-        nobuild: true
         versioningScheme: 'off'
+        
+    - task: DotNetCoreCLI@2
+      displayName: Pack Superintendent.Generation NuGet
+      inputs:
+        command: 'pack'
+        packagesToPack: '$(workingDirectory)/Superintendent.Generation/Superintendent.Generation.csproj'
+        configuration: 'Release'
+        versioningScheme: 'off'
+
+        
+    - task: PowerShell@2
+      displayName: 'Sign Superintendent Packages'
+      condition: ne(variables.AzureKeyVaultClientSecret, '')
+      inputs:
+        targetType: 'inline'
+        script: |
+          & sign code azure-key-vault "$(Build.ArtifactStagingDirectory)/**/*.nupkg" `
+          --azure-key-vault-url "$(AzureKeyVaultUrl)" `
+          --azure-key-vault-tenant-id "$(AzureKeyVaultTenantId)" `
+          --azure-key-vault-client-id "$(AzureKeyVaultClientId)" `
+          --azure-key-vault-client-secret "$(AzureKeyVaultClientSecret)" `
+          --azure-key-vault-certificate "$(AzureKeyVaultCert)" `
+          --timestamp-url http://timestamp.digicert.com 
+        
 
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
