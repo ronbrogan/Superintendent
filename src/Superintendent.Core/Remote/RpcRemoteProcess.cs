@@ -93,8 +93,12 @@ namespace Superintendent.Core.Remote
 
         public void EjectMombasa()
         {
-            if (this.process != null)
-                Win32.EjectModule(this.process.Id, MombasaPath);
+            try
+            {
+                if (this.process != null)
+                    Win32.EjectModule(this.process.Id, MombasaPath);
+            }
+            catch { }
         }
 
         public void DetachFromProcess()
